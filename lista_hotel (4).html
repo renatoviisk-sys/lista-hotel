@@ -103,6 +103,8 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .lav-total-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;text-align:center;}
 .lav-total-val{font-size:24px;font-weight:500;color:var(--purple);}
 .lav-total-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
+.lav-total-sub{font-size:10px;color:var(--txt3);margin-top:2px;opacity:0.7;}
+.lav-green{color:#4ade80 !important;}
 
 .lav-apt-card{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;display:flex;align-items:center;gap:12px;}
 .lav-apt-left{min-width:54px;text-align:center;}
@@ -183,7 +185,7 @@ const ROOMS={
   "Ramada":{order:6,apts:{"1214":"2s"}},
   "Tryp":{order:7,apts:{"06":"c","105":"c","207":"c"}},
   "Comft":{order:8,apts:{"106":"c","109":"cs","111":"2s","114":"c","206":"c","310":"c","311":"2s","316":"c","407":"2s","607":"2s","614":"c","705":"c","710":"c","803":"c","809":"c","810":"cs","1007":"cs"}},
-  "Go Inn":{order:9,apts:{"101":"c","114":"c","119":"c","305":"cs","313":"2s","411":"c","413":"cs","509":"c","516":"c","517":"c","603":"c","605":"cs","609":"cs","611":"c","617":"c","708":"c"}}
+  "Go Inn":{order:9,apts:{"101":"c","114":"c","119":"c","305":"cs","313":"2s","411":"c","413":"cs","509":"c","516":"c","517":"c","603":"c","605":"cs","609":"cs","611":"c","617":"c","705":"c","708":"c"}}
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 
@@ -279,6 +281,7 @@ function renderLavanderia(){
 
   const totalTrocas=entries.reduce((s,e)=>s+e.count,0);
   const totalAptos=entries.length;
+  const totalCadastrados=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
 
   let html=`
   <div class="lav-header">
@@ -292,6 +295,8 @@ function renderLavanderia(){
   <div class="lav-total-grid">
     <div class="lav-total-card"><div class="lav-total-val">${totalTrocas}</div><div class="lav-total-lbl">Trocas no mês</div></div>
     <div class="lav-total-card"><div class="lav-total-val">${totalAptos}</div><div class="lav-total-lbl">Aptos atendidos</div></div>
+    <div class="lav-total-card lav-money"><div class="lav-total-val lav-green">R$ ${(totalCadastrados*230).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lav-total-lbl">Administração</div><div class="lav-total-sub">R$ 230,00 × ${totalCadastrados} aptos</div></div>
+    <div class="lav-total-card lav-money"><div class="lav-total-val lav-green">R$ ${(totalTrocas*8.5).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lav-total-lbl">Troca de roupa</div><div class="lav-total-sub">R$ 8,50 por troca</div></div>
   </div>`;
 
   if(entries.length===0){

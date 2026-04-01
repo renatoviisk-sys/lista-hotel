@@ -118,6 +118,16 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .lav-empty{text-align:center;padding:3rem 1rem;color:var(--txt3);font-size:14px;}
 .lav-empty-icon{font-size:32px;margin-bottom:0.75rem;}
 
+/* Limpeza própria */
+.limpeza-section{background:var(--bg1);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.limpeza-title{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:0.75rem;}
+.limpeza-tag{font-size:10px;padding:2px 8px;border-radius:99px;background:#1a2e0a;color:#86efac;font-weight:500;margin-left:6px;}
+.limpeza-apt-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:0.5px solid var(--border);}
+.limpeza-apt-row:first-of-type{border-top:none;}
+.limpeza-apt-num{font-size:14px;font-weight:500;color:var(--txt);min-width:44px;}
+.limpeza-apt-cfg{font-size:11px;color:var(--txt3);flex:1;}
+.limpeza-count{font-size:14px;font-weight:500;color:#86efac;white-space:nowrap;}
+
 /* Toast */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--txt);font-size:13px;padding:10px 20px;border-radius:99px;border:0.5px solid var(--border2);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;}
 .toast.show{opacity:1;}
@@ -185,7 +195,7 @@ const ROOMS={
   "Ramada":{order:6,apts:{"1214":"2s"}},
   "Tryp":{order:7,apts:{"06":"c","105":"c","207":"c"}},
   "Comft":{order:8,apts:{"106":"c","109":"cs","111":"2s","114":"c","206":"c","310":"c","311":"2s","316":"c","407":"2s","607":"2s","614":"c","705":"c","710":"c","803":"c","809":"c","810":"cs","1007":"cs"}},
-  "Go Inn":{order:9,apts:{"101":"c","114":"c","119":"c","305":"cs","313":"2s","411":"c","413":"cs","509":"c","516":"c","517":"c","603":"c","605":"cs","609":"cs","611":"c","617":"c","705":"c","708":"c"}}
+  "Go Inn":{order:9,apts:{"101":"c","114":"c","117":"2s","119":"c","207":"2s","210":"2s","305":"cs","310":"2s","313":"2s","408":"2s","411":"c","413":"cs","418":"c","503":"c","509":"c","515":"2s","516":"c","517":"c","519":"c","603":"c","605":"cs","609":"cs","610":"2s","611":"c","617":"c","705":"c","708":"c","715":"c","806":"c","815":"c","906":"c","913":"2s","914":"c"}}
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 
@@ -225,6 +235,39 @@ function getLavData(){
   try{return JSON.parse(localStorage.getItem('lav_data')||'{}');}catch{return {};}
 }
 function saveLavData(data){localStorage.setItem('lav_data',JSON.stringify(data));}
+
+function getLimpezaData(){
+  try{return JSON.parse(localStorage.getItem('limp_data')||'{}');}catch{return {};}
+}
+function saveLimpezaData(data){localStorage.setItem('limp_data',JSON.stringify(data));}
+
+// Register limpeza: only Comf apts with checkout, only on tue/thu/sat/sun
+function registerLimpeza(depMap, dateKey){
+  const dayKey = dateKey || todayKey();
+  const month = dayKey.substring(0,7);
+  // Check day of week from dateKey
+  const [y,m,d] = dayKey.split('-').map(Number);
+  const dow = new Date(y,m-1,d).getDay(); // 0=sun,1=mon,2=tue,3=wed,4=thu,5=fri,6=sat
+  const DIAS_LIMPEZA=[0,2,4,6]; // dom, ter, qui, sab
+  if(!DIAS_LIMPEZA.includes(dow)) return 0;
+
+  const data=getLimpezaData();
+  if(!data[month])data[month]={};
+
+  let newCount=0;
+  Object.keys(depMap).forEach(k=>{
+    if(!depMap[k]||depMap[k].length===0)return;
+    const [hotel]=k.split('||');
+    if(hotel!=='Comf') return; // only Comf
+    if(!data[month][k])data[month][k]={count:0,days:[]};
+    if(data[month][k].days.includes(dayKey))return;
+    data[month][k].count+=1;
+    data[month][k].days.push(dayKey);
+    newCount++;
+  });
+  saveLimpezaData(data);
+  return newCount;
+}
 
 function currentMonthKey(){
   const d=new Date();
@@ -332,6 +375,38 @@ function renderLavanderia(){
     });
   }
 
+  // ── LIMPEZA PRÓPRIA COMF ──
+  const limpData=getLimpezaData();
+  const limpMonthData=limpData[month]||{};
+  const limpEntries=Object.keys(limpMonthData)
+    .filter(k=>limpMonthData[k].count>0)
+    .map(k=>{
+      const[hotel,apt]=k.split('||');
+      return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};
+    })
+    .sort((a,b)=>parseInt(a.apt)-parseInt(b.apt));
+
+  const totalLimpezas=limpEntries.reduce((s,e)=>s+e.count,0);
+
+  if(limpEntries.length>0){
+    html+=`<div class="limpeza-section">
+      <div class="limpeza-title">🧹 Limpeza própria — Comf<span class="limpeza-tag">R$ ${(totalLimpezas*25).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>`;
+    // total card
+    html+=`<div class="lav-total-grid" style="margin-bottom:1rem;">
+      <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">${totalLimpezas}</div><div class="lav-total-lbl">Limpezas no mês</div></div>
+      <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">R$ ${(totalLimpezas*25).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ 25,00 por limpeza</div></div>
+    </div>`;
+    limpEntries.forEach(e=>{
+      const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
+      html+=`<div class="limpeza-apt-row">
+        <span class="limpeza-apt-num">${e.apt}</span>
+        <span class="limpeza-apt-cfg">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</span>
+        <div style="text-align:right;">${dayChips}<div class="limpeza-count">${e.count}× limpeza</div></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
   document.getElementById('lav-content').innerHTML=html;
 }
 
@@ -430,7 +505,7 @@ function parseAndRender(lines,filename){
   const monthPT={'jan':'01','fev':'02','mar':'03','abr':'04','mai':'05','jun':'06','jul':'07','ago':'08','set':'09','out':'10','nov':'11','dez':'12'};
   let pdfDateKey=todayKey();
   for(const line of lines){
-    const dm=line.match(/(\d{1,2})\s+([a-z]{3})\s+(\d{4})/i);
+    const dm=line.match(/(\d{1,2})\s*([a-záéíóú]{3})\s*(\d{4})/i);
     if(dm){
       const mm=monthPT[dm[2].toLowerCase()]||'01';
       pdfDateKey=dm[3]+'-'+mm+'-'+String(dm[1]).padStart(2,'0');
@@ -440,6 +515,7 @@ function parseAndRender(lines,filename){
 
   // Register in lavanderia (only checkouts)
   const newCount=registerCheckouts(_dep, pdfDateKey);
+  registerLimpeza(_dep, pdfDateKey);
   if(newCount>0)showToast(newCount+' troca'+(newCount>1?'s':'')+' registrada'+(newCount>1?'s':'')+' na lavanderia');
   else showToast('Dia já registrado na lavanderia');
 

@@ -199,20 +199,25 @@ const ROOMS={
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 
+// Apts that use King size sheets instead of regular double
+const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
+function isKing(hotel,apt){return KING_APTS.has(hotel+"||"+apt);}
+
 // ── LINEN CALC ───────────────────────────────────────────────────────────────
-function calcLinen(config,guests){
+function calcLinen(config,guests,king=false){
   let g=guests;
   if(g===null){if(config==='c')g=2;else if(config==='2s')g=2;else if(config==='cs')g=3;}
   g=Math.max(1,g);
-  let lc=0,ls=0,f=0,t=0,tr=1,tp=1;
-  if(config==='c'){lc=2;f=2;}
+  let lc=0,lk=0,ls=0,f=0,t=0,tr=1,tp=1;
+  if(config==='c'){if(king){lk=2;}else{lc=2;}f=2;}
   else if(config==='2s'){const beds=g>=2?2:1;ls=beds*2;f=beds*1;}
-  else if(config==='cs'){lc=2;f=2;if(g>=2){ls=2;f+=1;}}
-  t=g;return{lc,ls,f,t,tr,tp};
+  else if(config==='cs'){if(king){lk=2;}else{lc=2;}f=2;if(g>=2){ls=2;f+=1;}}
+  t=g;return{lc,lk,ls,f,t,tr,tp};
 }
 function linenChips(lin){
   const p=[];
   if(lin.lc)p.push(lin.lc+'× lençol casal');
+  if(lin.lk)p.push(lin.lk+'× lençol king');
   if(lin.ls)p.push(lin.ls+'× lençol solteiro');
   if(lin.f)p.push(lin.f+'× fronha');
   if(lin.t)p.push(lin.t+'× toalha');
@@ -527,15 +532,15 @@ function parseAndRender(lines,filename){
 
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
 function calcTotals(){
-  const tot={lc:0,ls:0,f:0,t:0,tr:0,tp:0};
+  const tot={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
   Object.keys(ROOMS).forEach(hotel=>{
     Object.keys(ROOMS[hotel].apts).forEach(apt=>{
       const k=hotel+'||'+apt,config=ROOMS[hotel].apts[apt];
       const hasIn=(_arr[k]?.length>0),hasOut=(_dep[k]?.length>0);
       if(!hasOut)return;
       const guests=hasIn?(_arr[k][0]?.guests??null):null;
-      const lin=calcLinen(config,guests);
-      tot.lc+=lin.lc;tot.ls+=lin.ls;tot.f+=lin.f;tot.t+=lin.t;tot.tr+=lin.tr;tot.tp+=lin.tp;
+      const lin=calcLinen(config,guests,isKing(hotel,apt));
+      tot.lc+=lin.lc;tot.lk+=lin.lk;tot.ls+=lin.ls;tot.f+=lin.f;tot.t+=lin.t;tot.tr+=lin.tr;tot.tp+=lin.tp;
     });
   });
   return tot;
@@ -562,6 +567,7 @@ function renderUI(){
     <div class="enxoval-title">🛏 Enxoval do dia</div>
     <div class="enxoval-grid">
       <div class="enxoval-item"><div class="enxoval-val">${lin.lc}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.lk}</div><div class="enxoval-lbl">Lençol king</div></div>
       <div class="enxoval-item"><div class="enxoval-val">${lin.ls}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
       <div class="enxoval-item"><div class="enxoval-val">${lin.f}</div><div class="enxoval-lbl">Fronha</div></div>
       <div class="enxoval-item"><div class="enxoval-val">${lin.t}</div><div class="enxoval-lbl">Toalha banho</div></div>
@@ -607,7 +613,7 @@ function renderCards(){
       iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${g.name||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
       if(emp)rows=`<div class="no-movement">sem movimentação hoje</div>`;
       let chipsHtml='';
-      if(ho){const guests=hi?(iL[0]?.guests??null):null;const lin=calcLinen(config,guests);const chips=linenChips(lin);chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>`;}
+      if(ho){const guests=hi?(iL[0]?.guests??null):null;const lin=calcLinen(config,guests,isKing(hotel,apt));const chips=linenChips(lin);chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>`;}
       sec+=`<div class="apt-card ${emp?'':'has-movement'}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;

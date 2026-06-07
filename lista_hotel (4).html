@@ -54,6 +54,17 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .enxoval-val{font-size:20px;font-weight:500;color:var(--amber);}
 .enxoval-lbl{font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.3;}
 
+/* Detalhamento */
+.detalhamento-btn{font-size:12px;padding:8px 14px;border-radius:99px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);cursor:pointer;margin-bottom:1rem;-webkit-tap-highlight-color:transparent;}
+.detalhamento-btn.active{background:var(--bg3);color:var(--txt);font-weight:500;}
+.detalhamento-section{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.25rem;max-height:400px;overflow-y:auto;}
+.detalhamento-title{font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;}
+.detalhamento-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:0.5px solid var(--border);font-size:12px;}
+.detalhamento-item:first-of-type{border-top:none;}
+.detalhamento-apt{min-width:50px;font-weight:500;color:var(--txt);}
+.detalhamento-calc{flex:1;color:var(--txt2);line-height:1.4;}
+.detalhamento-calc strong{color:var(--txt);}
+
 /* Search + filters */
 #search-input{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:14px;background:var(--bg2);color:var(--txt);outline:none;margin-bottom:0.75rem;-webkit-appearance:none;}
 #search-input::placeholder{color:var(--txt3);}
@@ -188,14 +199,14 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 // ── ROOMS ────────────────────────────────────────────────────────────────────
 const ROOMS={
   "Comf":{order:1,apts:{"109":"2s","202":"cs","207":"cs","811":"c","1014":"cs","1102":"c","1111":"c","1301":"cs"}},
-  "Lets":{order:2,apts:{"506":"c","913":"2s","1301":"c"}},
+  "Lets":{order:2,apts:{"506":"c","913":"2s","1301":"c","1407":"c"}},
   "Kubit":{order:3,apts:{"113":"c","117":"c"}},
   "Bona":{order:4,apts:{"618":"c","702":"c"}},
   "Saint":{order:5,apts:{"411":"cs","815":"c","1215":"c"}},
   "Ramada":{order:6,apts:{"1214":"2s"}},
   "Tryp":{order:7,apts:{"06":"c","105":"c","207":"c"}},
-  "Comft":{order:8,apts:{"106":"c","109":"cs","111":"2s","114":"c","206":"c","310":"c","311":"2s","316":"c","407":"2s","607":"2s","614":"c","705":"c","710":"c","803":"c","809":"c","810":"cs","1007":"cs"}},
-  "Go Inn":{order:9,apts:{"101":"c","114":"c","117":"2s","119":"c","207":"2s","210":"2s","305":"cs","310":"2s","313":"2s","408":"2s","411":"c","413":"cs","418":"c","503":"c","509":"c","515":"2s","516":"c","517":"c","519":"c","603":"c","605":"cs","609":"cs","610":"2s","611":"c","617":"c","705":"c","708":"c","715":"c","806":"c","815":"c","906":"c","913":"2s","914":"c"}}
+  "Comft":{order:8,apts:{"106":"c","109":"cs","111":"2s","114":"c","206":"c","305":"cs","310":"c","311":"2s","316":"c","407":"2s","607":"2s","614":"c","705":"c","710":"c","803":"c","809":"c","810":"cs","1007":"cs"}},
+  "Go Inn":{order:9,apts:{"101":"c","114":"c","117":"2s","119":"c","207":"2s","210":"2s","305":"cs","310":"2s","313":"2s","408":"2s","411":"c","413":"cs","418":"c","503":"c","506":"c","509":"c","515":"2s","516":"c","517":"c","519":"c","603":"c","605":"cs","609":"cs","610":"2s","611":"c","617":"c","705":"c","708":"c","715":"c","806":"c","815":"c","906":"c","909":"c","913":"2s","914":"c"}}
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 
@@ -492,7 +503,7 @@ function extractName(line){
 function extractGuests(line){const m=line.match(/\b([1-9])\b/);return m?parseInt(m[0]):1;}
 
 // ── PARSE ─────────────────────────────────────────────────────────────────────
-let _arr={},_dep={},_filt='all',_srch='';
+let _arr={},_dep={},_filt='all',_srch='',_detalhes=[];
 
 function parseAndRender(lines,filename){
   _arr={};_dep={};let sec=null;
@@ -533,6 +544,7 @@ function parseAndRender(lines,filename){
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
 function calcTotals(){
   const tot={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
+  _detalhes=[];
   Object.keys(ROOMS).forEach(hotel=>{
     Object.keys(ROOMS[hotel].apts).forEach(apt=>{
       const k=hotel+'||'+apt,config=ROOMS[hotel].apts[apt];
@@ -540,13 +552,42 @@ function calcTotals(){
       if(!hasOut)return;
       const guests=hasIn?(_arr[k][0]?.guests??null):null;
       const lin=calcLinen(config,guests,isKing(hotel,apt));
+      const tipo=hasIn&&hasOut?'troca':hasIn?'chegada':'saída';
+      const msg=tipo==='troca'?`troca (${guests}px entrando)`:`${tipo}${guests?` (${guests}px)`:' (cap. máx)'}`;
+      _detalhes.push({hotel,apt,config,tipo:tipo,msg:msg,lin:lin});
       tot.lc+=lin.lc;tot.lk+=lin.lk;tot.ls+=lin.ls;tot.f+=lin.f;tot.t+=lin.t;tot.tr+=lin.tr;tot.tp+=lin.tp;
     });
+  });
+  _detalhes.sort((a,b)=>{
+    const oa=ROOMS[a.hotel].order,ob=ROOMS[b.hotel].order;
+    if(oa!==ob)return oa-ob;
+    return parseInt(a.apt)-parseInt(b.apt);
   });
   return tot;
 }
 
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
+function toggleDetalhamento(btn){
+  btn.classList.toggle('active');
+  const section=document.getElementById('detalhamento-section');
+  if(btn.classList.contains('active')){
+    let html='<div class="detalhamento-title">Lençóis por apto</div>';
+    _detalhes.forEach(d=>{
+      html+=`<div class="detalhamento-item">
+        <span class="detalhamento-apt">${d.hotel} ${d.apt}</span>
+        <span class="detalhamento-calc">
+          ${CFG_LABEL[d.config]} · ${d.msg}<br>
+          ${d.lin.lc?d.lin.lc+'× casal ':''}${d.lin.lk?d.lin.lk+'× king ':''}${d.lin.ls?d.lin.ls+'× solteiro ':''}
+        </span>
+      </div>`;
+    });
+    section.innerHTML=html;
+    section.style.display='block';
+  }else{
+    section.style.display='none';
+  }
+}
+
 function renderUI(){
   let tIn=0,tOut=0,tBoth=0;
   Object.keys(ROOMS).forEach(h=>Object.keys(ROOMS[h].apts).forEach(a=>{
@@ -575,6 +616,8 @@ function renderUI(){
       <div class="enxoval-item"><div class="enxoval-val">${lin.tp}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
   </div>
+  <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
+  <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">
   <div class="filter-row">
     <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>

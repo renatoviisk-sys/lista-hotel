@@ -20,17 +20,12 @@
 }
 html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 #app{max-width:560px;margin:0 auto;padding:0 0 3rem;}
-
 /* Tab bar */
 .tab-bar{display:flex;border-bottom:0.5px solid var(--border);margin-bottom:1.25rem;position:sticky;top:0;background:var(--bg0);z-index:10;}
 .tab{flex:1;padding:0.9rem 0;font-size:13px;font-weight:500;color:var(--txt3);text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:color 0.15s;}
 .tab.active{color:var(--txt);border-bottom-color:var(--blue);}
-
 .tab-content{display:none;padding:0 1rem;}
 .tab-content.active{display:block;}
-
-.page-title{font-size:13px;font-weight:500;color:var(--txt3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;}
-
 /* Drop zone */
 #drop-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:2rem 1.5rem;text-align:center;cursor:pointer;background:var(--bg1);transition:background 0.15s;margin-bottom:1.25rem;}
 #drop-zone:hover,#drop-zone.drag{background:var(--bg2);}
@@ -39,13 +34,11 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .upload-icon{font-size:26px;margin-bottom:0.5rem;}
 .upload-label{font-size:15px;color:var(--txt);font-weight:500;}
 .upload-sub{font-size:13px;color:var(--txt2);margin-top:4px;}
-
 /* Metrics */
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
 .metric{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 0.5rem;text-align:center;}
 .metric-label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
 .metric-value{font-size:22px;font-weight:500;color:var(--txt);}
-
 /* Enxoval panel */
 .enxoval-section{background:var(--bg1);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
 .enxoval-title{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:0.75rem;}
@@ -53,18 +46,17 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .enxoval-item{background:var(--bg2);border-radius:var(--radius-sm);padding:0.6rem 0.5rem;text-align:center;}
 .enxoval-val{font-size:20px;font-weight:500;color:var(--amber);}
 .enxoval-lbl{font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.3;}
-
 /* Detalhamento */
 .detalhamento-btn{font-size:12px;padding:8px 14px;border-radius:99px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);cursor:pointer;margin-bottom:1rem;-webkit-tap-highlight-color:transparent;}
 .detalhamento-btn.active{background:var(--bg3);color:var(--txt);font-weight:500;}
-.detalhamento-section{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.25rem;max-height:400px;overflow-y:auto;}
+/* FIX #11 (UX): overscroll-behavior evita scroll-within-scroll travando no iOS */
+.detalhamento-section{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.25rem;max-height:400px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .detalhamento-title{font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;}
 .detalhamento-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:0.5px solid var(--border);font-size:12px;}
 .detalhamento-item:first-of-type{border-top:none;}
 .detalhamento-apt{min-width:50px;font-weight:500;color:var(--txt);}
 .detalhamento-calc{flex:1;color:var(--txt2);line-height:1.4;}
 .detalhamento-calc strong{color:var(--txt);}
-
 /* Search + filters */
 #search-input{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:14px;background:var(--bg2);color:var(--txt);outline:none;margin-bottom:0.75rem;-webkit-appearance:none;}
 #search-input::placeholder{color:var(--txt3);}
@@ -73,7 +65,6 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .filter-row::-webkit-scrollbar{display:none;}
 .filter-btn{font-size:12px;padding:6px 14px;border-radius:99px;white-space:nowrap;border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
 .filter-btn.active{background:var(--bg3);color:var(--txt);font-weight:500;}
-
 /* Hotel + apt cards */
 .hotel-section{margin-bottom:1.5rem;}
 .hotel-header{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);padding-bottom:8px;margin-bottom:6px;border-bottom:0.5px solid var(--border);}
@@ -99,24 +90,20 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .no-movement{font-size:12px;color:var(--txt3);font-style:italic;}
 .enxoval-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;padding-top:6px;border-top:0.5px solid var(--border);}
 .chip{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--amber-bg);color:var(--amber);white-space:nowrap;}
-
 #results{display:none;}
 .empty-state{text-align:center;padding:2rem;color:var(--txt3);font-size:14px;}
-
 /* ── LAVANDERIA TAB ── */
 .lav-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
 .lav-month{font-size:15px;font-weight:500;color:var(--txt);}
 .lav-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
 .btn-reset{font-size:12px;padding:6px 14px;border-radius:99px;border:0.5px solid var(--red-bg);background:var(--red-bg);color:var(--red);cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .btn-reset:active{opacity:0.7;}
-
 .lav-total-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.5rem;}
 .lav-total-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;text-align:center;}
 .lav-total-val{font-size:24px;font-weight:500;color:var(--purple);}
 .lav-total-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
 .lav-total-sub{font-size:10px;color:var(--txt3);margin-top:2px;opacity:0.7;}
 .lav-green{color:#4ade80 !important;}
-
 .lav-apt-card{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;display:flex;align-items:center;gap:12px;}
 .lav-apt-left{min-width:54px;text-align:center;}
 .lav-apt-num{font-size:15px;font-weight:500;color:var(--txt);}
@@ -128,7 +115,6 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .lav-day-chip{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:var(--bg3);color:var(--txt3);margin:2px 2px 0 0;}
 .lav-empty{text-align:center;padding:3rem 1rem;color:var(--txt3);font-size:14px;}
 .lav-empty-icon{font-size:32px;margin-bottom:0.75rem;}
-
 /* Limpeza própria */
 .limpeza-section{background:var(--bg1);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
 .limpeza-title{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:0.75rem;}
@@ -138,11 +124,9 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .limpeza-apt-num{font-size:14px;font-weight:500;color:var(--txt);min-width:44px;}
 .limpeza-apt-cfg{font-size:11px;color:var(--txt3);flex:1;}
 .limpeza-count{font-size:14px;font-weight:500;color:#86efac;white-space:nowrap;}
-
 /* Toast */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--txt);font-size:13px;padding:10px 20px;border-radius:99px;border:0.5px solid var(--border2);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;}
 .toast.show{opacity:1;}
-
 /* Confirm dialog */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:50;display:none;align-items:center;justify-content:center;}
 .overlay.show{display:flex;}
@@ -152,6 +136,10 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 .dialog-btns{display:flex;gap:8px;}
 .btn-cancel{flex:1;padding:10px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);font-size:14px;cursor:pointer;}
 .btn-confirm{flex:1;padding:10px;border-radius:var(--radius-sm);border:none;background:var(--red-bg);color:var(--red);font-size:14px;font-weight:500;cursor:pointer;}
+/* FIX #12 (UX): 4 colunas em telas muito estreitas ficam apertadas */
+@media(max-width:340px){
+  .summary-grid{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 </head>
 <body>
@@ -160,7 +148,6 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
     <div class="tab active" onclick="switchTab('lista',this)">Lista do Dia</div>
     <div class="tab" onclick="switchTab('lavanderia',this)">Lavanderia</div>
   </div>
-
   <!-- TAB: LISTA -->
   <div id="tab-lista" class="tab-content active">
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
@@ -171,28 +158,25 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
     </div>
     <div id="results"></div>
   </div>
-
   <!-- TAB: LAVANDERIA -->
   <div id="tab-lavanderia" class="tab-content">
     <div id="lav-content"></div>
   </div>
 </div>
-
 <!-- Toast -->
 <div class="toast" id="toast"></div>
-
 <!-- Confirm dialog -->
+<!-- FIX #1 (CRÍTICO): texto atualizado — informa que limpeza também é zerada -->
 <div class="overlay" id="overlay">
   <div class="dialog">
     <div class="dialog-title">Zerar mês?</div>
-    <div class="dialog-sub">Todo o histórico de trocas do mês será apagado. Essa ação não pode ser desfeita.</div>
+    <div class="dialog-sub">Todo o histórico de trocas e limpezas do mês será apagado. Essa ação não pode ser desfeita.</div>
     <div class="dialog-btns">
       <button class="btn-cancel" onclick="closeDialog()">Cancelar</button>
       <button class="btn-confirm" onclick="confirmReset()">Zerar</button>
     </div>
   </div>
 </div>
-
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -209,15 +193,31 @@ const ROOMS={
   "Go Inn":{order:9,apts:{"101":"c","114":"c","117":"2s","119":"c","207":"2s","210":"2s","305":"cs","310":"2s","313":"2s","408":"2s","411":"c","413":"cs","418":"c","503":"c","506":"c","509":"c","515":"2s","516":"c","517":"c","519":"c","603":"c","605":"cs","609":"cs","610":"2s","611":"c","617":"c","705":"c","708":"c","715":"c","806":"c","815":"c","906":"c","909":"c","913":"2s","914":"c"}}
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
-
-// Apts that use King size sheets instead of regular double
 const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
-function isKing(hotel,apt){return KING_APTS.has(hotel+"||"+apt);}
+
+// ── FIX #7 (MELHORIA): preços em objeto único — altere aqui, reflete em todo lugar ──
+const PRECO={
+  adminPorApto: 230,
+  trocaEnxoval: 8.5,
+  limpezaComf:  25,
+};
+
+// ── FIX #2 (CRÍTICO): sanitização contra XSS — aplique em todo dado vindo do PDF ──
+function esc(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function isKing(hotel,apt){return KING_APTS.has(hotel+'||'+apt);}
 
 // ── LINEN CALC ───────────────────────────────────────────────────────────────
 function calcLinen(config,guests,king=false){
   let g=guests;
-  if(g===null){if(config==='c')g=2;else if(config==='2s')g=2;else if(config==='cs')g=3;}
+  // FIX #13 (MELHORIA): == null captura tanto null quanto undefined
+  if(g==null){if(config==='c')g=2;else if(config==='2s')g=2;else if(config==='cs')g=3;}
   g=Math.max(1,g);
   let lc=0,lk=0,ls=0,f=0,t=0,tr=1,tp=1;
   if(config==='c'){if(king){lk=2;}else{lc=2;}f=2;}
@@ -225,14 +225,17 @@ function calcLinen(config,guests,king=false){
   else if(config==='cs'){if(king){lk=2;}else{lc=2;}f=2;if(g>=2){ls=2;f+=1;}}
   t=g;return{lc,lk,ls,f,t,tr,tp};
 }
+
+// FIX #4 (CRÍTICO): usa lin.tr e lin.tp em vez de strings hardcoded "1× t. rosto"
 function linenChips(lin){
   const p=[];
   if(lin.lc)p.push(lin.lc+'× lençol casal');
   if(lin.lk)p.push(lin.lk+'× lençol king');
   if(lin.ls)p.push(lin.ls+'× lençol solteiro');
-  if(lin.f)p.push(lin.f+'× fronha');
-  if(lin.t)p.push(lin.t+'× toalha');
-  p.push('1× t. rosto');p.push('1× tapete');
+  if(lin.f) p.push(lin.f+'× fronha');
+  if(lin.t) p.push(lin.t+'× toalha banho');
+  if(lin.tr)p.push(lin.tr+'× t. rosto');
+  if(lin.tp)p.push(lin.tp+'× tapete');
   return p;
 }
 
@@ -246,35 +249,42 @@ function switchTab(name,el){
 }
 
 // ── LAVANDERIA STORAGE ────────────────────────────────────────────────────────
-// Structure: { "YYYY-MM": { "Hotel||apt": { count: N, days: ["YYYY-MM-DD",...] } } }
+// FIX #10 (MELHORIA): descarta meses além de keepMonths para evitar crescimento indefinido
+function purgeOldMonths(data,keepMonths=12){
+  const keys=Object.keys(data).sort();
+  while(keys.length>keepMonths)delete data[keys.shift()];
+  return data;
+}
 function getLavData(){
   try{return JSON.parse(localStorage.getItem('lav_data')||'{}');}catch{return {};}
 }
-function saveLavData(data){localStorage.setItem('lav_data',JSON.stringify(data));}
-
+// FIX #3 (CRÍTICO): try/catch em torno do setItem — QuotaExceededError antes era silencioso
+function saveLavData(data){
+  try{localStorage.setItem('lav_data',JSON.stringify(purgeOldMonths(data)));}
+  catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
+}
 function getLimpezaData(){
   try{return JSON.parse(localStorage.getItem('limp_data')||'{}');}catch{return {};}
 }
-function saveLimpezaData(data){localStorage.setItem('limp_data',JSON.stringify(data));}
+function saveLimpezaData(data){
+  try{localStorage.setItem('limp_data',JSON.stringify(purgeOldMonths(data)));}
+  catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
+}
 
-// Register limpeza: only Comf apts with checkout, only on tue/thu/sat/sun
-function registerLimpeza(depMap, dateKey){
-  const dayKey = dateKey || todayKey();
-  const month = dayKey.substring(0,7);
-  // Check day of week from dateKey
-  const [y,m,d] = dayKey.split('-').map(Number);
-  const dow = new Date(y,m-1,d).getDay(); // 0=sun,1=mon,2=tue,3=wed,4=thu,5=fri,6=sat
-  const DIAS_LIMPEZA=[0,2,4,6]; // dom, ter, qui, sab
-  if(!DIAS_LIMPEZA.includes(dow)) return 0;
-
+function registerLimpeza(depMap,dateKey){
+  const dayKey=dateKey||todayKey();
+  const month=dayKey.substring(0,7);
+  const [y,m,d]=dayKey.split('-').map(Number);
+  const dow=new Date(y,m-1,d).getDay();
+  const DIAS_LIMPEZA=[0,2,4,6];
+  if(!DIAS_LIMPEZA.includes(dow))return 0;
   const data=getLimpezaData();
   if(!data[month])data[month]={};
-
   let newCount=0;
   Object.keys(depMap).forEach(k=>{
     if(!depMap[k]||depMap[k].length===0)return;
-    const [hotel]=k.split('||');
-    if(hotel!=='Comf') return; // only Comf
+    const[hotel]=k.split('||');
+    if(hotel!=='Comf')return;
     if(!data[month][k])data[month][k]={count:0,days:[]};
     if(data[month][k].days.includes(dayKey))return;
     data[month][k].count+=1;
@@ -294,19 +304,16 @@ function todayKey(){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 
-// Register checkouts from a parsed day. Skips if that date already registered.
-function registerCheckouts(depMap, dateKey){
-  // dateKey format: "YYYY-MM-DD" extracted from PDF, fallback to today
-  const dayKey = dateKey || todayKey();
-  const month = dayKey.substring(0,7); // "YYYY-MM"
+function registerCheckouts(depMap,dateKey){
+  const dayKey=dateKey||todayKey();
+  const month=dayKey.substring(0,7);
   const data=getLavData();
   if(!data[month])data[month]={};
-
   let newCount=0;
   Object.keys(depMap).forEach(k=>{
     if(!depMap[k]||depMap[k].length===0)return;
     if(!data[month][k])data[month][k]={count:0,days:[]};
-    if(data[month][k].days.includes(dayKey))return; // already registered this date
+    if(data[month][k].days.includes(dayKey))return;
     data[month][k].count+=1;
     data[month][k].days.push(dayKey);
     newCount++;
@@ -319,29 +326,22 @@ function renderLavanderia(){
   const month=currentMonthKey();
   const data=getLavData();
   const monthData=data[month]||{};
-
-  // Month label
   const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const [y,m]=month.split('-');
+  const[y,m]=month.split('-');
   const monthLabel=monthNames[parseInt(m)-1]+' '+y;
-
-  // Build list of apts that have records
   const entries=Object.keys(monthData)
     .filter(k=>monthData[k].count>0)
-    .map(k=>{
-      const[hotel,apt]=k.split('||');
-      return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};
-    })
+    .map(k=>{const[hotel,apt]=k.split('||');return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};})
     .sort((a,b)=>{
-      const oa=ROOMS[a.hotel]?.order??99, ob=ROOMS[b.hotel]?.order??99;
+      const oa=ROOMS[a.hotel]?.order??99,ob=ROOMS[b.hotel]?.order??99;
       if(oa!==ob)return oa-ob;
       return parseInt(a.apt)-parseInt(b.apt);
     });
-
   const totalTrocas=entries.reduce((s,e)=>s+e.count,0);
   const totalAptos=entries.length;
   const totalCadastrados=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
-
+  // FIX #7 (MELHORIA): helper de formatação e uso de PRECO em vez de literais
+  const fmtBRL=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:2});
   let html=`
   <div class="lav-header">
     <div>
@@ -350,39 +350,30 @@ function renderLavanderia(){
     </div>
     <button class="btn-reset" onclick="openDialog()">Zerar mês</button>
   </div>
-
   <div class="lav-total-grid">
     <div class="lav-total-card"><div class="lav-total-val">${totalTrocas}</div><div class="lav-total-lbl">Trocas no mês</div></div>
     <div class="lav-total-card"><div class="lav-total-val">${totalAptos}</div><div class="lav-total-lbl">Aptos atendidos</div></div>
-    <div class="lav-total-card lav-money"><div class="lav-total-val lav-green">R$ ${(totalCadastrados*230).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lav-total-lbl">Administração</div><div class="lav-total-sub">R$ 230,00 × ${totalCadastrados} aptos</div></div>
-    <div class="lav-total-card lav-money"><div class="lav-total-val lav-green">R$ ${(totalTrocas*8.5).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lav-total-lbl">Troca de roupa</div><div class="lav-total-sub">R$ 8,50 por troca</div></div>
+    <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalCadastrados*PRECO.adminPorApto)}</div><div class="lav-total-lbl">Administração</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.adminPorApto)} × ${totalCadastrados} aptos</div></div>
+    <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalTrocas*PRECO.trocaEnxoval)}</div><div class="lav-total-lbl">Troca de roupa</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.trocaEnxoval)} por troca</div></div>
   </div>`;
-
   if(entries.length===0){
     html+=`<div class="lav-empty"><div class="lav-empty-icon">🧺</div>Nenhuma troca registrada este mês.<br>Carregue um PDF na aba Lista do Dia.</div>`;
-  } else {
-    // Group by hotel
+  }else{
     const hotels=[...new Set(entries.map(e=>e.hotel))];
     hotels.forEach(hotel=>{
       const hotelEntries=entries.filter(e=>e.hotel===hotel);
-      html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>`;
+      html+=`<div class="hotel-section"><div class="hotel-header">${esc(hotel)}</div>`;
       hotelEntries.forEach(e=>{
-        const dayChips=e.days.map(d=>{
-          const[,mm,dd]=d.split('-');
-          return`<span class="lav-day-chip">${dd}/${mm}</span>`;
-        }).join('');
+        const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
         html+=`<div class="lav-apt-card">
           <div class="lav-apt-left">
-            <div class="lav-apt-num">${e.apt}</div>
+            <div class="lav-apt-num">${esc(e.apt)}</div>
             <div class="lav-apt-hotel">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</div>
           </div>
           <div class="lav-apt-right">
             <div style="display:flex;align-items:baseline;justify-content:space-between;">
               <div class="lav-history">${dayChips}</div>
-              <div>
-                <div class="lav-apt-count">${e.count}×</div>
-                <div class="lav-apt-label">trocas</div>
-              </div>
+              <div><div class="lav-apt-count">${e.count}×</div><div class="lav-apt-label">trocas</div></div>
             </div>
           </div>
         </div>`;
@@ -390,50 +381,46 @@ function renderLavanderia(){
       html+=`</div>`;
     });
   }
-
   // ── LIMPEZA PRÓPRIA COMF ──
   const limpData=getLimpezaData();
   const limpMonthData=limpData[month]||{};
   const limpEntries=Object.keys(limpMonthData)
     .filter(k=>limpMonthData[k].count>0)
-    .map(k=>{
-      const[hotel,apt]=k.split('||');
-      return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};
-    })
+    .map(k=>{const[hotel,apt]=k.split('||');return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};})
     .sort((a,b)=>parseInt(a.apt)-parseInt(b.apt));
-
   const totalLimpezas=limpEntries.reduce((s,e)=>s+e.count,0);
-
   if(limpEntries.length>0){
     html+=`<div class="limpeza-section">
-      <div class="limpeza-title">🧹 Limpeza própria — Comf<span class="limpeza-tag">R$ ${(totalLimpezas*25).toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>`;
-    // total card
-    html+=`<div class="lav-total-grid" style="margin-bottom:1rem;">
-      <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">${totalLimpezas}</div><div class="lav-total-lbl">Limpezas no mês</div></div>
-      <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">R$ ${(totalLimpezas*25).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ 25,00 por limpeza</div></div>
-    </div>`;
+      <div class="limpeza-title">🧹 Limpeza própria — Comf<span class="limpeza-tag">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</span></div>
+      <div class="lav-total-grid" style="margin-bottom:1rem;">
+        <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">${totalLimpezas}</div><div class="lav-total-lbl">Limpezas no mês</div></div>
+        <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.limpezaComf)} por limpeza</div></div>
+      </div>`;
     limpEntries.forEach(e=>{
       const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
       html+=`<div class="limpeza-apt-row">
-        <span class="limpeza-apt-num">${e.apt}</span>
+        <span class="limpeza-apt-num">${esc(e.apt)}</span>
         <span class="limpeza-apt-cfg">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</span>
         <div style="text-align:right;">${dayChips}<div class="limpeza-count">${e.count}× limpeza</div></div>
       </div>`;
     });
     html+=`</div>`;
   }
-
   document.getElementById('lav-content').innerHTML=html;
 }
 
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){document.getElementById('overlay').classList.add('show');}
 function closeDialog(){document.getElementById('overlay').classList.remove('show');}
+// FIX #1 (CRÍTICO): zera lav_data E limp_data do mês — antes só zerava lavanderia
 function confirmReset(){
-  const data=getLavData();
   const month=currentMonthKey();
-  delete data[month];
-  saveLavData(data);
+  const lav=getLavData();
+  delete lav[month];
+  saveLavData(lav);
+  const limp=getLimpezaData();
+  delete limp[month];
+  saveLimpezaData(limp);
   closeDialog();
   renderLavanderia();
   showToast('Mês zerado com sucesso');
@@ -485,7 +472,11 @@ const HOTEL_TESTS=[
   {r:/\blets\b/i,h:'Lets'},{r:/\bkubit\b/i,h:'Kubit'},{r:/\bbona\b/i,h:'Bona'},
   {r:/\bsaint\b/i,h:'Saint'},{r:/\bramada\b/i,h:'Ramada'},{r:/\btryp\b/i,h:'Tryp'},
 ];
+// FIX #6 (MELHORIA): regex derivado de HOTEL_TESTS — fonte única de verdade para nomes de hotéis
+const HOTEL_CLEAN_RE=new RegExp(HOTEL_TESTS.map(t=>t.r.source).join('|'),'gi');
+
 function aptKey(raw){return raw.replace(/^0+/,'').replace(/-\d+$/,'');}
+
 function findMatch(line){
   for(const t of HOTEL_TESTS){
     if(!t.r.test(line))continue;
@@ -495,12 +486,31 @@ function findMatch(line){
   }
   return null;
 }
+
+// FIX #6 (MELHORIA): usa HOTEL_CLEAN_RE em vez de regex duplicado com nomes hardcoded
 function extractName(line){
   const dateM=line.match(/\d{1,2}\s+[a-záéíóúàâêôãõç]+\s+\d{4}/i);
-  if(dateM){let s=line.substring(0,line.indexOf(dateM[0]));s=s.replace(/go\s*inn?|comf\s*t|comft|comf|lets|kubit|bona|saint|ramada|tryp/gi,'');s=s.replace(/\b\d{2,4}(?:-\d+)?\b/g,'').replace(/\s+/g,' ').trim();if(s.length>2)return s;}
+  if(dateM){
+    let s=line.substring(0,line.indexOf(dateM[0]));
+    s=s.replace(HOTEL_CLEAN_RE,'');
+    s=s.replace(/\b\d{2,4}(?:-\d+)?\b/g,'').replace(/\s+/g,' ').trim();
+    if(s.length>2)return s;
+  }
   return '';
 }
-function extractGuests(line){const m=line.match(/\b([1-9])\b/);return m?parseInt(m[0]):1;}
+
+// FIX #5 (MELHORIA): extração mais robusta — padrão semântico antes de fallback posicional
+function extractGuests(line){
+  // Tenta padrão explícito: "2 pessoas", "3px", "1 adulto"
+  let m=line.match(/\b([1-9])\s*(?:p(?:essoas?|x)|adu|h[oó]sp)/i);
+  if(m)return parseInt(m[1]);
+  // Fallback: primeiro dígito avulso, mas após remover apt e data para evitar colisões
+  const stripped=line
+    .replace(/\b\d{2,4}(?:-\d)?\b/g,'')
+    .replace(/\d{1,2}\s+\w{3}\s+\d{4}/g,'');
+  m=stripped.match(/\b([1-9])\b/);
+  return m?parseInt(m[1]):1;
+}
 
 // ── PARSE ─────────────────────────────────────────────────────────────────────
 let _arr={},_dep={},_filt='all',_srch='',_detalhes=[];
@@ -516,8 +526,6 @@ function parseAndRender(lines,filename){
     if(sec==='in'){if(!_arr[k])_arr[k]=[];_arr[k].push(entry);}
     else{if(!_dep[k])_dep[k]=[];_dep[k].push(entry);}
   });
-
-  // Extract date from PDF (format "16 mar 2026")
   const monthPT={'jan':'01','fev':'02','mar':'03','abr':'04','mai':'05','jun':'06','jul':'07','ago':'08','set':'09','out':'10','nov':'11','dez':'12'};
   let pdfDateKey=todayKey();
   for(const line of lines){
@@ -528,13 +536,10 @@ function parseAndRender(lines,filename){
       break;
     }
   }
-
-  // Register in lavanderia (only checkouts)
-  const newCount=registerCheckouts(_dep, pdfDateKey);
-  registerLimpeza(_dep, pdfDateKey);
+  const newCount=registerCheckouts(_dep,pdfDateKey);
+  registerLimpeza(_dep,pdfDateKey);
   if(newCount>0)showToast(newCount+' troca'+(newCount>1?'s':'')+' registrada'+(newCount>1?'s':'')+' na lavanderia');
   else showToast('Dia já registrado na lavanderia');
-
   dz.classList.add('loaded');
   document.getElementById('drop-label').textContent=filename;
   document.getElementById('drop-sub').textContent='Clique para trocar o arquivo';
@@ -542,9 +547,10 @@ function parseAndRender(lines,filename){
 }
 
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
+// FIX #8 (MELHORIA): retorna {tot, detalhes} — sem side effect em _detalhes global
 function calcTotals(){
   const tot={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
-  _detalhes=[];
+  const detalhes=[];
   Object.keys(ROOMS).forEach(hotel=>{
     Object.keys(ROOMS[hotel].apts).forEach(apt=>{
       const k=hotel+'||'+apt,config=ROOMS[hotel].apts[apt];
@@ -554,16 +560,16 @@ function calcTotals(){
       const lin=calcLinen(config,guests,isKing(hotel,apt));
       const tipo=hasIn&&hasOut?'troca':hasIn?'chegada':'saída';
       const msg=tipo==='troca'?`troca (${guests}px entrando)`:`${tipo}${guests?` (${guests}px)`:' (cap. máx)'}`;
-      _detalhes.push({hotel,apt,config,tipo:tipo,msg:msg,lin:lin});
+      detalhes.push({hotel,apt,config,tipo,msg,lin});
       tot.lc+=lin.lc;tot.lk+=lin.lk;tot.ls+=lin.ls;tot.f+=lin.f;tot.t+=lin.t;tot.tr+=lin.tr;tot.tp+=lin.tp;
     });
   });
-  _detalhes.sort((a,b)=>{
+  detalhes.sort((a,b)=>{
     const oa=ROOMS[a.hotel].order,ob=ROOMS[b.hotel].order;
     if(oa!==ob)return oa-ob;
     return parseInt(a.apt)-parseInt(b.apt);
   });
-  return tot;
+  return{tot,detalhes};
 }
 
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
@@ -574,7 +580,7 @@ function toggleDetalhamento(btn){
     let html='<div class="detalhamento-title">Lençóis por apto</div>';
     _detalhes.forEach(d=>{
       html+=`<div class="detalhamento-item">
-        <span class="detalhamento-apt">${d.hotel} ${d.apt}</span>
+        <span class="detalhamento-apt">${esc(d.hotel)} ${esc(d.apt)}</span>
         <span class="detalhamento-calc">
           ${CFG_LABEL[d.config]} · ${d.msg}<br>
           ${d.lin.lc?d.lin.lc+'× casal ':''}${d.lin.lk?d.lin.lk+'× king ':''}${d.lin.ls?d.lin.ls+'× solteiro ':''}
@@ -595,8 +601,9 @@ function renderUI(){
     if(i)tIn++;if(o)tOut++;if(i&&o)tBoth++;
   }));
   const total=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
-  const lin=calcTotals();
-
+  // FIX #8 (MELHORIA): desestruturação explícita — sem side effect oculto
+  const{tot:lin,detalhes}=calcTotals();
+  _detalhes=detalhes;
   document.getElementById('results').innerHTML=`
   <div class="summary-grid">
     <div class="metric"><div class="metric-label">Chegadas</div><div class="metric-value">${tIn}</div></div>
@@ -652,11 +659,12 @@ function renderCards(){
       const config=ROOMS[hotel].apts[apt],cfgLabel=CFG_LABEL[config]||config;
       const badge=emp?`<span class="type-badge badge-empty">Sem movimento</span>`:both?`<span class="type-badge badge-both">⇄ Troca</span>`:hi?`<span class="type-badge badge-in">↓ Chegada</span>`:`<span class="type-badge badge-out">↑ Saída</span>`;
       let rows='';
-      oL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-out"></div><span class="guest-name">${g.name||'–'}</span><span class="guest-meta">${g.guests} px · 12:00</span></div>`;});
-      iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${g.name||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
+      // FIX #2 (CRÍTICO): esc() em g.name — dado vem do PDF e pode conter HTML
+      oL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-out"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 12:00</span></div>`;});
+      iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
       if(emp)rows=`<div class="no-movement">sem movimentação hoje</div>`;
       let chipsHtml='';
-      if(ho){const guests=hi?(iL[0]?.guests??null):null;const lin=calcLinen(config,guests,isKing(hotel,apt));const chips=linenChips(lin);chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>`;}
+      if(ho){const guests=hi?(iL[0]?.guests??null):null;const lin=calcLinen(config,guests,isKing(hotel,apt));const chips=linenChips(lin);chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;}
       sec+=`<div class="apt-card ${emp?'':'has-movement'}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;

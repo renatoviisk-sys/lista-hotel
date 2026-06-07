@@ -4,141 +4,903 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lista do Dia</title>
+<!-- ── TIPOGRAFIA: Inter (400/500/600/700) ── -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — "Obsidian"
+   Inspiração: Linear, Vercel, Raycast dark dashboards
+   ═══════════════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
+
 :root{
-  --bg0:#0f1117;--bg1:#181c25;--bg2:#1e2330;--bg3:#252b3a;
-  --border:#2d3447;--border2:#3a4260;
-  --txt:#e8eaf2;--txt2:#9aa3be;--txt3:#606880;
-  --green:#4ade80;--green-bg:#0d2a1a;
-  --red:#f87171;--red-bg:#2a0d0d;
-  --blue:#60a5fa;--blue-dim:#1a2a3d;
-  --amber:#fbbf24;--amber-bg:#2a1a05;
-  --purple:#c084fc;--purple-bg:#1e0a2e;
-  --radius:12px;--radius-sm:8px;
+  /* ── Fundos em camadas (profundidade) ── */
+  --bg-base:  #0b0d12;
+  --bg-0:     #0f1219;
+  --bg-1:     #141822;
+  --bg-2:     #1a1f2e;
+  --bg-3:     #202638;
+  --bg-hover: #262d42;
+
+  /* ── Bordas ultra-finas ── */
+  --b0: rgba(255,255,255,0.04);
+  --b1: rgba(255,255,255,0.07);
+  --b2: rgba(255,255,255,0.11);
+  --b3: rgba(255,255,255,0.18);
+
+  /* ── Texto ── */
+  --t1: #edf0f9;   /* primário */
+  --t2: #8892ae;   /* secundário */
+  --t3: #454e68;   /* terciário / muted */
+
+  /* ── Indigo — ação primária (tabs, filtros ativos) ── */
+  --indigo:     #818cf8;
+  --indigo-dim: rgba(99,102,241,0.13);
+  --indigo-bdr: rgba(99,102,241,0.28);
+
+  /* ── Teal-green — check-in ── */
+  --green:     #2dd4a0;
+  --green-dim: rgba(45,212,160,0.10);
+  --green-bdr: rgba(45,212,160,0.22);
+
+  /* ── Coral — check-out ── */
+  --red:     #f87171;
+  --red-dim: rgba(248,113,113,0.10);
+  --red-bdr: rgba(248,113,113,0.22);
+
+  /* ── Amber — enxoval ── */
+  --amber:     #fbbf24;
+  --amber-dim: rgba(251,191,36,0.10);
+  --amber-bdr: rgba(251,191,36,0.22);
+
+  /* ── Violet — lavanderia ── */
+  --violet:     #a78bfa;
+  --violet-dim: rgba(167,139,250,0.10);
+  --violet-bdr: rgba(167,139,250,0.22);
+
+  /* ── Sage — limpeza ── */
+  --sage:     #34d399;
+  --sage-dim: rgba(52,211,153,0.10);
+  --sage-bdr: rgba(52,211,153,0.20);
+
+  /* ── Raios ── */
+  --r-xs:   5px;
+  --r-sm:   10px;
+  --r-md:   14px;
+  --r-lg:   18px;
+  --r-xl:   24px;
+  --r-pill: 9999px;
+
+  /* ── Sombras ── */
+  --sh-sm: 0 1px 3px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.3);
+  --sh-md: 0 4px 18px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.3);
+  --sh-lg: 0 16px 50px rgba(0,0,0,0.65), 0 4px 14px rgba(0,0,0,0.4);
+
+  /* ── Fonte ── */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
-html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;min-height:100vh;}
-#app{max-width:560px;margin:0 auto;padding:0 0 3rem;}
-/* Tab bar */
-.tab-bar{display:flex;border-bottom:0.5px solid var(--border);margin-bottom:1.25rem;position:sticky;top:0;background:var(--bg0);z-index:10;}
-.tab{flex:1;padding:0.9rem 0;font-size:13px;font-weight:500;color:var(--txt3);text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:color 0.15s;}
-.tab.active{color:var(--txt);border-bottom-color:var(--blue);}
-.tab-content{display:none;padding:0 1rem;}
+
+/* ── Reset & base ─────────────────────────────────────────────── */
+html,body{
+  background: var(--bg-base);
+  color: var(--t1);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbars finos (webkit) */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+
+#app{max-width:580px;margin:0 auto;padding:0 0 5rem;}
+
+/* ══════════════════════════════════════════════════════════════
+   TAB BAR — frosted glass, sticky
+   ══════════════════════════════════════════════════════════════ */
+.tab-bar{
+  display:flex;
+  border-bottom:1px solid var(--b1);
+  margin-bottom:1.75rem;
+  position:sticky;
+  top:0;
+  /* Glass morfismo no header */
+  background:rgba(11,13,18,0.85);
+  backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
+  z-index:20;
+  padding:0 1.25rem;
+}
+.tab{
+  flex:1;
+  padding:1rem 0.5rem;
+  font-size:13px;
+  font-weight:500;
+  color:var(--t3);
+  text-align:center;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:color .2s, border-color .2s;
+  letter-spacing:0.01em;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab:hover{color:var(--t2);}
+.tab.active{color:var(--t1);border-bottom-color:var(--indigo);}
+
+.tab-content{display:none;padding:0 1.25rem;}
 .tab-content.active{display:block;}
-/* Drop zone */
-#drop-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:2rem 1.5rem;text-align:center;cursor:pointer;background:var(--bg1);transition:background 0.15s;margin-bottom:1.25rem;}
-#drop-zone:hover,#drop-zone.drag{background:var(--bg2);}
-#drop-zone.loaded{border-style:solid;border-color:var(--border);}
+
+/* ══════════════════════════════════════════════════════════════
+   DROP ZONE — convidativa, com brilho de fundo
+   ══════════════════════════════════════════════════════════════ */
+#drop-zone{
+  position:relative;
+  overflow:hidden;
+  border:1.5px dashed var(--b2);
+  border-radius:var(--r-lg);
+  padding:2.75rem 2rem;
+  text-align:center;
+  cursor:pointer;
+  background:var(--bg-1);
+  transition:background .2s, border-color .2s, transform .15s;
+  margin-bottom:1.75rem;
+}
+/* Brilho indigo sutil no topo — dá sensação de "ativo" */
+#drop-zone::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(99,102,241,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+#drop-zone:hover,#drop-zone.drag{
+  background:var(--bg-2);
+  border-color:var(--indigo-bdr);
+}
+#drop-zone.drag{transform:scale(1.015);}
+#drop-zone.loaded{
+  border-style:solid;
+  border-color:var(--b1);
+}
+#drop-zone.loaded::before{opacity:0;}
 #file-input{display:none;}
-.upload-icon{font-size:26px;margin-bottom:0.5rem;}
-.upload-label{font-size:15px;color:var(--txt);font-weight:500;}
-.upload-sub{font-size:13px;color:var(--txt2);margin-top:4px;}
-/* Metrics */
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
-.metric{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 0.5rem;text-align:center;}
-.metric-label{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
-.metric-value{font-size:22px;font-weight:500;color:var(--txt);}
-/* Enxoval panel */
-.enxoval-section{background:var(--bg1);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
-.enxoval-title{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:0.75rem;}
-.enxoval-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.enxoval-item{background:var(--bg2);border-radius:var(--radius-sm);padding:0.6rem 0.5rem;text-align:center;}
-.enxoval-val{font-size:20px;font-weight:500;color:var(--amber);}
-.enxoval-lbl{font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.3;}
-/* Detalhamento */
-.detalhamento-btn{font-size:12px;padding:8px 14px;border-radius:99px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);cursor:pointer;margin-bottom:1rem;-webkit-tap-highlight-color:transparent;}
-.detalhamento-btn.active{background:var(--bg3);color:var(--txt);font-weight:500;}
-/* FIX #11 (UX): overscroll-behavior evita scroll-within-scroll travando no iOS */
-.detalhamento-section{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.25rem;max-height:400px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
-.detalhamento-title{font-size:12px;font-weight:600;color:var(--txt3);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;}
-.detalhamento-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:0.5px solid var(--border);font-size:12px;}
+.upload-icon{
+  font-size:32px;
+  margin-bottom:0.875rem;
+  display:block;
+  transition:transform .2s;
+}
+#drop-zone:hover .upload-icon{transform:translateY(-2px);}
+.upload-label{
+  font-size:15px;
+  font-weight:600;
+  color:var(--t1);
+  letter-spacing:-0.01em;
+}
+.upload-sub{
+  font-size:13px;
+  color:var(--t3);
+  margin-top:6px;
+  line-height:1.6;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SUMMARY GRID — 4 métricas
+   ══════════════════════════════════════════════════════════════ */
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-bottom:1.75rem;
+}
+.metric{
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:1.1rem 0.75rem;
+  text-align:center;
+  box-shadow:var(--sh-sm);
+  transition:border-color .2s, background .2s;
+}
+.metric:hover{background:var(--bg-2);border-color:var(--b2);}
+.metric-label{
+  font-size:10px;
+  font-weight:600;
+  color:var(--t3);
+  text-transform:uppercase;
+  letter-spacing:0.09em;
+  margin-bottom:7px;
+}
+.metric-value{
+  font-size:26px;
+  font-weight:700;
+  color:var(--t1);
+  letter-spacing:-0.03em;
+  line-height:1;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ENXOVAL PANEL
+   ══════════════════════════════════════════════════════════════ */
+.enxoval-section{
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-lg);
+  padding:1.25rem 1.5rem;
+  margin-bottom:1.75rem;
+  box-shadow:var(--sh-sm);
+}
+.enxoval-title{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--t3);
+  margin-bottom:1rem;
+}
+/* 4 colunas — 7 itens ficam em 4+3, último row com 3 itens centralizados */
+.enxoval-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+/* Centraliza o último item quando ele fica sozinho (posição 4n+1 do fim) */
+.enxoval-item:last-child:nth-child(4n+1){grid-column:2;}
+.enxoval-item:last-child:nth-child(4n+2){grid-column:2 / span 2;max-width:unset;}
+.enxoval-item{
+  background:var(--bg-2);
+  border:1px solid var(--b0);
+  border-radius:var(--r-sm);
+  padding:0.75rem 0.5rem;
+  text-align:center;
+  transition:border-color .2s, background .2s;
+}
+.enxoval-item:hover{
+  background:var(--bg-3);
+  border-color:var(--amber-bdr);
+}
+.enxoval-val{
+  font-size:22px;
+  font-weight:700;
+  color:var(--amber);
+  letter-spacing:-0.02em;
+  line-height:1;
+}
+.enxoval-lbl{
+  font-size:10px;
+  font-weight:500;
+  color:var(--t3);
+  margin-top:5px;
+  line-height:1.4;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DETALHAMENTO
+   ══════════════════════════════════════════════════════════════ */
+.detalhamento-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  font-family:var(--font);
+  font-weight:500;
+  padding:8px 16px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--b1);
+  background:var(--bg-1);
+  color:var(--t2);
+  cursor:pointer;
+  margin-bottom:1rem;
+  transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.detalhamento-btn:hover{
+  background:var(--bg-2);
+  color:var(--t1);
+  border-color:var(--b2);
+}
+.detalhamento-btn.active{
+  background:var(--indigo-dim);
+  color:var(--indigo);
+  border-color:var(--indigo-bdr);
+}
+.detalhamento-section{
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:1rem 1.25rem;
+  margin-bottom:1.75rem;
+  max-height:420px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  box-shadow:var(--sh-sm);
+}
+.detalhamento-title{
+  font-size:10px;
+  font-weight:700;
+  color:var(--t3);
+  margin-bottom:0.875rem;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+}
+.detalhamento-item{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:10px 0;
+  border-top:1px solid var(--b0);
+  font-size:12px;
+}
 .detalhamento-item:first-of-type{border-top:none;}
-.detalhamento-apt{min-width:50px;font-weight:500;color:var(--txt);}
-.detalhamento-calc{flex:1;color:var(--txt2);line-height:1.4;}
-.detalhamento-calc strong{color:var(--txt);}
-/* Search + filters */
-#search-input{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);font-size:14px;background:var(--bg2);color:var(--txt);outline:none;margin-bottom:0.75rem;-webkit-appearance:none;}
-#search-input::placeholder{color:var(--txt3);}
-#search-input:focus{border-color:var(--blue);}
-.filter-row{display:flex;gap:6px;margin-bottom:1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
+.detalhamento-apt{
+  min-width:62px;
+  font-weight:600;
+  color:var(--t1);
+  font-size:12px;
+}
+.detalhamento-calc{
+  flex:1;
+  color:var(--t2);
+  line-height:1.65;
+}
+.detalhamento-calc strong{color:var(--t1);}
+
+/* ══════════════════════════════════════════════════════════════
+   SEARCH
+   ══════════════════════════════════════════════════════════════ */
+#search-input{
+  width:100%;
+  padding:11px 16px;
+  border-radius:var(--r-md);
+  border:1px solid var(--b1);
+  font-size:14px;
+  font-family:var(--font);
+  background:var(--bg-1);
+  color:var(--t1);
+  outline:none;
+  margin-bottom:0.875rem;
+  transition:border-color .2s, box-shadow .2s;
+  -webkit-appearance:none;
+}
+#search-input::placeholder{color:var(--t3);}
+#search-input:focus{
+  border-color:var(--indigo-bdr);
+  box-shadow:0 0 0 3px var(--indigo-dim);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FILTER ROW
+   ══════════════════════════════════════════════════════════════ */
+.filter-row{
+  display:flex;
+  gap:6px;
+  margin-bottom:1.75rem;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:2px;
+}
 .filter-row::-webkit-scrollbar{display:none;}
-.filter-btn{font-size:12px;padding:6px 14px;border-radius:99px;white-space:nowrap;border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
-.filter-btn.active{background:var(--bg3);color:var(--txt);font-weight:500;}
-/* Hotel + apt cards */
-.hotel-section{margin-bottom:1.5rem;}
-.hotel-header{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);padding-bottom:8px;margin-bottom:6px;border-bottom:0.5px solid var(--border);}
-.apt-card{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;display:flex;align-items:flex-start;gap:12px;}
-.apt-card.has-movement{border-color:var(--border2);}
-.apt-left{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:54px;padding-top:2px;}
-.apt-number{font-size:16px;font-weight:500;color:var(--txt);line-height:1;}
-.bed-config{font-size:9px;color:var(--txt3);text-align:center;line-height:1.4;max-width:54px;}
+.filter-btn{
+  font-size:12px;
+  font-family:var(--font);
+  font-weight:500;
+  padding:7px 15px;
+  border-radius:var(--r-pill);
+  white-space:nowrap;
+  border:1px solid var(--b1);
+  background:var(--bg-1);
+  color:var(--t2);
+  cursor:pointer;
+  flex-shrink:0;
+  transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.filter-btn:hover{
+  background:var(--bg-2);
+  color:var(--t1);
+  border-color:var(--b2);
+}
+.filter-btn.active{
+  background:var(--indigo-dim);
+  color:var(--indigo);
+  border-color:var(--indigo-bdr);
+  font-weight:600;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HOTEL SECTION & APT CARDS
+   ══════════════════════════════════════════════════════════════ */
+.hotel-section{margin-bottom:2rem;}
+.hotel-header{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--t3);
+  padding:0 2px 10px;
+  margin-bottom:8px;
+  border-bottom:1px solid var(--b0);
+}
+.apt-card{
+  background:var(--bg-1);
+  border:1px solid var(--b0);
+  border-radius:var(--r-md);
+  padding:1rem 1.25rem;
+  margin-bottom:8px;
+  display:flex;
+  align-items:stretch;
+  gap:0;
+  transition:border-color .2s, box-shadow .2s;
+  box-shadow:var(--sh-sm);
+  overflow:hidden;
+}
+.apt-card:hover{border-color:var(--b2);}
+.apt-card.has-movement{border-color:var(--b1);}
+.apt-card.has-movement:hover{
+  border-color:var(--b2);
+  box-shadow:var(--sh-md);
+}
+
+/* Número do apto — visual de "placa" */
+.apt-left{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-width:56px;
+  padding:0 0.875rem 0 0;
+  margin-right:0.875rem;
+  border-right:1px solid var(--b0);
+}
+.apt-number{
+  font-size:18px;
+  font-weight:700;
+  color:var(--t1);
+  line-height:1;
+  letter-spacing:-0.01em;
+}
+.bed-config{
+  font-size:9px;
+  font-weight:600;
+  color:var(--t3);
+  text-align:center;
+  line-height:1.4;
+  max-width:56px;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+}
 .apt-right{flex:1;min-width:0;}
-.badges-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:5px;}
-.type-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 10px;border-radius:99px;}
-.badge-both{background:var(--blue-dim);color:var(--blue);}
-.badge-in{background:var(--green-bg);color:var(--green);}
-.badge-out{background:var(--red-bg);color:var(--red);}
-.badge-empty{background:var(--bg3);color:var(--txt3);}
-.guest-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-top:0.5px solid var(--border);}
+.badges-row{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+
+/* ── Badges ──────────────────────────────────────── */
+.type-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:11px;
+  font-weight:600;
+  padding:4px 11px;
+  border-radius:var(--r-pill);
+  letter-spacing:0.01em;
+  border:1px solid transparent;
+}
+.badge-both{background:var(--indigo-dim);color:var(--indigo);border-color:var(--indigo-bdr);}
+.badge-in{background:var(--green-dim);color:var(--green);border-color:var(--green-bdr);}
+.badge-out{background:var(--red-dim);color:var(--red);border-color:var(--red-bdr);}
+.badge-empty{background:rgba(255,255,255,0.03);color:var(--t3);border-color:var(--b0);}
+
+/* ── Guest rows ──────────────────────────────────── */
+.guest-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 0;
+  border-top:1px solid var(--b0);
+}
 .guest-row:first-of-type{border-top:none;}
-.dir-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.dot-in{background:var(--green);}
-.dot-out{background:var(--red);}
-.guest-name{font-size:13px;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.guest-meta{font-size:11px;color:var(--txt3);white-space:nowrap;}
-.no-movement{font-size:12px;color:var(--txt3);font-style:italic;}
-.enxoval-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;padding-top:6px;border-top:0.5px solid var(--border);}
-.chip{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--amber-bg);color:var(--amber);white-space:nowrap;}
+.dir-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+/* Glow sutil nos dots — micro-detalhe premium */
+.dot-in{background:var(--green);box-shadow:0 0 7px rgba(45,212,160,0.55);}
+.dot-out{background:var(--red);box-shadow:0 0 7px rgba(248,113,113,0.55);}
+.guest-name{
+  font-size:13px;
+  font-weight:500;
+  color:var(--t1);
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.guest-meta{
+  font-size:11px;
+  font-weight:500;
+  color:var(--t3);
+  white-space:nowrap;
+}
+.no-movement{font-size:12px;color:var(--t3);font-style:italic;}
+
+/* ── Linen chips ─────────────────────────────────── */
+.enxoval-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px solid var(--b0);
+}
+.chip{
+  font-size:10px;
+  font-weight:600;
+  padding:3px 9px;
+  border-radius:var(--r-pill);
+  background:var(--amber-dim);
+  color:var(--amber);
+  border:1px solid var(--amber-bdr);
+  white-space:nowrap;
+  letter-spacing:0.01em;
+}
+
 #results{display:none;}
-.empty-state{text-align:center;padding:2rem;color:var(--txt3);font-size:14px;}
-/* ── LAVANDERIA TAB ── */
-.lav-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
-.lav-month{font-size:15px;font-weight:500;color:var(--txt);}
-.lav-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
-.btn-reset{font-size:12px;padding:6px 14px;border-radius:99px;border:0.5px solid var(--red-bg);background:var(--red-bg);color:var(--red);cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.btn-reset:active{opacity:0.7;}
-.lav-total-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.5rem;}
-.lav-total-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;text-align:center;}
-.lav-total-val{font-size:24px;font-weight:500;color:var(--purple);}
-.lav-total-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
-.lav-total-sub{font-size:10px;color:var(--txt3);margin-top:2px;opacity:0.7;}
-.lav-green{color:#4ade80 !important;}
-.lav-apt-card{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;display:flex;align-items:center;gap:12px;}
-.lav-apt-left{min-width:54px;text-align:center;}
-.lav-apt-num{font-size:15px;font-weight:500;color:var(--txt);}
-.lav-apt-hotel{font-size:9px;color:var(--txt3);}
+.empty-state{
+  text-align:center;
+  padding:4rem 2rem;
+  color:var(--t3);
+  font-size:14px;
+  line-height:1.75;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LAVANDERIA TAB
+   ══════════════════════════════════════════════════════════════ */
+.lav-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:1.75rem;
+}
+.lav-month{
+  font-size:17px;
+  font-weight:700;
+  color:var(--t1);
+  letter-spacing:-0.02em;
+}
+.lav-sub{
+  font-size:12px;
+  color:var(--t3);
+  margin-top:3px;
+  font-weight:400;
+}
+.btn-reset{
+  font-size:12px;
+  font-family:var(--font);
+  font-weight:600;
+  padding:7px 16px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--red-bdr);
+  background:var(--red-dim);
+  color:var(--red);
+  cursor:pointer;
+  transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-reset:hover{background:rgba(248,113,113,0.17);border-color:rgba(248,113,113,0.32);}
+.btn-reset:active{opacity:.75;}
+
+.lav-total-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:1.75rem;
+}
+/* Modifier para margem menor (limpeza section) */
+.lav-total-grid--sm{margin-bottom:1rem !important;}
+
+.lav-total-card{
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:1.1rem 1.25rem;
+  text-align:center;
+  box-shadow:var(--sh-sm);
+}
+.lav-total-val{
+  font-size:28px;
+  font-weight:700;
+  color:var(--violet);
+  letter-spacing:-0.03em;
+  line-height:1;
+}
+.lav-total-lbl{
+  font-size:11px;
+  font-weight:500;
+  color:var(--t3);
+  margin-top:7px;
+  letter-spacing:0.02em;
+}
+.lav-total-sub{
+  font-size:10px;
+  color:var(--t3);
+  margin-top:3px;
+  opacity:.6;
+}
+/* Usa a cor sage para valores financeiros positivos */
+.lav-green{color:var(--sage) !important;}
+
+.lav-apt-card{
+  background:var(--bg-1);
+  border:1px solid var(--b0);
+  border-radius:var(--r-md);
+  padding:0.9rem 1.25rem;
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  box-shadow:var(--sh-sm);
+  transition:border-color .2s;
+}
+.lav-apt-card:hover{border-color:var(--b2);}
+.lav-apt-left{
+  min-width:52px;
+  text-align:center;
+  padding-right:0.875rem;
+  border-right:1px solid var(--b0);
+}
+.lav-apt-num{
+  font-size:16px;
+  font-weight:700;
+  color:var(--t1);
+  letter-spacing:-0.01em;
+}
+.lav-apt-hotel{
+  font-size:9px;
+  font-weight:600;
+  color:var(--t3);
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  margin-top:3px;
+}
 .lav-apt-right{flex:1;}
-.lav-apt-count{font-size:22px;font-weight:500;color:var(--purple);text-align:right;}
-.lav-apt-label{font-size:11px;color:var(--txt3);text-align:right;}
-.lav-history{margin-top:4px;}
-.lav-day-chip{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:var(--bg3);color:var(--txt3);margin:2px 2px 0 0;}
-.lav-empty{text-align:center;padding:3rem 1rem;color:var(--txt3);font-size:14px;}
-.lav-empty-icon{font-size:32px;margin-bottom:0.75rem;}
-/* Limpeza própria */
-.limpeza-section{background:var(--bg1);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;}
-.limpeza-title{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:0.75rem;}
-.limpeza-tag{font-size:10px;padding:2px 8px;border-radius:99px;background:#1a2e0a;color:#86efac;font-weight:500;margin-left:6px;}
-.limpeza-apt-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:0.5px solid var(--border);}
+
+/* Layout interno do card de lavanderia (substitui inline style) */
+.lav-apt-info{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+}
+.lav-apt-count{
+  font-size:26px;
+  font-weight:700;
+  color:var(--violet);
+  text-align:right;
+  letter-spacing:-0.03em;
+  line-height:1;
+  white-space:nowrap;
+}
+.lav-apt-label{
+  font-size:10px;
+  font-weight:600;
+  color:var(--t3);
+  text-align:right;
+  margin-top:3px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+}
+.lav-history{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.lav-day-chip{
+  display:inline-block;
+  font-size:10px;
+  font-weight:600;
+  padding:2px 7px;
+  border-radius:var(--r-xs);
+  background:var(--bg-3);
+  color:var(--t2);
+  border:1px solid var(--b1);
+}
+
+.lav-empty{
+  text-align:center;
+  padding:4.5rem 1rem;
+  color:var(--t3);
+  font-size:14px;
+  line-height:1.8;
+}
+.lav-empty-icon{font-size:38px;margin-bottom:1rem;display:block;}
+
+/* ══════════════════════════════════════════════════════════════
+   LIMPEZA PRÓPRIA
+   ══════════════════════════════════════════════════════════════ */
+.limpeza-section{
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-lg);
+  padding:1.25rem 1.5rem;
+  margin-bottom:1.75rem;
+  box-shadow:var(--sh-sm);
+}
+.limpeza-title{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--t3);
+  margin-bottom:1rem;
+  display:flex;
+  align-items:center;
+}
+.limpeza-tag{
+  font-size:10px;
+  padding:3px 9px;
+  border-radius:var(--r-pill);
+  background:var(--sage-dim);
+  color:var(--sage);
+  border:1px solid var(--sage-bdr);
+  font-weight:700;
+  letter-spacing:0.01em;
+  margin-left:auto;
+}
+.limpeza-apt-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:9px 0;
+  border-top:1px solid var(--b0);
+}
 .limpeza-apt-row:first-of-type{border-top:none;}
-.limpeza-apt-num{font-size:14px;font-weight:500;color:var(--txt);min-width:44px;}
-.limpeza-apt-cfg{font-size:11px;color:var(--txt3);flex:1;}
-.limpeza-count{font-size:14px;font-weight:500;color:#86efac;white-space:nowrap;}
-/* Toast */
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--txt);font-size:13px;padding:10px 20px;border-radius:99px;border:0.5px solid var(--border2);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;}
-.toast.show{opacity:1;}
-/* Confirm dialog */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:50;display:none;align-items:center;justify-content:center;}
+.limpeza-apt-num{
+  font-size:14px;
+  font-weight:700;
+  color:var(--t1);
+  min-width:44px;
+}
+.limpeza-apt-cfg{
+  font-size:11px;
+  font-weight:500;
+  color:var(--t3);
+  flex:1;
+}
+/* Substitui o div com inline style="text-align:right" */
+.limpeza-apt-dates{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:3px;
+}
+.limpeza-count{
+  font-size:13px;
+  font-weight:700;
+  color:var(--sage);
+  white-space:nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOAST — slide-up + fade
+   ══════════════════════════════════════════════════════════════ */
+.toast{
+  position:fixed;
+  bottom:2rem;
+  left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--bg-3);
+  color:var(--t1);
+  font-size:13px;
+  font-family:var(--font);
+  font-weight:500;
+  padding:11px 22px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--b2);
+  box-shadow:var(--sh-lg);
+  opacity:0;
+  transition:opacity .25s, transform .25s;
+  pointer-events:none;
+  z-index:100;
+  white-space:nowrap;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DIALOG — blur overlay
+   ══════════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  z-index:50;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
 .overlay.show{display:flex;}
-.dialog{background:var(--bg1);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1.5rem;max-width:300px;width:90%;text-align:center;}
-.dialog-title{font-size:16px;font-weight:500;color:var(--txt);margin-bottom:0.5rem;}
-.dialog-sub{font-size:13px;color:var(--txt2);margin-bottom:1.25rem;line-height:1.5;}
-.dialog-btns{display:flex;gap:8px;}
-.btn-cancel{flex:1;padding:10px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt2);font-size:14px;cursor:pointer;}
-.btn-confirm{flex:1;padding:10px;border-radius:var(--radius-sm);border:none;background:var(--red-bg);color:var(--red);font-size:14px;font-weight:500;cursor:pointer;}
-/* FIX #12 (UX): 4 colunas em telas muito estreitas ficam apertadas */
-@media(max-width:340px){
+.dialog{
+  background:var(--bg-2);
+  border:1px solid var(--b2);
+  border-radius:var(--r-xl);
+  padding:1.875rem;
+  max-width:320px;
+  width:92%;
+  text-align:center;
+  box-shadow:var(--sh-lg);
+}
+.dialog-title{
+  font-size:17px;
+  font-weight:700;
+  color:var(--t1);
+  margin-bottom:0.5rem;
+  letter-spacing:-0.02em;
+}
+.dialog-sub{
+  font-size:13px;
+  color:var(--t2);
+  margin-bottom:1.625rem;
+  line-height:1.65;
+}
+.dialog-btns{display:flex;gap:10px;}
+.btn-cancel{
+  flex:1;
+  padding:11px;
+  border-radius:var(--r-md);
+  border:1px solid var(--b1);
+  background:var(--bg-3);
+  color:var(--t2);
+  font-size:14px;
+  font-family:var(--font);
+  font-weight:500;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-cancel:hover{background:var(--bg-hover);color:var(--t1);}
+.btn-confirm{
+  flex:1;
+  padding:11px;
+  border-radius:var(--r-md);
+  border:1px solid var(--red-bdr);
+  background:var(--red-dim);
+  color:var(--red);
+  font-size:14px;
+  font-family:var(--font);
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-confirm:hover{background:rgba(248,113,113,0.18);}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVO
+   ══════════════════════════════════════════════════════════════ */
+@media(max-width:420px){
   .summary-grid{grid-template-columns:repeat(2,1fr);}
+  .enxoval-grid{grid-template-columns:repeat(3,1fr);}
+  .enxoval-item:last-child:nth-child(4n+1){grid-column:unset;}
+}
+@media(max-width:340px){
+  .enxoval-grid{grid-template-columns:repeat(2,1fr);}
 }
 </style>
 </head>
@@ -166,7 +928,6 @@ html,body{background:var(--bg0);color:var(--txt);font-family:-apple-system,Blink
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 <!-- Confirm dialog -->
-<!-- FIX #1 (CRÍTICO): texto atualizado — informa que limpeza também é zerada -->
 <div class="overlay" id="overlay">
   <div class="dialog">
     <div class="dialog-title">Zerar mês?</div>
@@ -195,14 +956,12 @@ const ROOMS={
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
 
-// ── FIX #7 (MELHORIA): preços em objeto único — altere aqui, reflete em todo lugar ──
 const PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
   limpezaComf:  25,
 };
 
-// ── FIX #2 (CRÍTICO): sanitização contra XSS — aplique em todo dado vindo do PDF ──
 function esc(str){
   return String(str)
     .replace(/&/g,'&amp;')
@@ -210,13 +969,11 @@ function esc(str){
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;');
 }
-
 function isKing(hotel,apt){return KING_APTS.has(hotel+'||'+apt);}
 
 // ── LINEN CALC ───────────────────────────────────────────────────────────────
 function calcLinen(config,guests,king=false){
   let g=guests;
-  // FIX #13 (MELHORIA): == null captura tanto null quanto undefined
   if(g==null){if(config==='c')g=2;else if(config==='2s')g=2;else if(config==='cs')g=3;}
   g=Math.max(1,g);
   let lc=0,lk=0,ls=0,f=0,t=0,tr=1,tp=1;
@@ -225,8 +982,6 @@ function calcLinen(config,guests,king=false){
   else if(config==='cs'){if(king){lk=2;}else{lc=2;}f=2;if(g>=2){ls=2;f+=1;}}
   t=g;return{lc,lk,ls,f,t,tr,tp};
 }
-
-// FIX #4 (CRÍTICO): usa lin.tr e lin.tp em vez de strings hardcoded "1× t. rosto"
 function linenChips(lin){
   const p=[];
   if(lin.lc)p.push(lin.lc+'× lençol casal');
@@ -249,7 +1004,6 @@ function switchTab(name,el){
 }
 
 // ── LAVANDERIA STORAGE ────────────────────────────────────────────────────────
-// FIX #10 (MELHORIA): descarta meses além de keepMonths para evitar crescimento indefinido
 function purgeOldMonths(data,keepMonths=12){
   const keys=Object.keys(data).sort();
   while(keys.length>keepMonths)delete data[keys.shift()];
@@ -258,7 +1012,6 @@ function purgeOldMonths(data,keepMonths=12){
 function getLavData(){
   try{return JSON.parse(localStorage.getItem('lav_data')||'{}');}catch{return {};}
 }
-// FIX #3 (CRÍTICO): try/catch em torno do setItem — QuotaExceededError antes era silencioso
 function saveLavData(data){
   try{localStorage.setItem('lav_data',JSON.stringify(purgeOldMonths(data)));}
   catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
@@ -303,7 +1056,6 @@ function todayKey(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-
 function registerCheckouts(depMap,dateKey){
   const dayKey=dateKey||todayKey();
   const month=dayKey.substring(0,7);
@@ -340,7 +1092,6 @@ function renderLavanderia(){
   const totalTrocas=entries.reduce((s,e)=>s+e.count,0);
   const totalAptos=entries.length;
   const totalCadastrados=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
-  // FIX #7 (MELHORIA): helper de formatação e uso de PRECO em vez de literais
   const fmtBRL=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:2});
   let html=`
   <div class="lav-header">
@@ -371,7 +1122,7 @@ function renderLavanderia(){
             <div class="lav-apt-hotel">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</div>
           </div>
           <div class="lav-apt-right">
-            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+            <div class="lav-apt-info">
               <div class="lav-history">${dayChips}</div>
               <div><div class="lav-apt-count">${e.count}×</div><div class="lav-apt-label">trocas</div></div>
             </div>
@@ -392,16 +1143,16 @@ function renderLavanderia(){
   if(limpEntries.length>0){
     html+=`<div class="limpeza-section">
       <div class="limpeza-title">🧹 Limpeza própria — Comf<span class="limpeza-tag">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</span></div>
-      <div class="lav-total-grid" style="margin-bottom:1rem;">
-        <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">${totalLimpezas}</div><div class="lav-total-lbl">Limpezas no mês</div></div>
-        <div class="lav-total-card"><div class="lav-total-val" style="color:#86efac;">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.limpezaComf)} por limpeza</div></div>
+      <div class="lav-total-grid lav-total-grid--sm">
+        <div class="lav-total-card"><div class="lav-total-val lav-green">${totalLimpezas}</div><div class="lav-total-lbl">Limpezas no mês</div></div>
+        <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.limpezaComf)} por limpeza</div></div>
       </div>`;
     limpEntries.forEach(e=>{
       const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
       html+=`<div class="limpeza-apt-row">
         <span class="limpeza-apt-num">${esc(e.apt)}</span>
         <span class="limpeza-apt-cfg">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</span>
-        <div style="text-align:right;">${dayChips}<div class="limpeza-count">${e.count}× limpeza</div></div>
+        <div class="limpeza-apt-dates">${dayChips}<div class="limpeza-count">${e.count}× limpeza</div></div>
       </div>`;
     });
     html+=`</div>`;
@@ -412,7 +1163,6 @@ function renderLavanderia(){
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){document.getElementById('overlay').classList.add('show');}
 function closeDialog(){document.getElementById('overlay').classList.remove('show');}
-// FIX #1 (CRÍTICO): zera lav_data E limp_data do mês — antes só zerava lavanderia
 function confirmReset(){
   const month=currentMonthKey();
   const lav=getLavData();
@@ -472,11 +1222,9 @@ const HOTEL_TESTS=[
   {r:/\blets\b/i,h:'Lets'},{r:/\bkubit\b/i,h:'Kubit'},{r:/\bbona\b/i,h:'Bona'},
   {r:/\bsaint\b/i,h:'Saint'},{r:/\bramada\b/i,h:'Ramada'},{r:/\btryp\b/i,h:'Tryp'},
 ];
-// FIX #6 (MELHORIA): regex derivado de HOTEL_TESTS — fonte única de verdade para nomes de hotéis
 const HOTEL_CLEAN_RE=new RegExp(HOTEL_TESTS.map(t=>t.r.source).join('|'),'gi');
 
 function aptKey(raw){return raw.replace(/^0+/,'').replace(/-\d+$/,'');}
-
 function findMatch(line){
   for(const t of HOTEL_TESTS){
     if(!t.r.test(line))continue;
@@ -486,8 +1234,6 @@ function findMatch(line){
   }
   return null;
 }
-
-// FIX #6 (MELHORIA): usa HOTEL_CLEAN_RE em vez de regex duplicado com nomes hardcoded
 function extractName(line){
   const dateM=line.match(/\d{1,2}\s+[a-záéíóúàâêôãõç]+\s+\d{4}/i);
   if(dateM){
@@ -498,13 +1244,9 @@ function extractName(line){
   }
   return '';
 }
-
-// FIX #5 (MELHORIA): extração mais robusta — padrão semântico antes de fallback posicional
 function extractGuests(line){
-  // Tenta padrão explícito: "2 pessoas", "3px", "1 adulto"
   let m=line.match(/\b([1-9])\s*(?:p(?:essoas?|x)|adu|h[oó]sp)/i);
   if(m)return parseInt(m[1]);
-  // Fallback: primeiro dígito avulso, mas após remover apt e data para evitar colisões
   const stripped=line
     .replace(/\b\d{2,4}(?:-\d)?\b/g,'')
     .replace(/\d{1,2}\s+\w{3}\s+\d{4}/g,'');
@@ -547,7 +1289,6 @@ function parseAndRender(lines,filename){
 }
 
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
-// FIX #8 (MELHORIA): retorna {tot, detalhes} — sem side effect em _detalhes global
 function calcTotals(){
   const tot={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
   const detalhes=[];
@@ -601,7 +1342,6 @@ function renderUI(){
     if(i)tIn++;if(o)tOut++;if(i&&o)tBoth++;
   }));
   const total=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
-  // FIX #8 (MELHORIA): desestruturação explícita — sem side effect oculto
   const{tot:lin,detalhes}=calcTotals();
   _detalhes=detalhes;
   document.getElementById('results').innerHTML=`
@@ -659,7 +1399,6 @@ function renderCards(){
       const config=ROOMS[hotel].apts[apt],cfgLabel=CFG_LABEL[config]||config;
       const badge=emp?`<span class="type-badge badge-empty">Sem movimento</span>`:both?`<span class="type-badge badge-both">⇄ Troca</span>`:hi?`<span class="type-badge badge-in">↓ Chegada</span>`:`<span class="type-badge badge-out">↑ Saída</span>`;
       let rows='';
-      // FIX #2 (CRÍTICO): esc() em g.name — dado vem do PDF e pode conter HTML
       oL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-out"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 12:00</span></div>`;});
       iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
       if(emp)rows=`<div class="no-movement">sem movimentação hoje</div>`;

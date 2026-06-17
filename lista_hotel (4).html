@@ -824,6 +824,9 @@ html,body{
 .est-summary-val.warn{color:var(--red);}
 .est-summary-val.ok{color:var(--green);}
 
+.val-red{color:var(--red)!important;}
+.enxoval-section.enxoval-warn{border-color:var(--red-bdr);background:linear-gradient(180deg,var(--red-dim) 0%,var(--bg-1) 100%);}
+
 .estoque-warn{
   margin-top:0.85rem;
   padding:0.65rem 0.85rem;
@@ -1487,29 +1490,39 @@ function calcTotals(){
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
 function renderEstoquePreview(lin){
   const d=getEstoque();
-  let rows='';
-  let faltando=[];
+  // Compute what's missing (falta) for each item: how many more we need to close the day
+  const falta={};
   ESTOQUE_ITEMS.forEach(i=>{
     const tem=d[i.key]||0;
     const usar=lin[i.key]||0;
-    const sobra=tem-usar;
-    const cls=sobra<0?'warn':(usar>0?'ok':'dim');
-    if(sobra<0)faltando.push(i.name);
-    rows+=`<div class="estoque-preview-row">
-      <span class="estoque-preview-name">${i.name}</span>
-      <span class="estoque-preview-val dim">${tem}</span>
-      <span class="estoque-preview-val dim">−${usar}</span>
-      <span class="estoque-preview-val ${cls}">${sobra}</span>
-    </div>`;
+    falta[i.key]=Math.max(0,usar-tem);
   });
-  const warn=faltando.length>0?`<div class="estoque-warn">⚠️ Falta: ${faltando.join(', ')}</div>`:'';
-  return `<div class="estoque-preview">
-    <div class="estoque-preview-title">📦 Estoque após o dia</div>
-    <div class="estoque-preview-row header">
-      <span>Item</span><span style="text-align:right;">Tem</span><span style="text-align:right;">Usar</span><span style="text-align:right;">Sobra</span>
+  const algumFalta=ESTOQUE_ITEMS.some(i=>falta[i.key]>0);
+
+  return `
+  <div class="enxoval-section">
+    <div class="enxoval-title">📦 Estoque atual</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val">${d.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
-    ${rows}
-    ${warn}
+  </div>
+  <div class="enxoval-section ${algumFalta?'enxoval-warn':''}">
+    <div class="enxoval-title">${algumFalta?'⚠️ Falta para fechar o dia':'✅ Tudo ok para fechar o dia'}</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
+    </div>
   </div>`;
 }
 

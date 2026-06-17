@@ -17,24 +17,24 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 
 :root{
-  /* ── Fundos em camadas (profundidade) ── */
-  --bg-base:  #0b0d12;
-  --bg-0:     #0f1219;
-  --bg-1:     #141822;
-  --bg-2:     #1a1f2e;
-  --bg-3:     #202638;
-  --bg-hover: #262d42;
+  /* ── Fundos em camadas — preto puro neutro ── */
+  --bg-base:  #000000;
+  --bg-0:     #0a0a0a;
+  --bg-1:     #111111;
+  --bg-2:     #171717;
+  --bg-3:     #1f1f1f;
+  --bg-hover: #2a2a2a;
 
-  /* ── Bordas ultra-finas ── */
-  --b0: rgba(255,255,255,0.04);
-  --b1: rgba(255,255,255,0.07);
-  --b2: rgba(255,255,255,0.11);
-  --b3: rgba(255,255,255,0.18);
+  /* ── Bordas ultra-finas — branco puro ── */
+  --b0: rgba(255,255,255,0.05);
+  --b1: rgba(255,255,255,0.08);
+  --b2: rgba(255,255,255,0.12);
+  --b3: rgba(255,255,255,0.20);
 
-  /* ── Texto ── */
-  --t1: #edf0f9;   /* primário */
-  --t2: #8892ae;   /* secundário */
-  --t3: #454e68;   /* terciário / muted */
+  /* ── Texto — neutros sem tom azul ── */
+  --t1: #f5f5f5;   /* primário */
+  --t2: #a0a0a0;   /* secundário */
+  --t3: #5a5a5a;   /* terciário / muted */
 
   /* ── Indigo — ação primária (tabs, filtros ativos) ── */
   --indigo:     #818cf8;
@@ -112,7 +112,7 @@ html,body{
   position:sticky;
   top:0;
   /* Glass morfismo no header */
-  background:rgba(11,13,18,0.85);
+  background:rgba(0,0,0,0.85);
   backdrop-filter:blur(24px) saturate(1.4);
   -webkit-backdrop-filter:blur(24px) saturate(1.4);
   z-index:20;
@@ -195,6 +195,21 @@ html,body{
 /* ══════════════════════════════════════════════════════════════
    SUMMARY GRID — 4 métricas
    ══════════════════════════════════════════════════════════════ */
+.date-banner{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:0.75rem 1rem;
+  margin-bottom:1rem;
+  font-size:13px;
+  font-weight:500;
+  color:var(--t1);
+}
+.date-banner-icon{font-size:15px;}
+
 .summary-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -798,6 +813,38 @@ html,body{
 /* ══════════════════════════════════════════════════════════════
    TOAST — slide-up + fade
    ══════════════════════════════════════════════════════════════ */
+/* Estoque tab — mobile first, clean */
+.est-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;}
+.est-title{font-size:15px;font-weight:500;color:var(--txt);}
+.est-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
+.est-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.5rem;}
+.est-summary-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem 1rem;text-align:center;}
+.est-summary-val{font-size:24px;font-weight:500;color:var(--amber);}
+.est-summary-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
+.est-summary-val.warn{color:var(--red);}
+.est-summary-val.ok{color:var(--green);}
+
+.estoque-warn{
+  margin-top:0.85rem;
+  padding:0.65rem 0.85rem;
+  background:var(--red-dim);
+  border:1px solid var(--red-bdr);
+  border-radius:var(--r-sm);
+  font-size:12px;
+  font-weight:500;
+  color:var(--red);
+  line-height:1.4;
+}
+
+.est-row{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;}
+.est-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.est-row-name{font-size:14px;color:var(--txt);font-weight:500;}
+.est-row-qty{font-size:24px;font-weight:600;color:var(--amber);line-height:1;}
+.est-row-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.est-btn{padding:10px 0;border-radius:8px;border:none;font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;background:var(--bg3);color:var(--txt);transition:opacity 0.1s;}
+.est-btn:active{opacity:0.6;}
+.est-btn.m{background:#3a1a1a;color:#fca5a5;}
+.est-btn.p{background:#1a3a1a;color:#86efac;}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -895,7 +942,22 @@ html,body{
    RESPONSIVO
    ══════════════════════════════════════════════════════════════ */
 @media(max-width:420px){
-  .summary-grid{grid-template-columns:repeat(2,1fr);}
+  .date-banner{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:0.75rem 1rem;
+  margin-bottom:1rem;
+  font-size:13px;
+  font-weight:500;
+  color:var(--t1);
+}
+.date-banner-icon{font-size:15px;}
+
+.summary-grid{grid-template-columns:repeat(2,1fr);}
   .enxoval-grid{grid-template-columns:repeat(3,1fr);}
   .enxoval-item:last-child:nth-child(4n+1){grid-column:unset;}
 }
@@ -909,6 +971,7 @@ html,body{
   <div class="tab-bar">
     <div class="tab active" onclick="switchTab('lista',this)">Lista do Dia</div>
     <div class="tab" onclick="switchTab('lavanderia',this)">Lavanderia</div>
+    <div class="tab" onclick="switchTab('estoque',this)">Estoque</div>
   </div>
   <!-- TAB: LISTA -->
   <div id="tab-lista" class="tab-content active">
@@ -923,6 +986,11 @@ html,body{
   <!-- TAB: LAVANDERIA -->
   <div id="tab-lavanderia" class="tab-content">
     <div id="lav-content"></div>
+  </div>
+
+  <!-- TAB: ESTOQUE -->
+  <div id="tab-estoque" class="tab-content">
+    <div id="est-content"></div>
   </div>
 </div>
 <!-- Toast -->
@@ -1001,6 +1069,7 @@ function switchTab(name,el){
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='lavanderia') renderLavanderia();
+  if(name==='estoque') renderEstoque();
 }
 
 // ── LAVANDERIA STORAGE ────────────────────────────────────────────────────────
@@ -1160,6 +1229,97 @@ function renderLavanderia(){
   document.getElementById('lav-content').innerHTML=html;
 }
 
+// ── ESTOQUE ────────────────────────────────────────────────────────────────────
+// Structure: { lc:N, lk:N, ls:N, f:N, t:N, tr:N, tp:N }
+// Also tracks days already deducted: { last_deducted: ["YYYY-MM-DD",...] }
+const ESTOQUE_ITEMS=[
+  {key:'lc',name:'Lençol casal'},
+  {key:'lk',name:'Lençol king'},
+  {key:'ls',name:'Lençol solteiro'},
+  {key:'f',name:'Fronha'},
+  {key:'t',name:'Toalha banho'},
+  {key:'tr',name:'Toalha rosto'},
+  {key:'tp',name:'Tapete'},
+];
+
+function getEstoque(){
+  try{const d=JSON.parse(localStorage.getItem('estoque')||'{}');
+    ESTOQUE_ITEMS.forEach(i=>{if(typeof d[i.key]!=='number')d[i.key]=0;});
+    if(!Array.isArray(d.last_deducted))d.last_deducted=[];
+    return d;
+  }catch{return{lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0,last_deducted:[]};}
+}
+function saveEstoque(d){localStorage.setItem('estoque',JSON.stringify(d));}
+
+function adjustEstoque(key,delta){
+  const d=getEstoque();
+  d[key]=Math.max(0,(d[key]||0)+delta);
+  saveEstoque(d);
+  renderEstoque();
+}
+
+// Deduct linen used today from estoque. Only deducts once per date.
+function deductFromEstoque(dateKey){
+  const d=getEstoque();
+  if(d.last_deducted.includes(dateKey))return false;
+  const lin=calcTotals();
+  d.lc=Math.max(0,d.lc-lin.lc);
+  d.lk=Math.max(0,d.lk-lin.lk);
+  d.ls=Math.max(0,d.ls-lin.ls);
+  d.f=Math.max(0,d.f-lin.f);
+  d.t=Math.max(0,d.t-lin.t);
+  d.tr=Math.max(0,d.tr-lin.tr);
+  d.tp=Math.max(0,d.tp-lin.tp);
+  d.last_deducted.push(dateKey);
+  saveEstoque(d);
+  return true;
+}
+
+function renderEstoque(){
+  const d=getEstoque();
+  const total=ESTOQUE_ITEMS.reduce((s,i)=>s+(d[i.key]||0),0);
+  // count items at zero or low
+  const zerados=ESTOQUE_ITEMS.filter(i=>(d[i.key]||0)===0).length;
+  const okItens=ESTOQUE_ITEMS.length-zerados;
+
+  let html=`
+  <div class="est-header">
+    <div>
+      <div class="est-title">Estoque</div>
+      <div class="est-sub">Enxoval limpo disponível</div>
+    </div>
+  </div>
+  <div class="enxoval-section">
+    <div class="enxoval-title">📦 Estoque atual</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val">${d.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
+    </div>
+  </div>`;
+
+  ESTOQUE_ITEMS.forEach(i=>{
+    const qty=d[i.key]||0;
+    html+=`<div class="est-row">
+      <div class="est-row-top">
+        <span class="est-row-name">${i.name}</span>
+        <span class="est-row-qty">${qty}</span>
+      </div>
+      <div class="est-row-btns">
+        <button class="est-btn p" onclick="adjustEstoque('${i.key}',20)">+20</button>
+        <button class="est-btn p" onclick="adjustEstoque('${i.key}',1)">+1</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-1)">−1</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-20)">−20</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('est-content').innerHTML=html;
+}
+
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){document.getElementById('overlay').classList.add('show');}
 function closeDialog(){document.getElementById('overlay').classList.remove('show');}
@@ -1257,6 +1417,15 @@ function extractGuests(line){
 // ── PARSE ─────────────────────────────────────────────────────────────────────
 let _arr={},_dep={},_filt='all',_srch='',_detalhes=[];
 
+function formatPdfDate(key){
+  if(!key)return '';
+  const[y,m,d]=key.split('-').map(Number);
+  const dow=new Date(y,m-1,d).getDay();
+  const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return `${dias[dow]}, ${d} de ${meses[m-1]} de ${y}`;
+}
+let _pdfDate=null;
 function parseAndRender(lines,filename){
   _arr={};_dep={};let sec=null;
   lines.forEach(line=>{
@@ -1278,8 +1447,10 @@ function parseAndRender(lines,filename){
       break;
     }
   }
+  _pdfDate=pdfDateKey;
   const newCount=registerCheckouts(_dep,pdfDateKey);
   registerLimpeza(_dep,pdfDateKey);
+  deductFromEstoque(pdfDateKey);
   if(newCount>0)showToast(newCount+' troca'+(newCount>1?'s':'')+' registrada'+(newCount>1?'s':'')+' na lavanderia');
   else showToast('Dia já registrado na lavanderia');
   dz.classList.add('loaded');
@@ -1314,6 +1485,34 @@ function calcTotals(){
 }
 
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
+function renderEstoquePreview(lin){
+  const d=getEstoque();
+  let rows='';
+  let faltando=[];
+  ESTOQUE_ITEMS.forEach(i=>{
+    const tem=d[i.key]||0;
+    const usar=lin[i.key]||0;
+    const sobra=tem-usar;
+    const cls=sobra<0?'warn':(usar>0?'ok':'dim');
+    if(sobra<0)faltando.push(i.name);
+    rows+=`<div class="estoque-preview-row">
+      <span class="estoque-preview-name">${i.name}</span>
+      <span class="estoque-preview-val dim">${tem}</span>
+      <span class="estoque-preview-val dim">−${usar}</span>
+      <span class="estoque-preview-val ${cls}">${sobra}</span>
+    </div>`;
+  });
+  const warn=faltando.length>0?`<div class="estoque-warn">⚠️ Falta: ${faltando.join(', ')}</div>`:'';
+  return `<div class="estoque-preview">
+    <div class="estoque-preview-title">📦 Estoque após o dia</div>
+    <div class="estoque-preview-row header">
+      <span>Item</span><span style="text-align:right;">Tem</span><span style="text-align:right;">Usar</span><span style="text-align:right;">Sobra</span>
+    </div>
+    ${rows}
+    ${warn}
+  </div>`;
+}
+
 function toggleDetalhamento(btn){
   btn.classList.toggle('active');
   const section=document.getElementById('detalhamento-section');
@@ -1345,6 +1544,7 @@ function renderUI(){
   const{tot:lin,detalhes}=calcTotals();
   _detalhes=detalhes;
   document.getElementById('results').innerHTML=`
+  ${_pdfDate?`<div class="date-banner"><span class="date-banner-icon">📅</span><span>${formatPdfDate(_pdfDate)}</span></div>`:''}
   <div class="summary-grid">
     <div class="metric"><div class="metric-label">Chegadas</div><div class="metric-value">${tIn}</div></div>
     <div class="metric"><div class="metric-label">Saídas</div><div class="metric-value">${tOut}</div></div>
@@ -1363,6 +1563,7 @@ function renderUI(){
       <div class="enxoval-item"><div class="enxoval-val">${lin.tp}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
   </div>
+  ${renderEstoquePreview(lin)}
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">

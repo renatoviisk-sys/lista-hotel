@@ -1026,7 +1026,7 @@ const SUPABASE_URL      = 'https://bmhnvnlbcgegsgplkuea.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtaG52bmxiY2dlZ3NncGxrdWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3ODcyMDcsImV4cCI6MjA5NzM2MzIwN30.cyaCBafC3DtAJN5r8Fc-jEX44_3WM8on-2QfCrgmra0';
 
 let sb = null;                                         // cliente Supabase
-const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[] };
+const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[], lista:null };
 let _ready = false;                                    // conectado ao banco?
 
 function configurado(){
@@ -1054,6 +1054,7 @@ async function initApp(){
     assinarTempoReal();
     _ready = true;
     setSync('online');
+    aplicarListaAtual();
     rerenderCompartilhado();
   }catch(e){
     setSync('offline');
@@ -1068,7 +1069,7 @@ function avisoConfig(msg){
   });
 }
 async function recarregarTudo(){
-  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas()]);
+  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas(), carregarListaAtual()]);
 }
 async function carregarEstoque(){
   const {data,error}=await sb.from('estoque').select('*');
@@ -1090,12 +1091,42 @@ async function carregarLimpezas(){
   if(error)throw error;
   cache.limpezas=data||[];
 }
+async function carregarListaAtual(){
+  const {data,error}=await sb.from('lista_atual').select('*').eq('id',1).maybeSingle();
+  if(error)throw error;
+  cache.lista=data||null;
+}
+// Salva a lista do dia no banco para que todos vejam o mesmo PDF (e sobreviva ao F5)
+async function salvarListaAtual(filename){
+  if(!_ready)return;
+  const {error}=await sb.from('lista_atual').upsert(
+    {id:1, dia:_pdfDate, filename:filename||'Lista do dia', arr:_arr, dep:_dep, atualizado_em:new Date().toISOString()},
+    {onConflict:'id'}
+  );
+  if(error)showToast('Erro ao compartilhar a lista');
+}
+// Aplica na tela a lista do dia salva no banco. Retorna true se havia lista.
+function aplicarListaAtual(){
+  const row=cache.lista;
+  if(!row || !row.dia)return false;
+  _arr = row.arr || {};
+  _dep = row.dep || {};
+  _pdfDate = row.dia;
+  if(dz)dz.classList.add('loaded');
+  const lbl=document.getElementById('drop-label');
+  const sub=document.getElementById('drop-sub');
+  if(lbl)lbl.textContent = row.filename || 'Lista do dia';
+  if(sub)sub.textContent = 'Clique para trocar o arquivo';
+  renderUI();
+  return true;
+}
 function assinarTempoReal(){
   sb.channel('lavanderia-rt')
     .on('postgres_changes',{event:'*',schema:'public',table:'estoque'},       async()=>{try{await carregarEstoque();}catch(e){} rerenderCompartilhado();})
     .on('postgres_changes',{event:'*',schema:'public',table:'dias_fechados'}, async()=>{try{await carregarDias();}catch(e){}    rerenderCompartilhado();})
     .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        async()=>{try{await carregarTrocas();}catch(e){}  rerenderCompartilhado();})
     .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      async()=>{try{await carregarLimpezas();}catch(e){}rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'lista_atual'},   async()=>{try{await carregarListaAtual();}catch(e){} aplicarListaAtual();})
     .subscribe();
 }
 function abaAtiva(){
@@ -1513,6 +1544,7 @@ async function parseAndRender(lines,filename){
   dz.classList.add('loaded');
   document.getElementById('drop-label').textContent=filename;
   document.getElementById('drop-sub').textContent='Clique para trocar o arquivo';
+  if(_ready) await salvarListaAtual(filename);
   renderUI();
 }
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────

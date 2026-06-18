@@ -9,13 +9,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- ── BANCO COMPARTILHADO: Supabase ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    DESIGN SYSTEM — "Obsidian"
    Inspiração: Linear, Vercel, Raycast dark dashboards
    ═══════════════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
-
 :root{
   /* ── Fundos em camadas — preto puro neutro ── */
   --bg-base:  #000000;
@@ -24,48 +25,39 @@
   --bg-2:     #171717;
   --bg-3:     #1f1f1f;
   --bg-hover: #2a2a2a;
-
   /* ── Bordas ultra-finas — branco puro ── */
   --b0: rgba(255,255,255,0.05);
   --b1: rgba(255,255,255,0.08);
   --b2: rgba(255,255,255,0.12);
   --b3: rgba(255,255,255,0.20);
-
   /* ── Texto — neutros sem tom azul ── */
   --t1: #f5f5f5;   /* primário */
   --t2: #a0a0a0;   /* secundário */
   --t3: #5a5a5a;   /* terciário / muted */
-
   /* ── Indigo — ação primária (tabs, filtros ativos) ── */
   --indigo:     #818cf8;
   --indigo-dim: rgba(99,102,241,0.13);
   --indigo-bdr: rgba(99,102,241,0.28);
-
   /* ── Teal-green — check-in ── */
   --green:     #2dd4a0;
   --green-dim: rgba(45,212,160,0.10);
   --green-bdr: rgba(45,212,160,0.22);
-
   /* ── Coral — check-out ── */
   --red:     #f87171;
   --red-dim: rgba(248,113,113,0.10);
   --red-bdr: rgba(248,113,113,0.22);
-
   /* ── Amber — enxoval ── */
   --amber:     #fbbf24;
   --amber-dim: rgba(251,191,36,0.10);
   --amber-bdr: rgba(251,191,36,0.22);
-
   /* ── Violet — lavanderia ── */
   --violet:     #a78bfa;
   --violet-dim: rgba(167,139,250,0.10);
   --violet-bdr: rgba(167,139,250,0.22);
-
   /* ── Sage — limpeza ── */
   --sage:     #34d399;
   --sage-dim: rgba(52,211,153,0.10);
   --sage-bdr: rgba(52,211,153,0.20);
-
   /* ── Raios ── */
   --r-xs:   5px;
   --r-sm:   10px;
@@ -73,16 +65,13 @@
   --r-lg:   18px;
   --r-xl:   24px;
   --r-pill: 9999px;
-
   /* ── Sombras ── */
   --sh-sm: 0 1px 3px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.3);
   --sh-md: 0 4px 18px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.3);
   --sh-lg: 0 16px 50px rgba(0,0,0,0.65), 0 4px 14px rgba(0,0,0,0.4);
-
   /* ── Fonte ── */
   --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
-
 /* ── Reset & base ─────────────────────────────────────────────── */
 html,body{
   background: var(--bg-base);
@@ -94,14 +83,11 @@ html,body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 /* Scrollbars finos (webkit) */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
-
 #app{max-width:580px;margin:0 auto;padding:0 0 5rem;}
-
 /* ══════════════════════════════════════════════════════════════
    TAB BAR — frosted glass, sticky
    ══════════════════════════════════════════════════════════════ */
@@ -134,10 +120,8 @@ html,body{
 }
 .tab:hover{color:var(--t2);}
 .tab.active{color:var(--t1);border-bottom-color:var(--indigo);}
-
 .tab-content{display:none;padding:0 1.25rem;}
 .tab-content.active{display:block;}
-
 /* ══════════════════════════════════════════════════════════════
    DROP ZONE — convidativa, com brilho de fundo
    ══════════════════════════════════════════════════════════════ */
@@ -191,7 +175,6 @@ html,body{
   margin-top:6px;
   line-height:1.6;
 }
-
 /* ══════════════════════════════════════════════════════════════
    SUMMARY GRID — 4 métricas
    ══════════════════════════════════════════════════════════════ */
@@ -209,7 +192,6 @@ html,body{
   color:var(--t1);
 }
 .date-banner-icon{font-size:15px;}
-
 .summary-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -241,7 +223,6 @@ html,body{
   letter-spacing:-0.03em;
   line-height:1;
 }
-
 /* ══════════════════════════════════════════════════════════════
    ENXOVAL PANEL
    ══════════════════════════════════════════════════════════════ */
@@ -296,7 +277,6 @@ html,body{
   margin-top:5px;
   line-height:1.4;
 }
-
 /* ══════════════════════════════════════════════════════════════
    DETALHAMENTO
    ══════════════════════════════════════════════════════════════ */
@@ -368,7 +348,6 @@ html,body{
   line-height:1.65;
 }
 .detalhamento-calc strong{color:var(--t1);}
-
 /* ══════════════════════════════════════════════════════════════
    SEARCH
    ══════════════════════════════════════════════════════════════ */
@@ -391,7 +370,6 @@ html,body{
   border-color:var(--indigo-bdr);
   box-shadow:0 0 0 3px var(--indigo-dim);
 }
-
 /* ══════════════════════════════════════════════════════════════
    FILTER ROW
    ══════════════════════════════════════════════════════════════ */
@@ -430,7 +408,6 @@ html,body{
   border-color:var(--indigo-bdr);
   font-weight:600;
 }
-
 /* ══════════════════════════════════════════════════════════════
    HOTEL SECTION & APT CARDS
    ══════════════════════════════════════════════════════════════ */
@@ -464,7 +441,6 @@ html,body{
   border-color:var(--b2);
   box-shadow:var(--sh-md);
 }
-
 /* Número do apto — visual de "placa" */
 .apt-left{
   display:flex;
@@ -501,7 +477,6 @@ html,body{
   flex-wrap:wrap;
   margin-bottom:8px;
 }
-
 /* ── Badges ──────────────────────────────────────── */
 .type-badge{
   display:inline-flex;
@@ -518,7 +493,6 @@ html,body{
 .badge-in{background:var(--green-dim);color:var(--green);border-color:var(--green-bdr);}
 .badge-out{background:var(--red-dim);color:var(--red);border-color:var(--red-bdr);}
 .badge-empty{background:rgba(255,255,255,0.03);color:var(--t3);border-color:var(--b0);}
-
 /* ── Guest rows ──────────────────────────────────── */
 .guest-row{
   display:flex;
@@ -554,7 +528,6 @@ html,body{
   white-space:nowrap;
 }
 .no-movement{font-size:12px;color:var(--t3);font-style:italic;}
-
 /* ── Linen chips ─────────────────────────────────── */
 .enxoval-chips{
   display:flex;
@@ -575,7 +548,6 @@ html,body{
   white-space:nowrap;
   letter-spacing:0.01em;
 }
-
 #results{display:none;}
 .empty-state{
   text-align:center;
@@ -584,7 +556,6 @@ html,body{
   font-size:14px;
   line-height:1.75;
 }
-
 /* ══════════════════════════════════════════════════════════════
    LAVANDERIA TAB
    ══════════════════════════════════════════════════════════════ */
@@ -621,7 +592,6 @@ html,body{
 }
 .btn-reset:hover{background:rgba(248,113,113,0.17);border-color:rgba(248,113,113,0.32);}
 .btn-reset:active{opacity:.75;}
-
 .lav-total-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -630,7 +600,6 @@ html,body{
 }
 /* Modifier para margem menor (limpeza section) */
 .lav-total-grid--sm{margin-bottom:1rem !important;}
-
 .lav-total-card{
   background:var(--bg-1);
   border:1px solid var(--b1);
@@ -661,7 +630,6 @@ html,body{
 }
 /* Usa a cor sage para valores financeiros positivos */
 .lav-green{color:var(--sage) !important;}
-
 .lav-apt-card{
   background:var(--bg-1);
   border:1px solid var(--b0);
@@ -696,7 +664,6 @@ html,body{
   margin-top:3px;
 }
 .lav-apt-right{flex:1;}
-
 /* Layout interno do card de lavanderia (substitui inline style) */
 .lav-apt-info{
   display:flex;
@@ -733,7 +700,6 @@ html,body{
   color:var(--t2);
   border:1px solid var(--b1);
 }
-
 .lav-empty{
   text-align:center;
   padding:4.5rem 1rem;
@@ -742,7 +708,6 @@ html,body{
   line-height:1.8;
 }
 .lav-empty-icon{font-size:38px;margin-bottom:1rem;display:block;}
-
 /* ══════════════════════════════════════════════════════════════
    LIMPEZA PRÓPRIA
    ══════════════════════════════════════════════════════════════ */
@@ -809,7 +774,6 @@ html,body{
   color:var(--sage);
   white-space:nowrap;
 }
-
 /* ══════════════════════════════════════════════════════════════
    TOAST — slide-up + fade
    ══════════════════════════════════════════════════════════════ */
@@ -823,7 +787,6 @@ html,body{
 .est-summary-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
 .est-summary-val.warn{color:var(--red);}
 .est-summary-val.ok{color:var(--green);}
-
 .val-red{color:var(--red)!important;}
 .fechar-btn{
   width:100%;
@@ -851,7 +814,6 @@ html,body{
   font-weight:500;
 }
 .enxoval-section.enxoval-warn{border-color:var(--red-bdr);background:linear-gradient(180deg,var(--red-dim) 0%,var(--bg-1) 100%);}
-
 .estoque-warn{
   margin-top:0.85rem;
   padding:0.65rem 0.85rem;
@@ -863,7 +825,6 @@ html,body{
   color:var(--red);
   line-height:1.4;
 }
-
 .est-row{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;}
 .est-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .est-row-name{font-size:14px;color:var(--txt);font-weight:500;}
@@ -897,7 +858,26 @@ html,body{
   opacity:1;
   transform:translateX(-50%) translateY(0);
 }
-
+/* ── Indicador de conexão (tempo real) ── */
+.sync-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  font-weight:600;
+  padding:4px 10px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--b1);
+  background:var(--bg-1);
+  color:var(--t3);
+  white-space:nowrap;
+}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0;}
+.sync-pill.online{color:var(--green);border-color:var(--green-bdr);background:var(--green-dim);}
+.sync-pill.online .sync-dot{background:var(--green);box-shadow:0 0 7px rgba(45,212,160,0.55);}
+.sync-pill.offline{color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);}
+.sync-pill.offline .sync-dot{background:var(--red);}
+.sync-bar{display:flex;justify-content:flex-end;padding:0 1.25rem;margin-top:-0.5rem;margin-bottom:0.75rem;}
 /* ══════════════════════════════════════════════════════════════
    DIALOG — blur overlay
    ══════════════════════════════════════════════════════════════ */
@@ -965,7 +945,6 @@ html,body{
   transition:all .2s;
 }
 .btn-confirm:hover{background:rgba(248,113,113,0.18);}
-
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVO
    ══════════════════════════════════════════════════════════════ */
@@ -984,7 +963,6 @@ html,body{
   color:var(--t1);
 }
 .date-banner-icon{font-size:15px;}
-
 .summary-grid{grid-template-columns:repeat(2,1fr);}
   .enxoval-grid{grid-template-columns:repeat(3,1fr);}
   .enxoval-item:last-child:nth-child(4n+1){grid-column:unset;}
@@ -1001,6 +979,9 @@ html,body{
     <div class="tab" onclick="switchTab('lavanderia',this)">Lavanderia</div>
     <div class="tab" onclick="switchTab('estoque',this)">Estoque</div>
   </div>
+  <div class="sync-bar">
+    <span class="sync-pill" id="sync-pill"><span class="sync-dot"></span><span id="sync-text">Conectando…</span></span>
+  </div>
   <!-- TAB: LISTA -->
   <div id="tab-lista" class="tab-content active">
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
@@ -1015,7 +996,6 @@ html,body{
   <div id="tab-lavanderia" class="tab-content">
     <div id="lav-content"></div>
   </div>
-
   <!-- TAB: ESTOQUE -->
   <div id="tab-estoque" class="tab-content">
     <div id="est-content"></div>
@@ -1037,6 +1017,101 @@ html,body{
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+/* ════════════════════════════════════════════════════════════════
+   SUPABASE — banco de dados compartilhado (tempo real)
+   👉 Cole abaixo os 2 valores do SEU projeto Supabase.
+      Veja o passo a passo em GUIA-SUPABASE.md
+   ════════════════════════════════════════════════════════════════ */
+const SUPABASE_URL      = 'https://bmhnvnlbcgegsgplkuea.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtaG52bmxiY2dlZ3NncGxrdWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3ODcyMDcsImV4cCI6MjA5NzM2MzIwN30.cyaCBafC3DtAJN5r8Fc-jEX44_3WM8on-2QfCrgmra0';
+
+let sb = null;                                         // cliente Supabase
+const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[] };
+let _ready = false;                                    // conectado ao banco?
+
+function configurado(){
+  return /^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL) && SUPABASE_ANON_KEY.length > 30;
+}
+function setSync(state){
+  const pill=document.getElementById('sync-pill');
+  const txt=document.getElementById('sync-text');
+  if(!pill)return;
+  pill.classList.remove('online','offline');
+  if(state==='online'){pill.classList.add('online');txt.textContent='Sincronizado';}
+  else if(state==='offline'){pill.classList.add('offline');txt.textContent='Sem conexão';}
+  else{txt.textContent='Conectando…';}
+}
+async function initApp(){
+  setSync('connecting');
+  if(!configurado()){
+    setSync('offline');
+    avisoConfig();
+    return;
+  }
+  try{
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    await recarregarTudo();
+    assinarTempoReal();
+    _ready = true;
+    setSync('online');
+    rerenderCompartilhado();
+  }catch(e){
+    setSync('offline');
+    avisoConfig('Não consegui conectar ao banco. Verifique a URL/chave e a internet. ('+(e&&e.message||e)+')');
+  }
+}
+function avisoConfig(msg){
+  const aviso = msg || 'Configure o Supabase para começar — abra o arquivo GUIA-SUPABASE.md e siga os passos. Enquanto isso, o app fica sem conexão com o banco.';
+  ['lav-content','est-content'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=`<div class="empty-state">⚙️ ${esc(aviso)}</div>`;
+  });
+}
+async function recarregarTudo(){
+  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas()]);
+}
+async function carregarEstoque(){
+  const {data,error}=await sb.from('estoque').select('*');
+  if(error)throw error;
+  cache.estoque={}; (data||[]).forEach(r=>cache.estoque[r.item]=r.quantidade);
+}
+async function carregarDias(){
+  const {data,error}=await sb.from('dias_fechados').select('*');
+  if(error)throw error;
+  cache.dias={}; (data||[]).forEach(r=>cache.dias[r.dia]=r);
+}
+async function carregarTrocas(){
+  const {data,error}=await sb.from('trocas').select('*');
+  if(error)throw error;
+  cache.trocas=data||[];
+}
+async function carregarLimpezas(){
+  const {data,error}=await sb.from('limpezas').select('*');
+  if(error)throw error;
+  cache.limpezas=data||[];
+}
+function assinarTempoReal(){
+  sb.channel('lavanderia-rt')
+    .on('postgres_changes',{event:'*',schema:'public',table:'estoque'},       async()=>{try{await carregarEstoque();}catch(e){} rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'dias_fechados'}, async()=>{try{await carregarDias();}catch(e){}    rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        async()=>{try{await carregarTrocas();}catch(e){}  rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      async()=>{try{await carregarLimpezas();}catch(e){}rerenderCompartilhado();})
+    .subscribe();
+}
+function abaAtiva(){
+  if(document.getElementById('tab-lavanderia').classList.contains('active'))return 'lavanderia';
+  if(document.getElementById('tab-estoque').classList.contains('active'))return 'estoque';
+  return 'lista';
+}
+function rerenderCompartilhado(){
+  const aba=abaAtiva();
+  if(aba==='estoque') renderEstoque();
+  else if(aba==='lavanderia') renderLavanderia();
+  else if(aba==='lista' && _pdfDate) refreshEstoquePreview();
+}
+function estoqueQty(k){ return cache.estoque[k]||0; }
+function diaFechado(dia){ return !!cache.dias[dia]; }
+
 // ── ROOMS ────────────────────────────────────────────────────────────────────
 const ROOMS={
   "Comf":{order:1,apts:{"109":"2s","202":"cs","207":"cs","811":"c","1014":"cs","1102":"c","1111":"c","1301":"cs"}},
@@ -1051,13 +1126,11 @@ const ROOMS={
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
-
 const PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
   limpezaComf:  25,
 };
-
 function esc(str){
   return String(str)
     .replace(/&/g,'&amp;')
@@ -1066,7 +1139,6 @@ function esc(str){
     .replace(/"/g,'&quot;');
 }
 function isKing(hotel,apt){return KING_APTS.has(hotel+'||'+apt);}
-
 // ── LINEN CALC ───────────────────────────────────────────────────────────────
 function calcLinen(config,guests,king=false){
   let g=guests;
@@ -1089,7 +1161,6 @@ function linenChips(lin){
   if(lin.tp)p.push(lin.tp+'× tapete');
   return p;
 }
-
 // ── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1099,52 +1170,7 @@ function switchTab(name,el){
   if(name==='lavanderia') renderLavanderia();
   if(name==='estoque') renderEstoque();
 }
-
-// ── LAVANDERIA STORAGE ────────────────────────────────────────────────────────
-function purgeOldMonths(data,keepMonths=12){
-  const keys=Object.keys(data).sort();
-  while(keys.length>keepMonths)delete data[keys.shift()];
-  return data;
-}
-function getLavData(){
-  try{return JSON.parse(localStorage.getItem('lav_data')||'{}');}catch{return {};}
-}
-function saveLavData(data){
-  try{localStorage.setItem('lav_data',JSON.stringify(purgeOldMonths(data)));}
-  catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
-}
-function getLimpezaData(){
-  try{return JSON.parse(localStorage.getItem('limp_data')||'{}');}catch{return {};}
-}
-function saveLimpezaData(data){
-  try{localStorage.setItem('limp_data',JSON.stringify(purgeOldMonths(data)));}
-  catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
-}
-
-function registerLimpeza(depMap,dateKey){
-  const dayKey=dateKey||todayKey();
-  const month=dayKey.substring(0,7);
-  const [y,m,d]=dayKey.split('-').map(Number);
-  const dow=new Date(y,m-1,d).getDay();
-  const DIAS_LIMPEZA=[0,2,4,6];
-  if(!DIAS_LIMPEZA.includes(dow))return 0;
-  const data=getLimpezaData();
-  if(!data[month])data[month]={};
-  let newCount=0;
-  Object.keys(depMap).forEach(k=>{
-    if(!depMap[k]||depMap[k].length===0)return;
-    const[hotel]=k.split('||');
-    if(hotel!=='Comf')return;
-    if(!data[month][k])data[month][k]={count:0,days:[]};
-    if(data[month][k].days.includes(dayKey))return;
-    data[month][k].count+=1;
-    data[month][k].days.push(dayKey);
-    newCount++;
-  });
-  saveLimpezaData(data);
-  return newCount;
-}
-
+// ── DATAS ────────────────────────────────────────────────────────────────────
 function currentMonthKey(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
@@ -1153,34 +1179,70 @@ function todayKey(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-function registerCheckouts(depMap,dateKey){
-  const dayKey=dateKey||todayKey();
-  const month=dayKey.substring(0,7);
-  const data=getLavData();
-  if(!data[month])data[month]={};
-  let newCount=0;
+// Agrupa linhas {hotel,apt,dia} por apartamento dentro de um mês 'YYYY-MM'
+function aggPorApto(rows, month){
+  const out={};
+  (rows||[]).forEach(r=>{
+    const dia=String(r.dia);
+    if(!dia.startsWith(month))return;
+    const k=r.hotel+'||'+r.apt;
+    if(!out[k]) out[k]={count:0,days:[]};
+    out[k].count++; out[k].days.push(dia);
+  });
+  Object.values(out).forEach(o=>o.days.sort());
+  return out;
+}
+// ── REGISTRO NO BANCO ──────────────────────────────────────────────────────────
+async function registrarTrocas(depMap, dia){
+  const rows=[];
   Object.keys(depMap).forEach(k=>{
     if(!depMap[k]||depMap[k].length===0)return;
-    if(!data[month][k])data[month][k]={count:0,days:[]};
-    if(data[month][k].days.includes(dayKey))return;
-    data[month][k].count+=1;
-    data[month][k].days.push(dayKey);
-    newCount++;
+    const i=k.indexOf('||');
+    rows.push({hotel:k.substring(0,i),apt:k.substring(i+2),dia});
   });
-  saveLavData(data);
-  return newCount;
+  if(rows.length===0)return 0;
+  const {data,error}=await sb.from('trocas')
+    .upsert(rows,{onConflict:'hotel,apt,dia',ignoreDuplicates:true})
+    .select();
+  if(error){showToast('Erro ao salvar trocas');return 0;}
+  await carregarTrocas();
+  return (data||[]).length;
 }
-
+async function registrarLimpezas(depMap, dia){
+  const [y,m,d]=dia.split('-').map(Number);
+  const dow=new Date(y,m-1,d).getDay();
+  const DIAS_LIMPEZA=[0,2,4,6];
+  if(!DIAS_LIMPEZA.includes(dow))return 0;
+  const rows=[];
+  Object.keys(depMap).forEach(k=>{
+    if(!depMap[k]||depMap[k].length===0)return;
+    const i=k.indexOf('||');
+    const hotel=k.substring(0,i);
+    if(hotel!=='Comf')return;
+    rows.push({hotel,apt:k.substring(i+2),dia});
+  });
+  if(rows.length===0)return 0;
+  const {data,error}=await sb.from('limpezas')
+    .upsert(rows,{onConflict:'hotel,apt,dia',ignoreDuplicates:true})
+    .select();
+  if(error)return 0;
+  await carregarLimpezas();
+  return (data||[]).length;
+}
+// ── RENDER LAVANDERIA ───────────────────────────────────────────────────────────
 function renderLavanderia(){
+  if(!configurado()){
+    document.getElementById('lav-content').innerHTML=`<div class="empty-state">⚙️ Configure o Supabase para usar o app (veja o GUIA-SUPABASE.md).</div>`;
+    return;
+  }
   const month=currentMonthKey();
-  const data=getLavData();
-  const monthData=data[month]||{};
+  const monthData=aggPorApto(cache.trocas, month);
   const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const[y,m]=month.split('-');
   const monthLabel=monthNames[parseInt(m)-1]+' '+y;
   const entries=Object.keys(monthData)
     .filter(k=>monthData[k].count>0)
-    .map(k=>{const[hotel,apt]=k.split('||');return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};})
+    .map(k=>{const i=k.indexOf('||');const hotel=k.substring(0,i),apt=k.substring(i+2);return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};})
     .sort((a,b)=>{
       const oa=ROOMS[a.hotel]?.order??99,ob=ROOMS[b.hotel]?.order??99;
       if(oa!==ob)return oa-ob;
@@ -1230,11 +1292,10 @@ function renderLavanderia(){
     });
   }
   // ── LIMPEZA PRÓPRIA COMF ──
-  const limpData=getLimpezaData();
-  const limpMonthData=limpData[month]||{};
+  const limpMonthData=aggPorApto(cache.limpezas, month);
   const limpEntries=Object.keys(limpMonthData)
     .filter(k=>limpMonthData[k].count>0)
-    .map(k=>{const[hotel,apt]=k.split('||');return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};})
+    .map(k=>{const i=k.indexOf('||');const hotel=k.substring(0,i),apt=k.substring(i+2);return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};})
     .sort((a,b)=>parseInt(a.apt)-parseInt(b.apt));
   const totalLimpezas=limpEntries.reduce((s,e)=>s+e.count,0);
   if(limpEntries.length>0){
@@ -1256,10 +1317,7 @@ function renderLavanderia(){
   }
   document.getElementById('lav-content').innerHTML=html;
 }
-
 // ── ESTOQUE ────────────────────────────────────────────────────────────────────
-// Structure: { lc:N, lk:N, ls:N, f:N, t:N, tr:N, tp:N }
-// Also tracks days already deducted: { last_deducted: ["YYYY-MM-DD",...] }
 const ESTOQUE_ITEMS=[
   {key:'lc',name:'Lençol casal'},
   {key:'lk',name:'Lençol king'},
@@ -1269,47 +1327,22 @@ const ESTOQUE_ITEMS=[
   {key:'tr',name:'Toalha rosto'},
   {key:'tp',name:'Tapete'},
 ];
-
-function getEstoque(){
-  try{const d=JSON.parse(localStorage.getItem('estoque')||'{}');
-    ESTOQUE_ITEMS.forEach(i=>{if(typeof d[i.key]!=='number')d[i.key]=0;});
-    if(!Array.isArray(d.last_deducted))d.last_deducted=[];
-    return d;
-  }catch{return{lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0,last_deducted:[]};}
-}
-function saveEstoque(d){localStorage.setItem('estoque',JSON.stringify(d));}
-
-function adjustEstoque(key,delta){
-  const d=getEstoque();
-  d[key]=Math.max(0,(d[key]||0)+delta);
-  saveEstoque(d);
+// Soma/subtrai uma peça — atualização otimista + confirmação no banco
+async function adjustEstoque(key,delta){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  cache.estoque[key]=Math.max(0,(cache.estoque[key]||0)+delta);
+  renderEstoque();
+  const {data,error}=await sb.rpc('adjust_estoque',{p_item:key,p_delta:delta});
+  if(error){showToast('Erro ao salvar');try{await carregarEstoque();}catch(e){} renderEstoque();return;}
+  cache.estoque[key]=data;
   renderEstoque();
 }
-
-// Deduct linen used today from estoque. Only deducts once per date.
-function deductFromEstoque(dateKey){
-  const d=getEstoque();
-  if(d.last_deducted.includes(dateKey))return false;
-  const lin=calcTotals();
-  d.lc=Math.max(0,d.lc-lin.lc);
-  d.lk=Math.max(0,d.lk-lin.lk);
-  d.ls=Math.max(0,d.ls-lin.ls);
-  d.f=Math.max(0,d.f-lin.f);
-  d.t=Math.max(0,d.t-lin.t);
-  d.tr=Math.max(0,d.tr-lin.tr);
-  d.tp=Math.max(0,d.tp-lin.tp);
-  d.last_deducted.push(dateKey);
-  saveEstoque(d);
-  return true;
-}
-
 function renderEstoque(){
-  const d=getEstoque();
-  const total=ESTOQUE_ITEMS.reduce((s,i)=>s+(d[i.key]||0),0);
-  // count items at zero or low
-  const zerados=ESTOQUE_ITEMS.filter(i=>(d[i.key]||0)===0).length;
-  const okItens=ESTOQUE_ITEMS.length-zerados;
-
+  if(!configurado()){
+    document.getElementById('est-content').innerHTML=`<div class="empty-state">⚙️ Configure o Supabase para usar o app (veja o GUIA-SUPABASE.md).</div>`;
+    return;
+  }
+  const d=cache.estoque;
   let html=`
   <div class="est-header">
     <div>
@@ -1329,7 +1362,6 @@ function renderEstoque(){
       <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
   </div>`;
-
   ESTOQUE_ITEMS.forEach(i=>{
     const qty=d[i.key]||0;
     html+=`<div class="est-row">
@@ -1347,37 +1379,35 @@ function renderEstoque(){
   });
   document.getElementById('est-content').innerHTML=html;
 }
-
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){document.getElementById('overlay').classList.add('show');}
 function closeDialog(){document.getElementById('overlay').classList.remove('show');}
-function confirmReset(){
+async function confirmReset(){
+  if(!_ready){closeDialog();showToast('Sem conexão com o banco');return;}
   const month=currentMonthKey();
-  const lav=getLavData();
-  delete lav[month];
-  saveLavData(lav);
-  const limp=getLimpezaData();
-  delete limp[month];
-  saveLimpezaData(limp);
+  const ini=month+'-01';
+  const[y,m]=month.split('-').map(Number);
+  const prox=(m===12)?((y+1)+'-01-01'):(y+'-'+String(m+1).padStart(2,'0')+'-01');
+  const e1=await sb.from('trocas').delete().gte('dia',ini).lt('dia',prox);
+  const e2=await sb.from('limpezas').delete().gte('dia',ini).lt('dia',prox);
   closeDialog();
+  if(e1.error||e2.error){showToast('Erro ao zerar o mês');return;}
+  try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
   renderLavanderia();
   showToast('Mês zerado com sucesso');
 }
-
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
 }
-
 // ── FILE HANDLING ─────────────────────────────────────────────────────────────
 const dz=document.getElementById('drop-zone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleFile(e.dataTransfer.files[0]);});
 document.getElementById('file-input').addEventListener('change',e=>handleFile(e.target.files[0]));
-
 async function handleFile(file){
   if(!file)return;
   document.getElementById('drop-label').textContent='Carregando...';
@@ -1397,13 +1427,12 @@ async function handleFile(file){
       .sort((a,b)=>{const[pa,ya]=a.split('_').map(Number);const[pb,yb]=b.split('_').map(Number);return pa!==pb?pa-pb:yb-ya;})
       .map(k=>map[k].sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim())
       .filter(l=>l.length>0);
-    parseAndRender(lines,file.name);
+    await parseAndRender(lines,file.name);
   }catch(err){
     document.getElementById('drop-label').textContent='Erro ao ler PDF';
     document.getElementById('drop-sub').textContent=err.message;
   }
 }
-
 // ── HOTEL DETECTOR ────────────────────────────────────────────────────────────
 const HOTEL_TESTS=[
   {r:/go\s*inn?/i,h:'Go Inn'},{r:/comf\s*t\b|comft\b/i,h:'Comft'},{r:/\bcomf\b/i,h:'Comf'},
@@ -1411,7 +1440,6 @@ const HOTEL_TESTS=[
   {r:/\bsaint\b/i,h:'Saint'},{r:/\bramada\b/i,h:'Ramada'},{r:/\btryp\b/i,h:'Tryp'},
 ];
 const HOTEL_CLEAN_RE=new RegExp(HOTEL_TESTS.map(t=>t.r.source).join('|'),'gi');
-
 function aptKey(raw){return raw.replace(/^0+/,'').replace(/-\d+$/,'');}
 function findMatch(line){
   for(const t of HOTEL_TESTS){
@@ -1441,10 +1469,8 @@ function extractGuests(line){
   m=stripped.match(/\b([1-9])\b/);
   return m?parseInt(m[1]):1;
 }
-
 // ── PARSE ─────────────────────────────────────────────────────────────────────
 let _arr={},_dep={},_filt='all',_srch='',_detalhes=[];
-
 function formatPdfDate(key){
   if(!key)return '';
   const[y,m,d]=key.split('-').map(Number);
@@ -1454,7 +1480,7 @@ function formatPdfDate(key){
   return `${dias[dow]}, ${d} de ${meses[m-1]} de ${y}`;
 }
 let _pdfDate=null;
-function parseAndRender(lines,filename){
+async function parseAndRender(lines,filename){
   _arr={};_dep={};let sec=null;
   lines.forEach(line=>{
     if(/chegadas/i.test(line)){sec='in';return;}
@@ -1476,16 +1502,19 @@ function parseAndRender(lines,filename){
     }
   }
   _pdfDate=pdfDateKey;
-  const newCount=registerCheckouts(_dep,pdfDateKey);
-  registerLimpeza(_dep,pdfDateKey);
-  if(newCount>0)showToast(newCount+' troca'+(newCount>1?'s':'')+' registrada'+(newCount>1?'s':'')+' na lavanderia');
-  else showToast('Dia já registrado na lavanderia');
+  if(_ready){
+    const novas=await registrarTrocas(_dep,pdfDateKey);
+    await registrarLimpezas(_dep,pdfDateKey);
+    if(novas>0)showToast(novas+' troca'+(novas>1?'s':'')+' registrada'+(novas>1?'s':'')+' na lavanderia');
+    else showToast('Dia já registrado na lavanderia');
+  }else{
+    showToast('Sem conexão com o banco — configure o Supabase');
+  }
   dz.classList.add('loaded');
   document.getElementById('drop-label').textContent=filename;
   document.getElementById('drop-sub').textContent='Clique para trocar o arquivo';
   renderUI();
 }
-
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
 function calcTotals(){
   const tot={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
@@ -1510,40 +1539,40 @@ function calcTotals(){
   });
   return{tot,detalhes};
 }
-
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
-function fecharDia(){
+async function fecharDia(){
   if(!_pdfDate){showToast('Carregue um PDF primeiro');return;}
-  // Confirm before deducting
-  const lin=calcTotals();
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const {tot:lin}=calcTotals();
   const totalUsar=lin.lc+lin.lk+lin.ls+lin.f+lin.t+lin.tr+lin.tp;
   if(totalUsar===0){showToast('Nenhum item para descontar');return;}
   if(!confirm(`Fechar o dia ${_pdfDate.split('-').reverse().join('/')}?\n\nVai descontar ${totalUsar} peças do estoque.`))return;
-  const ok=deductFromEstoque(_pdfDate);
-  if(ok){
-    showToast('✓ Dia fechado · estoque atualizado');
-    renderUI();
-  }else{
-    showToast('Este dia já foi fechado');
-  }
+  const {data,error}=await sb.rpc('fechar_dia',{
+    p_dia:_pdfDate,p_lc:lin.lc,p_lk:lin.lk,p_ls:lin.ls,p_f:lin.f,p_t:lin.t,p_tr:lin.tr,p_tp:lin.tp
+  });
+  if(error){showToast('Erro ao fechar o dia');return;}
+  try{await Promise.all([carregarEstoque(),carregarDias()]);}catch(e){}
+  if(data===true)showToast('✓ Dia fechado · estoque atualizado');
+  else showToast('Este dia já estava fechado');
+  refreshEstoquePreview();
 }
-
-function reabrirDia(){
-  if(!_pdfDate)return;
-  const d=getEstoque();
-  if(!d.last_deducted.includes(_pdfDate))return;
-  // Restore stock: add back what was deducted
-  const lin=calcTotals();
-  d.lc+=lin.lc;d.lk+=lin.lk;d.ls+=lin.ls;d.f+=lin.f;d.t+=lin.t;d.tr+=lin.tr;d.tp+=lin.tp;
-  d.last_deducted=d.last_deducted.filter(x=>x!==_pdfDate);
-  saveEstoque(d);
-  showToast('Dia reaberto · estoque restaurado');
-  renderUI();
+async function reabrirDia(){
+  if(!_pdfDate||!_ready)return;
+  const {data,error}=await sb.rpc('reabrir_dia',{p_dia:_pdfDate});
+  if(error){showToast('Erro ao reabrir');return;}
+  try{await Promise.all([carregarEstoque(),carregarDias()]);}catch(e){}
+  if(data===true)showToast('Dia reaberto · estoque restaurado');
+  refreshEstoquePreview();
 }
-
+function refreshEstoquePreview(){
+  const root=document.getElementById('estoque-preview-root');
+  if(!root)return;
+  const {tot:lin}=calcTotals();
+  root.innerHTML=renderEstoquePreview(lin);
+}
 function renderEstoquePreview(lin){
-  const d=getEstoque();
-  // Compute what's missing (falta) for each item: how many more we need to close the day
+  const d=cache.estoque;
+  // Quanto falta de cada peça para conseguir fechar o dia
   const falta={};
   ESTOQUE_ITEMS.forEach(i=>{
     const tem=d[i.key]||0;
@@ -1551,7 +1580,7 @@ function renderEstoquePreview(lin){
     falta[i.key]=Math.max(0,usar-tem);
   });
   const algumFalta=ESTOQUE_ITEMS.some(i=>falta[i.key]>0);
-
+  const fechado=_pdfDate&&diaFechado(_pdfDate);
   return `
   <div class="enxoval-section">
     <div class="enxoval-title">📦 Estoque atual</div>
@@ -1576,18 +1605,11 @@ function renderEstoquePreview(lin){
       <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
       <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
-    ${(()=>{
-      const d=getEstoque();
-      const fechado=_pdfDate&&d.last_deducted.includes(_pdfDate);
-      if(fechado){
-        return `<button class="fechar-btn fechado" onclick="reabrirDia()">✓ Dia fechado &middot; toque para reabrir</button>`;
-      }else{
-        return `<button class="fechar-btn" onclick="fecharDia()">✓ Fechar o dia &middot; descontar do estoque</button>`;
-      }
-    })()}
+    ${fechado
+      ? `<button class="fechar-btn fechado" onclick="reabrirDia()">✓ Dia fechado &middot; toque para reabrir</button>`
+      : `<button class="fechar-btn" onclick="fecharDia()">✓ Fechar o dia &middot; descontar do estoque</button>`}
   </div>`;
 }
-
 function toggleDetalhamento(btn){
   btn.classList.toggle('active');
   const section=document.getElementById('detalhamento-section');
@@ -1608,7 +1630,6 @@ function toggleDetalhamento(btn){
     section.style.display='none';
   }
 }
-
 function renderUI(){
   let tIn=0,tOut=0,tBoth=0;
   Object.keys(ROOMS).forEach(h=>Object.keys(ROOMS[h].apts).forEach(a=>{
@@ -1638,7 +1659,7 @@ function renderUI(){
       <div class="enxoval-item"><div class="enxoval-val">${lin.tp}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
   </div>
-  ${renderEstoquePreview(lin)}
+  <div id="estoque-preview-root">${renderEstoquePreview(lin)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">
@@ -1653,10 +1674,8 @@ function renderUI(){
   document.getElementById('results').style.display='block';
   renderCards();
 }
-
 function onSearch(v){_srch=v.toLowerCase();renderCards();}
 function setFilter(f,btn){_filt=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderCards();}
-
 function renderCards(){
   const root=document.getElementById('cards-root');if(!root)return;
   let html='',any=false;
@@ -1686,6 +1705,9 @@ function renderCards(){
   });
   root.innerHTML=any?html:`<div class="empty-state">Nenhum resultado encontrado.</div>`;
 }
+// ── INICIALIZAÇÃO ───────────────────────────────────────────────────────────────
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initApp);
+else initApp();
 </script>
 </body>
 </html>

@@ -548,6 +548,26 @@ html,body{
   white-space:nowrap;
   letter-spacing:0.01em;
 }
+/* ── Tirar/incluir do enxoval (extensão de reserva) ── */
+.enx-excluded{
+  margin-top:9px;padding-top:9px;
+  border-top:1px solid var(--b0);
+  font-size:11px;font-weight:600;color:var(--violet);
+}
+.enx-toggle{
+  display:inline-block;
+  margin-top:9px;
+  font-size:11px;font-family:var(--font);font-weight:600;
+  padding:6px 13px;border-radius:var(--r-pill);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:all .15s;
+}
+.enx-toggle.in{background:transparent;color:var(--t3);border:1px solid var(--b1);}
+.enx-toggle.in:hover{color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);}
+.enx-toggle.out{background:var(--green-dim);color:var(--green);border:1px solid var(--green-bdr);}
+.enx-toggle.out:hover{background:rgba(45,212,160,0.17);}
+.apt-card.apt-foraenx{opacity:.72;}
+.apt-card.apt-foraenx:hover{opacity:1;}
 #results{display:none;}
 .empty-state{
   text-align:center;
@@ -565,6 +585,22 @@ html,body{
   justify-content:space-between;
   margin-bottom:1.75rem;
 }
+.lav-nav{display:flex;align-items:center;gap:10px;}
+.lav-nav-btn{
+  width:32px;height:32px;flex-shrink:0;
+  border-radius:var(--r-pill);
+  border:1px solid var(--b1);
+  background:var(--bg-1);
+  color:var(--t1);
+  font-size:18px;line-height:1;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.lav-nav-btn:hover{background:var(--bg-2);border-color:var(--b2);}
+.lav-nav-btn:active{opacity:.7;}
+.lav-nav-btn:disabled{opacity:.25;cursor:default;}
 .lav-month{
   font-size:17px;
   font-weight:700;
@@ -1006,8 +1042,8 @@ html,body{
 <!-- Confirm dialog -->
 <div class="overlay" id="overlay">
   <div class="dialog">
-    <div class="dialog-title">Zerar mês?</div>
-    <div class="dialog-sub">Todo o histórico de trocas e limpezas do mês será apagado. Essa ação não pode ser desfeita.</div>
+    <div class="dialog-title" id="dialog-title">Zerar mês?</div>
+    <div class="dialog-sub" id="dialog-sub">Todo o histórico de trocas e limpezas do mês será apagado. Essa ação não pode ser desfeita.</div>
     <div class="dialog-btns">
       <button class="btn-cancel" onclick="closeDialog()">Cancelar</button>
       <button class="btn-confirm" onclick="confirmReset()">Zerar</button>
@@ -1026,7 +1062,7 @@ const SUPABASE_URL      = 'https://bmhnvnlbcgegsgplkuea.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtaG52bmxiY2dlZ3NncGxrdWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3ODcyMDcsImV4cCI6MjA5NzM2MzIwN30.cyaCBafC3DtAJN5r8Fc-jEX44_3WM8on-2QfCrgmra0';
 
 let sb = null;                                         // cliente Supabase
-const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[], lista:null };
+const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[], lista:null, overrides:{} };
 let _ready = false;                                    // conectado ao banco?
 
 function configurado(){
@@ -1069,7 +1105,7 @@ function avisoConfig(msg){
   });
 }
 async function recarregarTudo(){
-  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas(), carregarListaAtual()]);
+  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
 }
 async function carregarEstoque(){
   const {data,error}=await sb.from('estoque').select('*');
@@ -1092,9 +1128,18 @@ async function carregarLimpezas(){
   cache.limpezas=data||[];
 }
 async function carregarListaAtual(){
-  const {data,error}=await sb.from('lista_atual').select('*').eq('id',1).maybeSingle();
-  if(error)throw error;
-  cache.lista=data||null;
+  try{
+    const {data,error}=await sb.from('lista_atual').select('*').eq('id',1).maybeSingle();
+    if(error)throw error;
+    cache.lista=data||null;
+  }catch(e){ cache.lista=null; }   // tabela opcional pode ainda não existir
+}
+async function carregarOverrides(){
+  try{
+    const {data,error}=await sb.from('override_enxoval').select('*');
+    if(error)throw error;
+    cache.overrides={}; (data||[]).forEach(r=>{cache.overrides[r.hotel+'||'+r.apt+'||'+String(r.dia)]=r.conta;});
+  }catch(e){ cache.overrides={}; }   // tabela opcional pode ainda não existir
 }
 // Salva a lista do dia no banco para que todos vejam o mesmo PDF (e sobreviva ao F5)
 async function salvarListaAtual(filename){
@@ -1127,6 +1172,7 @@ function assinarTempoReal(){
     .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        async()=>{try{await carregarTrocas();}catch(e){}  rerenderCompartilhado();})
     .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      async()=>{try{await carregarLimpezas();}catch(e){}rerenderCompartilhado();})
     .on('postgres_changes',{event:'*',schema:'public',table:'lista_atual'},   async()=>{try{await carregarListaAtual();}catch(e){} aplicarListaAtual();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'override_enxoval'},async()=>{try{await carregarOverrides();}catch(e){} rerenderCompartilhado();})
     .subscribe();
 }
 function abaAtiva(){
@@ -1138,7 +1184,7 @@ function rerenderCompartilhado(){
   const aba=abaAtiva();
   if(aba==='estoque') renderEstoque();
   else if(aba==='lavanderia') renderLavanderia();
-  else if(aba==='lista' && _pdfDate) refreshEstoquePreview();
+  else if(aba==='lista' && _pdfDate) atualizarListaDoDia();
 }
 function estoqueQty(k){ return cache.estoque[k]||0; }
 function diaFechado(dia){ return !!cache.dias[dia]; }
@@ -1198,8 +1244,9 @@ function switchTab(name,el){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='lavanderia') renderLavanderia();
+  if(name==='lavanderia'){ _lavMonth=currentMonthKey(); renderLavanderia(); }
   if(name==='estoque') renderEstoque();
+  if(name==='lista' && _pdfDate) atualizarListaDoDia();
 }
 // ── DATAS ────────────────────────────────────────────────────────────────────
 function currentMonthKey(){
@@ -1224,10 +1271,42 @@ function aggPorApto(rows, month){
   return out;
 }
 // ── REGISTRO NO BANCO ──────────────────────────────────────────────────────────
-async function registrarTrocas(depMap, dia){
+// Normaliza nome para comparar hóspedes (sem acento, minúsculo)
+function normNome(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
+function mesmoHospede(a,b){
+  const na=normNome(a), nb=normNome(b);
+  if(!na||!nb)return false;
+  if(na===nb)return true;
+  const ta=na.split(' ').filter(x=>x.length>1), tb=nb.split(' ').filter(x=>x.length>1);
+  if(ta.length<2||tb.length<2)return false;
+  if(ta[0]===tb[0] && ta[ta.length-1]===tb[tb.length-1])return true;     // mesmo 1º e último nome
+  const setMaior=new Set(ta.length>=tb.length?ta:tb);
+  const menor=ta.length<tb.length?ta:tb;
+  return menor.every(t=>setMaior.has(t));                                // um nome contém todos os tokens do outro
+}
+// É extensão? mesmo hóspede saindo e entrando no MESMO apto
+function ehExtensao(k){
+  const arr=_arr[k]||[], dep=_dep[k]||[];
+  if(arr.length===0||dep.length===0)return false;
+  return dep.some(d=>arr.some(a=>mesmoHospede(d.name,a.name)));
+}
+// Esse apto (com saída) está FORA do enxoval do dia? (extensão automática ou decisão manual)
+function aptoForaDoEnxoval(k){
+  if(!_dep[k]||_dep[k].length===0)return false;
+  const ov=cache.overrides[k+'||'+_pdfDate];
+  const conta=(ov!==undefined)?ov:!ehExtensao(k);
+  return !conta;
+}
+// Registra TODA saída como troca (faturamento R$8,50 por rotatividade).
+// O R$8,50 conta sempre — inclusive em extensão. A extensão só não gera
+// enxoval físico (isso é tratado no cálculo de enxoval, não aqui).
+async function registrarTrocas(dia){
   const rows=[];
-  Object.keys(depMap).forEach(k=>{
-    if(!depMap[k]||depMap[k].length===0)return;
+  Object.keys(_dep).forEach(k=>{
+    if(!_dep[k]||_dep[k].length===0)return;
     const i=k.indexOf('||');
     rows.push({hotel:k.substring(0,i),apt:k.substring(i+2),dia});
   });
@@ -1260,17 +1339,49 @@ async function registrarLimpezas(depMap, dia){
   await carregarLimpezas();
   return (data||[]).length;
 }
+// ── NAVEGAÇÃO POR MÊS (ver meses anteriores) ──────────────────────────────────
+let _lavMonth=null;  // 'YYYY-MM' do mês exibido na aba Lavanderia
+function shiftMonth(month,delta){
+  let[y,m]=month.split('-').map(Number);
+  m+=delta;
+  while(m<1){m+=12;y--;}
+  while(m>12){m-=12;y++;}
+  return y+'-'+String(m).padStart(2,'0');
+}
+function earliestMonth(){
+  let min=null;
+  const scan=rows=>(rows||[]).forEach(r=>{const mo=String(r.dia).substring(0,7);if(!min||mo<min)min=mo;});
+  scan(cache.trocas);scan(cache.limpezas);
+  return min;
+}
+function lavPrevMonth(){
+  const m=_lavMonth||currentMonthKey();
+  _lavMonth=shiftMonth(m,-1);
+  renderLavanderia();
+}
+function lavNextMonth(){
+  const m=_lavMonth||currentMonthKey();
+  const nx=shiftMonth(m,1);
+  if(nx>currentMonthKey())return;   // não navega para o futuro
+  _lavMonth=nx;
+  renderLavanderia();
+}
 // ── RENDER LAVANDERIA ───────────────────────────────────────────────────────────
 function renderLavanderia(){
   if(!configurado()){
     document.getElementById('lav-content').innerHTML=`<div class="empty-state">⚙️ Configure o Supabase para usar o app (veja o GUIA-SUPABASE.md).</div>`;
     return;
   }
-  const month=currentMonthKey();
+  const month=_lavMonth||currentMonthKey();
   const monthData=aggPorApto(cache.trocas, month);
   const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const[y,m]=month.split('-');
   const monthLabel=monthNames[parseInt(m)-1]+' '+y;
+  const curMonth=currentMonthKey();
+  const earliest=earliestMonth();
+  const prevDisabled = !earliest || month<=earliest;
+  const nextDisabled = month>=curMonth;
+  const subLabel = (month===curMonth)?'Mês atual · trocas de enxoval':'Histórico · trocas de enxoval';
   const entries=Object.keys(monthData)
     .filter(k=>monthData[k].count>0)
     .map(k=>{const i=k.indexOf('||');const hotel=k.substring(0,i),apt=k.substring(i+2);return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};})
@@ -1285,9 +1396,13 @@ function renderLavanderia(){
   const fmtBRL=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:2});
   let html=`
   <div class="lav-header">
-    <div>
-      <div class="lav-month">${monthLabel}</div>
-      <div class="lav-sub">Histórico de trocas de enxoval</div>
+    <div class="lav-nav">
+      <button class="lav-nav-btn" onclick="lavPrevMonth()" ${prevDisabled?'disabled':''} title="Mês anterior">‹</button>
+      <div>
+        <div class="lav-month">${monthLabel}</div>
+        <div class="lav-sub">${subLabel}</div>
+      </div>
+      <button class="lav-nav-btn" onclick="lavNextMonth()" ${nextDisabled?'disabled':''} title="Próximo mês">›</button>
     </div>
     <button class="btn-reset" onclick="openDialog()">Zerar mês</button>
   </div>
@@ -1298,7 +1413,7 @@ function renderLavanderia(){
     <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalTrocas*PRECO.trocaEnxoval)}</div><div class="lav-total-lbl">Troca de roupa</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.trocaEnxoval)} por troca</div></div>
   </div>`;
   if(entries.length===0){
-    html+=`<div class="lav-empty"><div class="lav-empty-icon">🧺</div>Nenhuma troca registrada este mês.<br>Carregue um PDF na aba Lista do Dia.</div>`;
+    html+=`<div class="lav-empty"><div class="lav-empty-icon">🧺</div>Nenhuma troca registrada em ${monthLabel}.<br>Carregue um PDF na aba Lista do Dia.</div>`;
   }else{
     const hotels=[...new Set(entries.map(e=>e.hotel))];
     hotels.forEach(hotel=>{
@@ -1338,10 +1453,17 @@ function renderLavanderia(){
       </div>`;
     limpEntries.forEach(e=>{
       const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
-      html+=`<div class="limpeza-apt-row">
-        <span class="limpeza-apt-num">${esc(e.apt)}</span>
-        <span class="limpeza-apt-cfg">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</span>
-        <div class="limpeza-apt-dates">${dayChips}<div class="limpeza-count">${e.count}× limpeza</div></div>
+      html+=`<div class="lav-apt-card">
+        <div class="lav-apt-left">
+          <div class="lav-apt-num">${esc(e.apt)}</div>
+          <div class="lav-apt-hotel">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</div>
+        </div>
+        <div class="lav-apt-right">
+          <div class="lav-apt-info">
+            <div class="lav-history">${dayChips}</div>
+            <div><div class="lav-apt-count lav-green">${e.count}×</div><div class="lav-apt-label">limpezas</div></div>
+          </div>
+        </div>
       </div>`;
     });
     html+=`</div>`;
@@ -1411,11 +1533,19 @@ function renderEstoque(){
   document.getElementById('est-content').innerHTML=html;
 }
 // ── DIALOG ────────────────────────────────────────────────────────────────────
-function openDialog(){document.getElementById('overlay').classList.add('show');}
+function openDialog(){
+  const month=_lavMonth||currentMonthKey();
+  const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const[y,m]=month.split('-');
+  const label=monthNames[parseInt(m)-1]+' '+y;
+  document.getElementById('dialog-title').textContent='Zerar '+label+'?';
+  document.getElementById('dialog-sub').textContent='Todo o histórico de trocas e limpezas de '+label+' será apagado. Essa ação não pode ser desfeita.';
+  document.getElementById('overlay').classList.add('show');
+}
 function closeDialog(){document.getElementById('overlay').classList.remove('show');}
 async function confirmReset(){
   if(!_ready){closeDialog();showToast('Sem conexão com o banco');return;}
-  const month=currentMonthKey();
+  const month=_lavMonth||currentMonthKey();
   const ini=month+'-01';
   const[y,m]=month.split('-').map(Number);
   const prox=(m===12)?((y+1)+'-01-01'):(y+'-'+String(m+1).padStart(2,'0')+'-01');
@@ -1534,7 +1664,7 @@ async function parseAndRender(lines,filename){
   }
   _pdfDate=pdfDateKey;
   if(_ready){
-    const novas=await registrarTrocas(_dep,pdfDateKey);
+    const novas=await registrarTrocas(pdfDateKey);
     await registrarLimpezas(_dep,pdfDateKey);
     if(novas>0)showToast(novas+' troca'+(novas>1?'s':'')+' registrada'+(novas>1?'s':'')+' na lavanderia');
     else showToast('Dia já registrado na lavanderia');
@@ -1556,6 +1686,7 @@ function calcTotals(){
       const k=hotel+'||'+apt,config=ROOMS[hotel].apts[apt];
       const hasIn=(_arr[k]?.length>0),hasOut=(_dep[k]?.length>0);
       if(!hasOut)return;
+      if(aptoForaDoEnxoval(k))return;        // extensão ou retirado manualmente → não conta enxoval
       const guests=hasIn?(_arr[k][0]?.guests??null):null;
       const lin=calcLinen(config,guests,isKing(hotel,apt));
       const tipo=hasIn&&hasOut?'troca':hasIn?'chegada':'saída';
@@ -1662,6 +1793,42 @@ function toggleDetalhamento(btn){
     section.style.display='none';
   }
 }
+function enxovalDiaHTML(lin){
+  return `
+  <div class="enxoval-section">
+    <div class="enxoval-title">🛏 Enxoval do dia</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val">${lin.lc}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.lk}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.ls}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.f}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.t}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.tr}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${lin.tp}</div><div class="enxoval-lbl">Tapete</div></div>
+    </div>
+  </div>`;
+}
+// Atualiza só as partes que dependem dos dados (sem mexer na busca/filtros)
+function atualizarListaDoDia(){
+  if(!_pdfDate)return;
+  const er=document.getElementById('enxoval-dia-root');
+  if(er){const {tot:lin}=calcTotals();er.innerHTML=enxovalDiaHTML(lin);}
+  refreshEstoquePreview();
+  renderCards();
+}
+// Botão: tira/recoloca o ENXOVAL FÍSICO de um apto (não mexe no R$8,50).
+async function toggleEnxoval(hotel,apt){
+  if(!_ready||!_pdfDate){showToast('Sem conexão com o banco');return;}
+  const k=hotel+'||'+apt;
+  const conta=aptoForaDoEnxoval(k);   // está fora → passa a ter enxoval; tem enxoval → tira
+  const {error}=await sb.from('override_enxoval')
+    .upsert({hotel,apt,dia:_pdfDate,conta},{onConflict:'hotel,apt,dia'});
+  if(error){showToast('Rode o supabase-add-enxoval-override.sql para ativar este botão');return;}
+  cache.overrides[k+'||'+_pdfDate]=conta;
+  try{await carregarOverrides();}catch(e){}
+  atualizarListaDoDia();
+  showToast(conta?'Enxoval incluído (R$8,50 segue contando)':'Enxoval retirado (R$8,50 segue contando)');
+}
 function renderUI(){
   let tIn=0,tOut=0,tBoth=0;
   Object.keys(ROOMS).forEach(h=>Object.keys(ROOMS[h].apts).forEach(a=>{
@@ -1679,31 +1846,21 @@ function renderUI(){
     <div class="metric"><div class="metric-label">Troca</div><div class="metric-value">${tBoth}</div></div>
     <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
   </div>
-  <div class="enxoval-section">
-    <div class="enxoval-title">🛏 Enxoval do dia</div>
-    <div class="enxoval-grid">
-      <div class="enxoval-item"><div class="enxoval-val">${lin.lc}</div><div class="enxoval-lbl">Lençol casal</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${lin.lk}</div><div class="enxoval-lbl">Lençol king</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${lin.ls}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${lin.f}</div><div class="enxoval-lbl">Fronha</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${lin.t}</div><div class="enxoval-lbl">Toalha banho</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${lin.tr}</div><div class="enxoval-lbl">Toalha rosto</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${lin.tp}</div><div class="enxoval-lbl">Tapete</div></div>
-    </div>
-  </div>
+  <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
   <div id="estoque-preview-root">${renderEstoquePreview(lin)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">
   <div class="filter-row">
-    <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
-    <button class="filter-btn" onclick="setFilter('both',this)">Troca</button>
-    <button class="filter-btn" onclick="setFilter('in',this)">Só chegada</button>
-    <button class="filter-btn" onclick="setFilter('out',this)">Só saída</button>
-    <button class="filter-btn" onclick="setFilter('empty',this)">Sem mov.</button>
+    <button class="filter-btn ${_filt==='all'?'active':''}" onclick="setFilter('all',this)">Todos</button>
+    <button class="filter-btn ${_filt==='both'?'active':''}" onclick="setFilter('both',this)">Troca</button>
+    <button class="filter-btn ${_filt==='in'?'active':''}" onclick="setFilter('in',this)">Só chegada</button>
+    <button class="filter-btn ${_filt==='out'?'active':''}" onclick="setFilter('out',this)">Só saída</button>
+    <button class="filter-btn ${_filt==='empty'?'active':''}" onclick="setFilter('empty',this)">Sem mov.</button>
   </div>
   <div id="cards-root"></div>`;
   document.getElementById('results').style.display='block';
+  const si=document.getElementById('search-input'); if(si&&_srch) si.value=_srch;
   renderCards();
 }
 function onSearch(v){_srch=v.toLowerCase();renderCards();}
@@ -1729,9 +1886,22 @@ function renderCards(){
       oL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-out"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 12:00</span></div>`;});
       iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
       if(emp)rows=`<div class="no-movement">sem movimentação hoje</div>`;
-      let chipsHtml='';
-      if(ho){const guests=hi?(iL[0]?.guests??null):null;const lin=calcLinen(config,guests,isKing(hotel,apt));const chips=linenChips(lin);chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;}
-      sec+=`<div class="apt-card ${emp?'':'has-movement'}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
+      let chipsHtml='',foraEnx=false;
+      if(ho){
+        foraEnx=aptoForaDoEnxoval(k);
+        if(foraEnx){
+          const ext=hi&&ehExtensao(k);
+          chipsHtml=`<div class="enx-excluded">${ext?'🔁 Extensão · sem troca de enxoval':'✋ Sem enxoval (retirado)'} · R$8,50 conta</div>`;
+          if(_ready)chipsHtml+=`<button class="enx-toggle out" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">+ Incluir no enxoval</button>`;
+        }else{
+          const guests=hi?(iL[0]?.guests??null):null;
+          const lin=calcLinen(config,guests,isKing(hotel,apt));
+          const chips=linenChips(lin);
+          chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;
+          if(_ready)chipsHtml+=`<button class="enx-toggle in" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">− Tirar do enxoval</button>`;
+        }
+      }
+      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;
   });

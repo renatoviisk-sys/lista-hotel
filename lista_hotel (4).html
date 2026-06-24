@@ -1203,6 +1203,7 @@ const ROOMS={
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
+const SEM_ROSTO=new Set(["Comft","Go Inn"]);   // hotéis que NÃO levam mais toalha de rosto (só tapete)
 const PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
@@ -1217,11 +1218,11 @@ function esc(str){
 }
 function isKing(hotel,apt){return KING_APTS.has(hotel+'||'+apt);}
 // ── LINEN CALC ───────────────────────────────────────────────────────────────
-function calcLinen(config,guests,king=false){
+function calcLinen(config,guests,king=false,semRosto=false){
   let g=guests;
   if(g==null){if(config==='c')g=2;else if(config==='2s')g=2;else if(config==='cs')g=3;}
   g=Math.max(1,g);
-  let lc=0,lk=0,ls=0,f=0,t=0,tr=1,tp=1;
+  let lc=0,lk=0,ls=0,f=0,t=0,tr=(semRosto?0:1),tp=1;
   if(config==='c'){if(king){lk=2;}else{lc=2;}f=2;}
   else if(config==='2s'){const beds=g>=2?2:1;ls=beds*2;f=beds*1;}
   else if(config==='cs'){if(king){lk=2;}else{lc=2;}f=2;if(g>=2){ls=2;f+=1;}}
@@ -1688,7 +1689,7 @@ function calcTotals(){
       if(!hasOut)return;
       if(aptoForaDoEnxoval(k))return;        // extensão ou retirado manualmente → não conta enxoval
       const guests=hasIn?(_arr[k][0]?.guests??null):null;
-      const lin=calcLinen(config,guests,isKing(hotel,apt));
+      const lin=calcLinen(config,guests,isKing(hotel,apt),SEM_ROSTO.has(hotel));
       const tipo=hasIn&&hasOut?'troca':hasIn?'chegada':'saída';
       const msg=tipo==='troca'?`troca (${guests}px entrando)`:`${tipo}${guests?` (${guests}px)`:' (cap. máx)'}`;
       detalhes.push({hotel,apt,config,tipo,msg,lin});
@@ -1895,7 +1896,7 @@ function renderCards(){
           if(_ready)chipsHtml+=`<button class="enx-toggle out" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">+ Incluir no enxoval</button>`;
         }else{
           const guests=hi?(iL[0]?.guests??null):null;
-          const lin=calcLinen(config,guests,isKing(hotel,apt));
+          const lin=calcLinen(config,guests,isKing(hotel,apt),SEM_ROSTO.has(hotel));
           const chips=linenChips(lin);
           chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;
           if(_ready)chipsHtml+=`<button class="enx-toggle in" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">− Tirar do enxoval</button>`;

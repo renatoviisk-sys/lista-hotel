@@ -1538,12 +1538,12 @@ function renderEstoque(){
         <span class="est-row-qty" onclick="setEstoqueExato('${i.key}','${i.name}')" title="Tocar para digitar a quantidade">${qty}<span class="est-edit">✎</span></span>
       </div>
       <div class="est-row-btns">
-        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-20)">−20</button>
-        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-5)">−5</button>
-        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-1)">−1</button>
         <button class="est-btn p" onclick="adjustEstoque('${i.key}',1)">+1</button>
         <button class="est-btn p" onclick="adjustEstoque('${i.key}',5)">+5</button>
         <button class="est-btn p" onclick="adjustEstoque('${i.key}',20)">+20</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-1)">−1</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-5)">−5</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-20)">−20</button>
       </div>
     </div>`;
   });

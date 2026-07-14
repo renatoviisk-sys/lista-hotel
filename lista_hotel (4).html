@@ -1648,7 +1648,7 @@ function extractGuests(line){
   return m?parseInt(m[1]):1;
 }
 // ── PARSE ─────────────────────────────────────────────────────────────────────
-let _arr={},_dep={},_filt='all',_srch='',_detalhes=[];
+let _arr={},_dep={},_hotelFilt='',_srch='',_detalhes=[];
 function formatPdfDate(key){
   if(!key)return '';
   const[y,m,d]=key.split('-').map(Number);
@@ -1869,11 +1869,7 @@ function renderUI(){
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">
   <div class="filter-row">
-    <button class="filter-btn ${_filt==='all'?'active':''}" onclick="setFilter('all',this)">Todos</button>
-    <button class="filter-btn ${_filt==='both'?'active':''}" onclick="setFilter('both',this)">Troca</button>
-    <button class="filter-btn ${_filt==='in'?'active':''}" onclick="setFilter('in',this)">Só chegada</button>
-    <button class="filter-btn ${_filt==='out'?'active':''}" onclick="setFilter('out',this)">Só saída</button>
-    <button class="filter-btn ${_filt==='empty'?'active':''}" onclick="setFilter('empty',this)">Sem mov.</button>
+    ${Object.keys(ROOMS).sort((a,b)=>ROOMS[b].order-ROOMS[a].order).map(h=>`<button class="filter-btn ${_hotelFilt===h?'active':''}" onclick="setHotel('${esc(h)}',this)">${esc(h)}</button>`).join('')}
   </div>
   <div id="cards-root"></div>`;
   document.getElementById('results').style.display='block';
@@ -1881,20 +1877,23 @@ function renderUI(){
   renderCards();
 }
 function onSearch(v){_srch=v.toLowerCase();renderCards();}
-function setFilter(f,btn){_filt=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderCards();}
+// Filtro por hotel — clicar no mesmo botão desativa (mostra todos)
+function setHotel(hotel,btn){
+  _hotelFilt=(_hotelFilt===hotel)?'':hotel;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(_hotelFilt)btn.classList.add('active');
+  renderCards();
+}
 function renderCards(){
   const root=document.getElementById('cards-root');if(!root)return;
   let html='',any=false;
   Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order).forEach(hotel=>{
+    if(_hotelFilt && hotel!==_hotelFilt) return;   // filtro por hotel
     let sec='';
     Object.keys(ROOMS[hotel].apts).sort((a,b)=>parseInt(a)-parseInt(b)).forEach(apt=>{
       const k=hotel+'||'+apt;
       const iL=_arr[k]||[],oL=_dep[k]||[];
       const hi=iL.length>0,ho=oL.length>0,emp=!hi&&!ho,both=hi&&ho;
-      if(_filt==='both'&&!both)return;
-      if(_filt==='in'&&(!hi||both))return;
-      if(_filt==='out'&&(!ho||both))return;
-      if(_filt==='empty'&&!emp)return;
       if(_srch){const s=(hotel+' '+apt).toLowerCase(),n=[...iL,...oL].map(x=>x.name.toLowerCase()).join(' ');if(!s.includes(_srch)&&!n.includes(_srch))return;}
       any=true;
       const config=ROOMS[hotel].apts[apt],cfgLabel=CFG_LABEL[config]||config;

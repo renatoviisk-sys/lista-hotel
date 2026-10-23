@@ -2,70 +2,62 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Lista do Dia</title>
 <!-- ── TIPOGRAFIA: Inter (400/500/600/700) ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- ── BANCO COMPARTILHADO: Supabase ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    DESIGN SYSTEM — "Obsidian"
    Inspiração: Linear, Vercel, Raycast dark dashboards
    ═══════════════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
-
 :root{
-  /* ── Fundos em camadas (profundidade) ── */
-  --bg-base:  #0b0d12;
-  --bg-0:     #0f1219;
-  --bg-1:     #141822;
-  --bg-2:     #1a1f2e;
-  --bg-3:     #202638;
-  --bg-hover: #262d42;
-
-  /* ── Bordas ultra-finas ── */
-  --b0: rgba(255,255,255,0.04);
-  --b1: rgba(255,255,255,0.07);
-  --b2: rgba(255,255,255,0.11);
-  --b3: rgba(255,255,255,0.18);
-
-  /* ── Texto ── */
-  --t1: #edf0f9;   /* primário */
-  --t2: #8892ae;   /* secundário */
-  --t3: #454e68;   /* terciário / muted */
-
+  /* ── Fundos em camadas — preto puro neutro ── */
+  --bg-base:  #000000;
+  --bg-0:     #0a0a0a;
+  --bg-1:     #111111;
+  --bg-2:     #171717;
+  --bg-3:     #1f1f1f;
+  --bg-hover: #2a2a2a;
+  /* ── Bordas ultra-finas — branco puro ── */
+  --b0: rgba(255,255,255,0.05);
+  --b1: rgba(255,255,255,0.08);
+  --b2: rgba(255,255,255,0.12);
+  --b3: rgba(255,255,255,0.20);
+  /* ── Texto — neutros sem tom azul ── */
+  --t1: #f5f5f5;   /* primário */
+  --t2: #a0a0a0;   /* secundário */
+  --t3: #5a5a5a;   /* terciário / muted */
   /* ── Indigo — ação primária (tabs, filtros ativos) ── */
   --indigo:     #818cf8;
   --indigo-dim: rgba(99,102,241,0.13);
   --indigo-bdr: rgba(99,102,241,0.28);
-
   /* ── Teal-green — check-in ── */
   --green:     #2dd4a0;
   --green-dim: rgba(45,212,160,0.10);
   --green-bdr: rgba(45,212,160,0.22);
-
   /* ── Coral — check-out ── */
   --red:     #f87171;
   --red-dim: rgba(248,113,113,0.10);
   --red-bdr: rgba(248,113,113,0.22);
-
   /* ── Amber — enxoval ── */
   --amber:     #fbbf24;
   --amber-dim: rgba(251,191,36,0.10);
   --amber-bdr: rgba(251,191,36,0.22);
-
   /* ── Violet — lavanderia ── */
   --violet:     #a78bfa;
   --violet-dim: rgba(167,139,250,0.10);
   --violet-bdr: rgba(167,139,250,0.22);
-
   /* ── Sage — limpeza ── */
   --sage:     #34d399;
   --sage-dim: rgba(52,211,153,0.10);
   --sage-bdr: rgba(52,211,153,0.20);
-
   /* ── Raios ── */
   --r-xs:   5px;
   --r-sm:   10px;
@@ -73,16 +65,13 @@
   --r-lg:   18px;
   --r-xl:   24px;
   --r-pill: 9999px;
-
   /* ── Sombras ── */
   --sh-sm: 0 1px 3px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.3);
   --sh-md: 0 4px 18px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.3);
   --sh-lg: 0 16px 50px rgba(0,0,0,0.65), 0 4px 14px rgba(0,0,0,0.4);
-
   /* ── Fonte ── */
   --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
-
 /* ── Reset & base ─────────────────────────────────────────────── */
 html,body{
   background: var(--bg-base);
@@ -94,14 +83,11 @@ html,body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 /* Scrollbars finos (webkit) */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
-
 #app{max-width:580px;margin:0 auto;padding:0 0 5rem;}
-
 /* ══════════════════════════════════════════════════════════════
    TAB BAR — frosted glass, sticky
    ══════════════════════════════════════════════════════════════ */
@@ -112,7 +98,7 @@ html,body{
   position:sticky;
   top:0;
   /* Glass morfismo no header */
-  background:rgba(11,13,18,0.85);
+  background:rgba(0,0,0,0.85);
   backdrop-filter:blur(24px) saturate(1.4);
   -webkit-backdrop-filter:blur(24px) saturate(1.4);
   z-index:20;
@@ -134,10 +120,8 @@ html,body{
 }
 .tab:hover{color:var(--t2);}
 .tab.active{color:var(--t1);border-bottom-color:var(--indigo);}
-
 .tab-content{display:none;padding:0 1.25rem;}
 .tab-content.active{display:block;}
-
 /* ══════════════════════════════════════════════════════════════
    DROP ZONE — convidativa, com brilho de fundo
    ══════════════════════════════════════════════════════════════ */
@@ -191,10 +175,23 @@ html,body{
   margin-top:6px;
   line-height:1.6;
 }
-
 /* ══════════════════════════════════════════════════════════════
    SUMMARY GRID — 4 métricas
    ══════════════════════════════════════════════════════════════ */
+.date-banner{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:0.75rem 1rem;
+  margin-bottom:1rem;
+  font-size:13px;
+  font-weight:500;
+  color:var(--t1);
+}
+.date-banner-icon{font-size:15px;}
 .summary-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -226,7 +223,6 @@ html,body{
   letter-spacing:-0.03em;
   line-height:1;
 }
-
 /* ══════════════════════════════════════════════════════════════
    ENXOVAL PANEL
    ══════════════════════════════════════════════════════════════ */
@@ -281,7 +277,6 @@ html,body{
   margin-top:5px;
   line-height:1.4;
 }
-
 /* ══════════════════════════════════════════════════════════════
    DETALHAMENTO
    ══════════════════════════════════════════════════════════════ */
@@ -353,7 +348,6 @@ html,body{
   line-height:1.65;
 }
 .detalhamento-calc strong{color:var(--t1);}
-
 /* ══════════════════════════════════════════════════════════════
    SEARCH
    ══════════════════════════════════════════════════════════════ */
@@ -376,7 +370,6 @@ html,body{
   border-color:var(--indigo-bdr);
   box-shadow:0 0 0 3px var(--indigo-dim);
 }
-
 /* ══════════════════════════════════════════════════════════════
    FILTER ROW
    ══════════════════════════════════════════════════════════════ */
@@ -415,7 +408,6 @@ html,body{
   border-color:var(--indigo-bdr);
   font-weight:600;
 }
-
 /* ══════════════════════════════════════════════════════════════
    HOTEL SECTION & APT CARDS
    ══════════════════════════════════════════════════════════════ */
@@ -449,7 +441,6 @@ html,body{
   border-color:var(--b2);
   box-shadow:var(--sh-md);
 }
-
 /* Número do apto — visual de "placa" */
 .apt-left{
   display:flex;
@@ -486,7 +477,6 @@ html,body{
   flex-wrap:wrap;
   margin-bottom:8px;
 }
-
 /* ── Badges ──────────────────────────────────────── */
 .type-badge{
   display:inline-flex;
@@ -503,7 +493,6 @@ html,body{
 .badge-in{background:var(--green-dim);color:var(--green);border-color:var(--green-bdr);}
 .badge-out{background:var(--red-dim);color:var(--red);border-color:var(--red-bdr);}
 .badge-empty{background:rgba(255,255,255,0.03);color:var(--t3);border-color:var(--b0);}
-
 /* ── Guest rows ──────────────────────────────────── */
 .guest-row{
   display:flex;
@@ -539,7 +528,6 @@ html,body{
   white-space:nowrap;
 }
 .no-movement{font-size:12px;color:var(--t3);font-style:italic;}
-
 /* ── Linen chips ─────────────────────────────────── */
 .enxoval-chips{
   display:flex;
@@ -560,7 +548,26 @@ html,body{
   white-space:nowrap;
   letter-spacing:0.01em;
 }
-
+/* ── Tirar/incluir do enxoval (extensão de reserva) ── */
+.enx-excluded{
+  margin-top:9px;padding-top:9px;
+  border-top:1px solid var(--b0);
+  font-size:11px;font-weight:600;color:var(--violet);
+}
+.enx-toggle{
+  display:inline-block;
+  margin-top:9px;
+  font-size:11px;font-family:var(--font);font-weight:600;
+  padding:6px 13px;border-radius:var(--r-pill);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:all .15s;
+}
+.enx-toggle.in{background:transparent;color:var(--t3);border:1px solid var(--b1);}
+.enx-toggle.in:hover{color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);}
+.enx-toggle.out{background:var(--green-dim);color:var(--green);border:1px solid var(--green-bdr);}
+.enx-toggle.out:hover{background:rgba(45,212,160,0.17);}
+.apt-card.apt-foraenx{opacity:.72;}
+.apt-card.apt-foraenx:hover{opacity:1;}
 #results{display:none;}
 .empty-state{
   text-align:center;
@@ -569,7 +576,6 @@ html,body{
   font-size:14px;
   line-height:1.75;
 }
-
 /* ══════════════════════════════════════════════════════════════
    LAVANDERIA TAB
    ══════════════════════════════════════════════════════════════ */
@@ -579,6 +585,22 @@ html,body{
   justify-content:space-between;
   margin-bottom:1.75rem;
 }
+.lav-nav{display:flex;align-items:center;gap:10px;}
+.lav-nav-btn{
+  width:32px;height:32px;flex-shrink:0;
+  border-radius:var(--r-pill);
+  border:1px solid var(--b1);
+  background:var(--bg-1);
+  color:var(--t1);
+  font-size:18px;line-height:1;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.lav-nav-btn:hover{background:var(--bg-2);border-color:var(--b2);}
+.lav-nav-btn:active{opacity:.7;}
+.lav-nav-btn:disabled{opacity:.25;cursor:default;}
 .lav-month{
   font-size:17px;
   font-weight:700;
@@ -606,7 +628,6 @@ html,body{
 }
 .btn-reset:hover{background:rgba(248,113,113,0.17);border-color:rgba(248,113,113,0.32);}
 .btn-reset:active{opacity:.75;}
-
 .lav-total-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -615,7 +636,6 @@ html,body{
 }
 /* Modifier para margem menor (limpeza section) */
 .lav-total-grid--sm{margin-bottom:1rem !important;}
-
 .lav-total-card{
   background:var(--bg-1);
   border:1px solid var(--b1);
@@ -646,7 +666,6 @@ html,body{
 }
 /* Usa a cor sage para valores financeiros positivos */
 .lav-green{color:var(--sage) !important;}
-
 .lav-apt-card{
   background:var(--bg-1);
   border:1px solid var(--b0);
@@ -681,7 +700,6 @@ html,body{
   margin-top:3px;
 }
 .lav-apt-right{flex:1;}
-
 /* Layout interno do card de lavanderia (substitui inline style) */
 .lav-apt-info{
   display:flex;
@@ -718,7 +736,6 @@ html,body{
   color:var(--t2);
   border:1px solid var(--b1);
 }
-
 .lav-empty{
   text-align:center;
   padding:4.5rem 1rem;
@@ -727,7 +744,6 @@ html,body{
   line-height:1.8;
 }
 .lav-empty-icon{font-size:38px;margin-bottom:1rem;display:block;}
-
 /* ══════════════════════════════════════════════════════════════
    LIMPEZA PRÓPRIA
    ══════════════════════════════════════════════════════════════ */
@@ -794,10 +810,68 @@ html,body{
   color:var(--sage);
   white-space:nowrap;
 }
-
 /* ══════════════════════════════════════════════════════════════
    TOAST — slide-up + fade
    ══════════════════════════════════════════════════════════════ */
+/* Estoque tab — mobile first, clean */
+.est-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;}
+.est-title{font-size:15px;font-weight:500;color:var(--txt);}
+.est-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
+.est-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.5rem;}
+.est-summary-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem 1rem;text-align:center;}
+.est-summary-val{font-size:24px;font-weight:500;color:var(--amber);}
+.est-summary-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
+.est-summary-val.warn{color:var(--red);}
+.est-summary-val.ok{color:var(--green);}
+.val-red{color:var(--red)!important;}
+.fechar-btn{
+  width:100%;
+  margin-top:1rem;
+  padding:0.85rem 1rem;
+  border:none;
+  border-radius:var(--r-sm);
+  background:var(--green);
+  color:#062013;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .15s, background .15s;
+  font-family:inherit;
+  touch-action:manipulation;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.fechar-btn:active{opacity:0.7;}
+.fechar-btn.fechado{
+  background:transparent;
+  color:var(--green);
+  border:1px solid var(--green);
+  font-weight:500;
+}
+.enxoval-section.enxoval-warn{border-color:var(--red-bdr);background:linear-gradient(180deg,var(--red-dim) 0%,var(--bg-1) 100%);}
+.estoque-warn{
+  margin-top:0.85rem;
+  padding:0.65rem 0.85rem;
+  background:var(--red-dim);
+  border:1px solid var(--red-bdr);
+  border-radius:var(--r-sm);
+  font-size:12px;
+  font-weight:500;
+  color:var(--red);
+  line-height:1.4;
+}
+.est-row{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;}
+.est-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.est-row-name{font-size:14px;color:var(--txt);font-weight:500;}
+.est-row-qty{font-size:24px;font-weight:600;color:var(--amber);line-height:1;cursor:pointer;display:inline-flex;align-items:center;}
+.est-row-qty:active{opacity:.6;}
+.est-edit{font-size:12px;color:var(--t3);margin-left:6px;}
+.est-row-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.est-btn{padding:14px 0;border-radius:8px;border:none;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;background:var(--bg3);color:var(--txt);transition:transform .08s, opacity .08s;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+.est-btn:active{transform:scale(0.94);opacity:0.8;}
+.est-btn.m{background:#3a1a1a;color:#fca5a5;}
+.est-btn.p{background:#1a3a1a;color:#86efac;}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -822,7 +896,26 @@ html,body{
   opacity:1;
   transform:translateX(-50%) translateY(0);
 }
-
+/* ── Indicador de conexão (tempo real) ── */
+.sync-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  font-weight:600;
+  padding:4px 10px;
+  border-radius:var(--r-pill);
+  border:1px solid var(--b1);
+  background:var(--bg-1);
+  color:var(--t3);
+  white-space:nowrap;
+}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0;}
+.sync-pill.online{color:var(--green);border-color:var(--green-bdr);background:var(--green-dim);}
+.sync-pill.online .sync-dot{background:var(--green);box-shadow:0 0 7px rgba(45,212,160,0.55);}
+.sync-pill.offline{color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);}
+.sync-pill.offline .sync-dot{background:var(--red);}
+.sync-bar{display:flex;justify-content:flex-end;padding:0 1.25rem;margin-top:-0.5rem;margin-bottom:0.75rem;}
 /* ══════════════════════════════════════════════════════════════
    DIALOG — blur overlay
    ══════════════════════════════════════════════════════════════ */
@@ -890,12 +983,42 @@ html,body{
   transition:all .2s;
 }
 .btn-confirm:hover{background:rgba(248,113,113,0.18);}
-
+/* ── Botão + modal de saída manual ── */
+.btn-add-saida{
+  font-size:12px;font-family:var(--font);font-weight:600;
+  padding:7px 14px;border-radius:var(--r-pill);
+  border:1px solid var(--sage-bdr);background:var(--sage-dim);color:var(--sage);
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;white-space:nowrap;
+}
+.btn-add-saida:hover{background:rgba(52,211,153,0.17);}
+.btn-add-saida:active{opacity:.75;}
+.dialog-form{text-align:left;}
+.dialog-form label{display:block;font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin:14px 0 6px;}
+.dialog-field{
+  width:100%;padding:11px 12px;border-radius:var(--r-md);
+  border:1px solid var(--b1);background:var(--bg-3);color:var(--t1);
+  font-size:15px;font-family:var(--font);outline:none;
+}
+.dialog-field:focus{border-color:var(--indigo-bdr);}
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVO
    ══════════════════════════════════════════════════════════════ */
 @media(max-width:420px){
-  .summary-grid{grid-template-columns:repeat(2,1fr);}
+  .date-banner{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:0.75rem 1rem;
+  margin-bottom:1rem;
+  font-size:13px;
+  font-weight:500;
+  color:var(--t1);
+}
+.date-banner-icon{font-size:15px;}
+.summary-grid{grid-template-columns:repeat(2,1fr);}
   .enxoval-grid{grid-template-columns:repeat(3,1fr);}
   .enxoval-item:last-child:nth-child(4n+1){grid-column:unset;}
 }
@@ -909,6 +1032,10 @@ html,body{
   <div class="tab-bar">
     <div class="tab active" onclick="switchTab('lista',this)">Lista do Dia</div>
     <div class="tab" onclick="switchTab('lavanderia',this)">Lavanderia</div>
+    <div class="tab" onclick="switchTab('estoque',this)">Estoque</div>
+  </div>
+  <div class="sync-bar">
+    <span class="sync-pill" id="sync-pill"><span class="sync-dot"></span><span id="sync-text">Conectando…</span></span>
   </div>
   <!-- TAB: LISTA -->
   <div id="tab-lista" class="tab-content active">
@@ -924,22 +1051,179 @@ html,body{
   <div id="tab-lavanderia" class="tab-content">
     <div id="lav-content"></div>
   </div>
+  <!-- TAB: ESTOQUE -->
+  <div id="tab-estoque" class="tab-content">
+    <div id="est-content"></div>
+  </div>
 </div>
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 <!-- Confirm dialog -->
 <div class="overlay" id="overlay">
   <div class="dialog">
-    <div class="dialog-title">Zerar mês?</div>
-    <div class="dialog-sub">Todo o histórico de trocas e limpezas do mês será apagado. Essa ação não pode ser desfeita.</div>
+    <div class="dialog-title" id="dialog-title">Zerar mês?</div>
+    <div class="dialog-sub" id="dialog-sub">Todo o histórico de trocas e limpezas do mês será apagado. Essa ação não pode ser desfeita.</div>
     <div class="dialog-btns">
       <button class="btn-cancel" onclick="closeDialog()">Cancelar</button>
       <button class="btn-confirm" onclick="confirmReset()">Zerar</button>
     </div>
   </div>
 </div>
+<!-- Adicionar saída manual -->
+<div class="overlay" id="overlay-saida">
+  <div class="dialog dialog-form">
+    <div class="dialog-title">Adicionar saída manual</div>
+    <div class="dialog-sub">Registra 1 troca (R$ 8,50) e o enxoval do apartamento na data escolhida. Aparece na Lavanderia.</div>
+    <label>Hotel</label>
+    <select class="dialog-field" id="saida-hotel" onchange="onSaidaHotel()"></select>
+    <label>Apartamento</label>
+    <select class="dialog-field" id="saida-apto"></select>
+    <label>Data da saída</label>
+    <input class="dialog-field" type="date" id="saida-data">
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-cancel" onclick="closeSaida()">Cancelar</button>
+      <button class="btn-add-saida" style="flex:1;text-align:center;" onclick="addSaidaManual()">Adicionar saída</button>
+    </div>
+  </div>
+</div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ════════════════════════════════════════════════════════════════
+   SUPABASE — banco de dados compartilhado (tempo real)
+   👉 Cole abaixo os 2 valores do SEU projeto Supabase.
+      Veja o passo a passo em GUIA-SUPABASE.md
+   ════════════════════════════════════════════════════════════════ */
+const SUPABASE_URL      = 'https://bmhnvnlbcgegsgplkuea.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtaG52bmxiY2dlZ3NncGxrdWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3ODcyMDcsImV4cCI6MjA5NzM2MzIwN30.cyaCBafC3DtAJN5r8Fc-jEX44_3WM8on-2QfCrgmra0';
+
+let sb = null;                                         // cliente Supabase
+const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[], lista:null, overrides:{} };
+let _ready = false;                                    // conectado ao banco?
+
+function configurado(){
+  return /^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL) && SUPABASE_ANON_KEY.length > 30;
+}
+function setSync(state){
+  const pill=document.getElementById('sync-pill');
+  const txt=document.getElementById('sync-text');
+  if(!pill)return;
+  pill.classList.remove('online','offline');
+  if(state==='online'){pill.classList.add('online');txt.textContent='Sincronizado';}
+  else if(state==='offline'){pill.classList.add('offline');txt.textContent='Sem conexão';}
+  else{txt.textContent='Conectando…';}
+}
+async function initApp(){
+  setSync('connecting');
+  if(!configurado()){
+    setSync('offline');
+    avisoConfig();
+    return;
+  }
+  try{
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    await recarregarTudo();
+    assinarTempoReal();
+    _ready = true;
+    setSync('online');
+    aplicarListaAtual();
+    rerenderCompartilhado();
+  }catch(e){
+    setSync('offline');
+    avisoConfig('Não consegui conectar ao banco. Verifique a URL/chave e a internet. ('+(e&&e.message||e)+')');
+  }
+}
+function avisoConfig(msg){
+  const aviso = msg || 'Configure o Supabase para começar — abra o arquivo GUIA-SUPABASE.md e siga os passos. Enquanto isso, o app fica sem conexão com o banco.';
+  ['lav-content','est-content'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=`<div class="empty-state">⚙️ ${esc(aviso)}</div>`;
+  });
+}
+async function recarregarTudo(){
+  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
+}
+async function carregarEstoque(){
+  const {data,error}=await sb.from('estoque').select('*');
+  if(error)throw error;
+  cache.estoque={}; (data||[]).forEach(r=>cache.estoque[r.item]=r.quantidade);
+}
+async function carregarDias(){
+  const {data,error}=await sb.from('dias_fechados').select('*');
+  if(error)throw error;
+  cache.dias={}; (data||[]).forEach(r=>cache.dias[r.dia]=r);
+}
+async function carregarTrocas(){
+  const {data,error}=await sb.from('trocas').select('*');
+  if(error)throw error;
+  cache.trocas=data||[];
+}
+async function carregarLimpezas(){
+  const {data,error}=await sb.from('limpezas').select('*');
+  if(error)throw error;
+  cache.limpezas=data||[];
+}
+async function carregarListaAtual(){
+  try{
+    const {data,error}=await sb.from('lista_atual').select('*').eq('id',1).maybeSingle();
+    if(error)throw error;
+    cache.lista=data||null;
+  }catch(e){ cache.lista=null; }   // tabela opcional pode ainda não existir
+}
+async function carregarOverrides(){
+  try{
+    const {data,error}=await sb.from('override_enxoval').select('*');
+    if(error)throw error;
+    cache.overrides={}; (data||[]).forEach(r=>{cache.overrides[r.hotel+'||'+r.apt+'||'+String(r.dia)]=r.conta;});
+  }catch(e){ cache.overrides={}; }   // tabela opcional pode ainda não existir
+}
+// Salva a lista do dia no banco para que todos vejam o mesmo PDF (e sobreviva ao F5)
+async function salvarListaAtual(filename){
+  if(!_ready)return;
+  const {error}=await sb.from('lista_atual').upsert(
+    {id:1, dia:_pdfDate, filename:filename||'Lista do dia', arr:_arr, dep:_dep, atualizado_em:new Date().toISOString()},
+    {onConflict:'id'}
+  );
+  if(error)showToast('Erro ao compartilhar a lista');
+}
+// Aplica na tela a lista do dia salva no banco. Retorna true se havia lista.
+function aplicarListaAtual(){
+  const row=cache.lista;
+  if(!row || !row.dia)return false;
+  _arr = row.arr || {};
+  _dep = row.dep || {};
+  _pdfDate = row.dia;
+  if(dz)dz.classList.add('loaded');
+  const lbl=document.getElementById('drop-label');
+  const sub=document.getElementById('drop-sub');
+  if(lbl)lbl.textContent = row.filename || 'Lista do dia';
+  if(sub)sub.textContent = 'Clique para trocar o arquivo';
+  renderUI();
+  return true;
+}
+function assinarTempoReal(){
+  sb.channel('lavanderia-rt')
+    .on('postgres_changes',{event:'*',schema:'public',table:'estoque'},       async()=>{try{await carregarEstoque();}catch(e){} rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'dias_fechados'}, async()=>{try{await carregarDias();}catch(e){}    rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        async()=>{try{await carregarTrocas();}catch(e){}  rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      async()=>{try{await carregarLimpezas();}catch(e){}rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'lista_atual'},   async()=>{try{await carregarListaAtual();}catch(e){} aplicarListaAtual();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'override_enxoval'},async()=>{try{await carregarOverrides();}catch(e){} rerenderCompartilhado();})
+    .subscribe();
+}
+function abaAtiva(){
+  if(document.getElementById('tab-lavanderia').classList.contains('active'))return 'lavanderia';
+  if(document.getElementById('tab-estoque').classList.contains('active'))return 'estoque';
+  return 'lista';
+}
+function rerenderCompartilhado(){
+  const aba=abaAtiva();
+  if(aba==='estoque') renderEstoque();
+  else if(aba==='lavanderia') renderLavanderia();
+  else if(aba==='lista' && _pdfDate) atualizarListaDoDia();
+}
+function estoqueQty(k){ return cache.estoque[k]||0; }
+function diaFechado(dia){ return !!cache.dias[dia]; }
 
 // ── ROOMS ────────────────────────────────────────────────────────────────────
 const ROOMS={
@@ -948,20 +1232,19 @@ const ROOMS={
   "Kubit":{order:3,apts:{"113":"c","117":"c","305":"c","519":"c"}},
   "Bona":{order:4,apts:{"618":"c","702":"c"}},
   "Saint":{order:5,apts:{"411":"cs","815":"c","1215":"c"}},
-  "Ramada":{order:6,apts:{"1214":"2s"}},
+  "Ramada":{order:6,apts:{"517":"2s","1214":"2s"}},
   "Tryp":{order:7,apts:{"06":"c","105":"c","207":"c"}},
   "Comft":{order:8,apts:{"106":"c","109":"cs","111":"2s","114":"c","206":"c","305":"cs","310":"c","311":"2s","316":"c","407":"2s","607":"2s","614":"c","705":"c","710":"c","803":"c","809":"c","810":"cs","1007":"cs"}},
   "Go Inn":{order:9,apts:{"101":"c","114":"c","117":"2s","119":"c","207":"2s","210":"2s","305":"cs","308":"2s","310":"2s","313":"2s","408":"2s","411":"c","413":"cs","418":"c","503":"c","506":"c","509":"c","512":"c","515":"2s","516":"c","517":"c","519":"c","603":"c","605":"cs","609":"cs","610":"2s","611":"c","617":"c","703":"cs","708":"c","715":"c","806":"c","815":"c","906":"c","909":"c","913":"2s","914":"c"}}
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
 const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
-
+const SEM_ROSTO=new Set(["Comft","Go Inn"]);   // hotéis que NÃO levam mais toalha de rosto (só tapete)
 const PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
   limpezaComf:  25,
 };
-
 function esc(str){
   return String(str)
     .replace(/&/g,'&amp;')
@@ -970,13 +1253,12 @@ function esc(str){
     .replace(/"/g,'&quot;');
 }
 function isKing(hotel,apt){return KING_APTS.has(hotel+'||'+apt);}
-
 // ── LINEN CALC ───────────────────────────────────────────────────────────────
-function calcLinen(config,guests,king=false){
+function calcLinen(config,guests,king=false,semRosto=false){
   let g=guests;
   if(g==null){if(config==='c')g=2;else if(config==='2s')g=2;else if(config==='cs')g=3;}
   g=Math.max(1,g);
-  let lc=0,lk=0,ls=0,f=0,t=0,tr=1,tp=1;
+  let lc=0,lk=0,ls=0,f=0,t=0,tr=(semRosto?0:1),tp=1;
   if(config==='c'){if(king){lk=2;}else{lc=2;}f=2;}
   else if(config==='2s'){const beds=g>=2?2:1;ls=beds*2;f=beds*1;}
   else if(config==='cs'){if(king){lk=2;}else{lc=2;}f=2;if(g>=2){ls=2;f+=1;}}
@@ -993,61 +1275,17 @@ function linenChips(lin){
   if(lin.tp)p.push(lin.tp+'× tapete');
   return p;
 }
-
 // ── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='lavanderia') renderLavanderia();
+  if(name==='lavanderia'){ _lavMonth=mesLavPadrao(); renderLavanderia(); }
+  if(name==='estoque') renderEstoque();
+  if(name==='lista' && _pdfDate) atualizarListaDoDia();
 }
-
-// ── LAVANDERIA STORAGE ────────────────────────────────────────────────────────
-function purgeOldMonths(data,keepMonths=12){
-  const keys=Object.keys(data).sort();
-  while(keys.length>keepMonths)delete data[keys.shift()];
-  return data;
-}
-function getLavData(){
-  try{return JSON.parse(localStorage.getItem('lav_data')||'{}');}catch{return {};}
-}
-function saveLavData(data){
-  try{localStorage.setItem('lav_data',JSON.stringify(purgeOldMonths(data)));}
-  catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
-}
-function getLimpezaData(){
-  try{return JSON.parse(localStorage.getItem('limp_data')||'{}');}catch{return {};}
-}
-function saveLimpezaData(data){
-  try{localStorage.setItem('limp_data',JSON.stringify(purgeOldMonths(data)));}
-  catch(e){if(e.name==='QuotaExceededError')showToast('⚠️ Armazenamento cheio — dados não salvos');}
-}
-
-function registerLimpeza(depMap,dateKey){
-  const dayKey=dateKey||todayKey();
-  const month=dayKey.substring(0,7);
-  const [y,m,d]=dayKey.split('-').map(Number);
-  const dow=new Date(y,m-1,d).getDay();
-  const DIAS_LIMPEZA=[0,2,4,6];
-  if(!DIAS_LIMPEZA.includes(dow))return 0;
-  const data=getLimpezaData();
-  if(!data[month])data[month]={};
-  let newCount=0;
-  Object.keys(depMap).forEach(k=>{
-    if(!depMap[k]||depMap[k].length===0)return;
-    const[hotel]=k.split('||');
-    if(hotel!=='Comf')return;
-    if(!data[month][k])data[month][k]={count:0,days:[]};
-    if(data[month][k].days.includes(dayKey))return;
-    data[month][k].count+=1;
-    data[month][k].days.push(dayKey);
-    newCount++;
-  });
-  saveLimpezaData(data);
-  return newCount;
-}
-
+// ── DATAS ────────────────────────────────────────────────────────────────────
 function currentMonthKey(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
@@ -1056,34 +1294,142 @@ function todayKey(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-function registerCheckouts(depMap,dateKey){
-  const dayKey=dateKey||todayKey();
-  const month=dayKey.substring(0,7);
-  const data=getLavData();
-  if(!data[month])data[month]={};
-  let newCount=0;
+// Agrupa linhas {hotel,apt,dia} por apartamento dentro de um mês 'YYYY-MM'
+function aggPorApto(rows, month){
+  const out={};
+  (rows||[]).forEach(r=>{
+    const dia=String(r.dia);
+    if(!dia.startsWith(month))return;
+    const k=r.hotel+'||'+r.apt;
+    if(!out[k]) out[k]={count:0,days:[]};
+    out[k].count++; out[k].days.push(dia);
+  });
+  Object.values(out).forEach(o=>o.days.sort());
+  return out;
+}
+// ── REGISTRO NO BANCO ──────────────────────────────────────────────────────────
+// Normaliza nome para comparar hóspedes (sem acento, minúsculo)
+function normNome(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
+function mesmoHospede(a,b){
+  const na=normNome(a), nb=normNome(b);
+  if(!na||!nb)return false;
+  if(na===nb)return true;
+  const ta=na.split(' ').filter(x=>x.length>1), tb=nb.split(' ').filter(x=>x.length>1);
+  if(ta.length<2||tb.length<2)return false;
+  if(ta[0]===tb[0] && ta[ta.length-1]===tb[tb.length-1])return true;     // mesmo 1º e último nome
+  const setMaior=new Set(ta.length>=tb.length?ta:tb);
+  const menor=ta.length<tb.length?ta:tb;
+  return menor.every(t=>setMaior.has(t));                                // um nome contém todos os tokens do outro
+}
+// É extensão? mesmo hóspede saindo e entrando no MESMO apto
+function ehExtensao(k){
+  const arr=_arr[k]||[], dep=_dep[k]||[];
+  if(arr.length===0||dep.length===0)return false;
+  return dep.some(d=>arr.some(a=>mesmoHospede(d.name,a.name)));
+}
+// Esse apto (com saída) está FORA do enxoval do dia? (extensão automática ou decisão manual)
+function aptoForaDoEnxoval(k){
+  if(!_dep[k]||_dep[k].length===0)return false;
+  const ov=cache.overrides[k+'||'+_pdfDate];
+  const conta=(ov!==undefined)?ov:!ehExtensao(k);
+  return !conta;
+}
+// Registra TODA saída como troca (faturamento R$8,50 por rotatividade).
+// O R$8,50 conta sempre — inclusive em extensão. A extensão só não gera
+// enxoval físico (isso é tratado no cálculo de enxoval, não aqui).
+async function registrarTrocas(dia){
+  const rows=[];
+  Object.keys(_dep).forEach(k=>{
+    if(!_dep[k]||_dep[k].length===0)return;
+    const i=k.indexOf('||');
+    rows.push({hotel:k.substring(0,i),apt:k.substring(i+2),dia});
+  });
+  if(rows.length===0)return 0;
+  const {data,error}=await sb.from('trocas')
+    .upsert(rows,{onConflict:'hotel,apt,dia',ignoreDuplicates:true})
+    .select();
+  if(error){showToast('Erro ao salvar trocas');return 0;}
+  await carregarTrocas();
+  return (data||[]).length;
+}
+async function registrarLimpezas(depMap, dia){
+  const [y,m,d]=dia.split('-').map(Number);
+  const dow=new Date(y,m-1,d).getDay();
+  const DIAS_LIMPEZA=[0,2,4,6];
+  if(!DIAS_LIMPEZA.includes(dow))return 0;
+  const rows=[];
   Object.keys(depMap).forEach(k=>{
     if(!depMap[k]||depMap[k].length===0)return;
-    if(!data[month][k])data[month][k]={count:0,days:[]};
-    if(data[month][k].days.includes(dayKey))return;
-    data[month][k].count+=1;
-    data[month][k].days.push(dayKey);
-    newCount++;
+    const i=k.indexOf('||');
+    const hotel=k.substring(0,i);
+    if(hotel!=='Comf')return;
+    rows.push({hotel,apt:k.substring(i+2),dia});
   });
-  saveLavData(data);
-  return newCount;
+  if(rows.length===0)return 0;
+  const {data,error}=await sb.from('limpezas')
+    .upsert(rows,{onConflict:'hotel,apt,dia',ignoreDuplicates:true})
+    .select();
+  if(error)return 0;
+  await carregarLimpezas();
+  return (data||[]).length;
 }
-
+// ── NAVEGAÇÃO POR MÊS (ver meses anteriores) ──────────────────────────────────
+let _lavMonth=null;  // 'YYYY-MM' do mês exibido na aba Lavanderia
+function shiftMonth(month,delta){
+  let[y,m]=month.split('-').map(Number);
+  m+=delta;
+  while(m<1){m+=12;y--;}
+  while(m>12){m-=12;y++;}
+  return y+'-'+String(m).padStart(2,'0');
+}
+function earliestMonth(){
+  let min=null;
+  const scan=rows=>(rows||[]).forEach(r=>{const mo=String(r.dia).substring(0,7);if(!min||mo<min)min=mo;});
+  scan(cache.trocas);scan(cache.limpezas);
+  return min;
+}
+// Mês que a aba Lavanderia deve abrir: o do PDF carregado, senão o último mês com dados, senão o atual
+function mesLavPadrao(){
+  if(_pdfDate) return String(_pdfDate).substring(0,7);
+  let latest=null;
+  const scan=rows=>(rows||[]).forEach(r=>{const mo=String(r.dia).substring(0,7);if(!latest||mo>latest)latest=mo;});
+  scan(cache.trocas);scan(cache.limpezas);
+  return latest||currentMonthKey();
+}
+function lavPrevMonth(){
+  const m=_lavMonth||currentMonthKey();
+  _lavMonth=shiftMonth(m,-1);
+  renderLavanderia();
+}
+function lavNextMonth(){
+  const m=_lavMonth||currentMonthKey();
+  const nx=shiftMonth(m,1);
+  if(nx>currentMonthKey())return;   // não navega para o futuro
+  _lavMonth=nx;
+  renderLavanderia();
+}
+// ── RENDER LAVANDERIA ───────────────────────────────────────────────────────────
 function renderLavanderia(){
-  const month=currentMonthKey();
-  const data=getLavData();
-  const monthData=data[month]||{};
+  if(!configurado()){
+    document.getElementById('lav-content').innerHTML=`<div class="empty-state">⚙️ Configure o Supabase para usar o app (veja o GUIA-SUPABASE.md).</div>`;
+    return;
+  }
+  const month=_lavMonth||currentMonthKey();
+  const monthData=aggPorApto(cache.trocas, month);
   const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const[y,m]=month.split('-');
   const monthLabel=monthNames[parseInt(m)-1]+' '+y;
+  const curMonth=currentMonthKey();
+  const earliest=earliestMonth();
+  const prevDisabled = !earliest || month<=earliest;
+  const nextDisabled = month>=curMonth;
+  const subLabel = (month===curMonth)?'Mês atual · trocas de enxoval':'Histórico · trocas de enxoval';
   const entries=Object.keys(monthData)
     .filter(k=>monthData[k].count>0)
-    .map(k=>{const[hotel,apt]=k.split('||');return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};})
+    .map(k=>{const i=k.indexOf('||');const hotel=k.substring(0,i),apt=k.substring(i+2);return{key:k,hotel,apt,count:monthData[k].count,days:monthData[k].days};})
     .sort((a,b)=>{
       const oa=ROOMS[a.hotel]?.order??99,ob=ROOMS[b.hotel]?.order??99;
       if(oa!==ob)return oa-ob;
@@ -1095,11 +1441,18 @@ function renderLavanderia(){
   const fmtBRL=v=>v.toLocaleString('pt-BR',{minimumFractionDigits:2});
   let html=`
   <div class="lav-header">
-    <div>
-      <div class="lav-month">${monthLabel}</div>
-      <div class="lav-sub">Histórico de trocas de enxoval</div>
+    <div class="lav-nav">
+      <button class="lav-nav-btn" onclick="lavPrevMonth()" ${prevDisabled?'disabled':''} title="Mês anterior">‹</button>
+      <div>
+        <div class="lav-month">${monthLabel}</div>
+        <div class="lav-sub">${subLabel}</div>
+      </div>
+      <button class="lav-nav-btn" onclick="lavNextMonth()" ${nextDisabled?'disabled':''} title="Próximo mês">›</button>
     </div>
-    <button class="btn-reset" onclick="openDialog()">Zerar mês</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-add-saida" onclick="openSaida()">＋ Saída</button>
+      <button class="btn-reset" onclick="openDialog()">Zerar mês</button>
+    </div>
   </div>
   <div class="lav-total-grid">
     <div class="lav-total-card"><div class="lav-total-val">${totalTrocas}</div><div class="lav-total-lbl">Trocas no mês</div></div>
@@ -1108,7 +1461,7 @@ function renderLavanderia(){
     <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalTrocas*PRECO.trocaEnxoval)}</div><div class="lav-total-lbl">Troca de roupa</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.trocaEnxoval)} por troca</div></div>
   </div>`;
   if(entries.length===0){
-    html+=`<div class="lav-empty"><div class="lav-empty-icon">🧺</div>Nenhuma troca registrada este mês.<br>Carregue um PDF na aba Lista do Dia.</div>`;
+    html+=`<div class="lav-empty"><div class="lav-empty-icon">🧺</div>Nenhuma troca registrada em ${monthLabel}.<br>Carregue um PDF na aba Lista do Dia.</div>`;
   }else{
     const hotels=[...new Set(entries.map(e=>e.hotel))];
     hotels.forEach(hotel=>{
@@ -1133,11 +1486,10 @@ function renderLavanderia(){
     });
   }
   // ── LIMPEZA PRÓPRIA COMF ──
-  const limpData=getLimpezaData();
-  const limpMonthData=limpData[month]||{};
+  const limpMonthData=aggPorApto(cache.limpezas, month);
   const limpEntries=Object.keys(limpMonthData)
     .filter(k=>limpMonthData[k].count>0)
-    .map(k=>{const[hotel,apt]=k.split('||');return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};})
+    .map(k=>{const i=k.indexOf('||');const hotel=k.substring(0,i),apt=k.substring(i+2);return{key:k,hotel,apt,count:limpMonthData[k].count,days:limpMonthData[k].days};})
     .sort((a,b)=>parseInt(a.apt)-parseInt(b.apt));
   const totalLimpezas=limpEntries.reduce((s,e)=>s+e.count,0);
   if(limpEntries.length>0){
@@ -1149,47 +1501,184 @@ function renderLavanderia(){
       </div>`;
     limpEntries.forEach(e=>{
       const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
-      html+=`<div class="limpeza-apt-row">
-        <span class="limpeza-apt-num">${esc(e.apt)}</span>
-        <span class="limpeza-apt-cfg">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</span>
-        <div class="limpeza-apt-dates">${dayChips}<div class="limpeza-count">${e.count}× limpeza</div></div>
+      html+=`<div class="lav-apt-card">
+        <div class="lav-apt-left">
+          <div class="lav-apt-num">${esc(e.apt)}</div>
+          <div class="lav-apt-hotel">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</div>
+        </div>
+        <div class="lav-apt-right">
+          <div class="lav-apt-info">
+            <div class="lav-history">${dayChips}</div>
+            <div><div class="lav-apt-count lav-green">${e.count}×</div><div class="lav-apt-label">limpezas</div></div>
+          </div>
+        </div>
       </div>`;
     });
     html+=`</div>`;
   }
   document.getElementById('lav-content').innerHTML=html;
 }
-
+// ── ESTOQUE ────────────────────────────────────────────────────────────────────
+const ESTOQUE_ITEMS=[
+  {key:'lc',name:'Lençol casal'},
+  {key:'lk',name:'Lençol king'},
+  {key:'ls',name:'Lençol solteiro'},
+  {key:'f',name:'Fronha'},
+  {key:'t',name:'Toalha banho'},
+  {key:'tr',name:'Toalha rosto'},
+  {key:'tp',name:'Tapete'},
+];
+// Soma/subtrai uma peça — atualização otimista + confirmação no banco
+async function adjustEstoque(key,delta){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  cache.estoque[key]=Math.max(0,(cache.estoque[key]||0)+delta);
+  renderEstoque();
+  const {data,error}=await sb.rpc('adjust_estoque',{p_item:key,p_delta:delta});
+  if(error){showToast('Erro ao salvar');try{await carregarEstoque();}catch(e){} renderEstoque();return;}
+  cache.estoque[key]=data;
+  renderEstoque();
+}
+// Digitar a quantidade exata (toque no número). Usa a mesma RPC atômica.
+async function setEstoqueExato(key,nome){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const atual=cache.estoque[key]||0;
+  const txt=prompt('Definir quantidade de '+nome+':',atual);
+  if(txt===null)return;                                   // cancelou
+  const novo=parseInt(String(txt).replace(/[^0-9]/g,''),10);
+  if(isNaN(novo)){showToast('Valor inválido');return;}
+  const delta=novo-atual;
+  if(delta===0)return;
+  await adjustEstoque(key,delta);
+}
+function renderEstoque(){
+  if(!configurado()){
+    document.getElementById('est-content').innerHTML=`<div class="empty-state">⚙️ Configure o Supabase para usar o app (veja o GUIA-SUPABASE.md).</div>`;
+    return;
+  }
+  const d=cache.estoque;
+  let html=`
+  <div class="est-header">
+    <div>
+      <div class="est-title">Estoque</div>
+      <div class="est-sub">Enxoval limpo disponível</div>
+    </div>
+  </div>
+  <div class="enxoval-section">
+    <div class="enxoval-title">📦 Estoque atual</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val">${d.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
+    </div>
+  </div>`;
+  ESTOQUE_ITEMS.forEach(i=>{
+    const qty=d[i.key]||0;
+    html+=`<div class="est-row">
+      <div class="est-row-top">
+        <span class="est-row-name">${i.name}</span>
+        <span class="est-row-qty" onclick="setEstoqueExato('${i.key}','${i.name}')" title="Tocar para digitar a quantidade">${qty}<span class="est-edit">✎</span></span>
+      </div>
+      <div class="est-row-btns">
+        <button class="est-btn p" onclick="adjustEstoque('${i.key}',1)">+1</button>
+        <button class="est-btn p" onclick="adjustEstoque('${i.key}',5)">+5</button>
+        <button class="est-btn p" onclick="adjustEstoque('${i.key}',20)">+20</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-1)">−1</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-5)">−5</button>
+        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-20)">−20</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('est-content').innerHTML=html;
+}
 // ── DIALOG ────────────────────────────────────────────────────────────────────
-function openDialog(){document.getElementById('overlay').classList.add('show');}
+function openDialog(){
+  const month=_lavMonth||currentMonthKey();
+  const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const[y,m]=month.split('-');
+  const label=monthNames[parseInt(m)-1]+' '+y;
+  document.getElementById('dialog-title').textContent='Zerar '+label+'?';
+  document.getElementById('dialog-sub').textContent='Todo o histórico de trocas e limpezas de '+label+' será apagado. Essa ação não pode ser desfeita.';
+  document.getElementById('overlay').classList.add('show');
+}
 function closeDialog(){document.getElementById('overlay').classList.remove('show');}
-function confirmReset(){
-  const month=currentMonthKey();
-  const lav=getLavData();
-  delete lav[month];
-  saveLavData(lav);
-  const limp=getLimpezaData();
-  delete limp[month];
-  saveLimpezaData(limp);
+async function confirmReset(){
+  if(!_ready){closeDialog();showToast('Sem conexão com o banco');return;}
+  const month=_lavMonth||currentMonthKey();
+  const ini=month+'-01';
+  const[y,m]=month.split('-').map(Number);
+  const prox=(m===12)?((y+1)+'-01-01'):(y+'-'+String(m+1).padStart(2,'0')+'-01');
+  const e1=await sb.from('trocas').delete().gte('dia',ini).lt('dia',prox);
+  const e2=await sb.from('limpezas').delete().gte('dia',ini).lt('dia',prox);
   closeDialog();
+  if(e1.error||e2.error){showToast('Erro ao zerar o mês');return;}
+  try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
   renderLavanderia();
   showToast('Mês zerado com sucesso');
 }
-
+// ── SAÍDA MANUAL ──────────────────────────────────────────────────────────────
+function openSaida(){
+  const hSel=document.getElementById('saida-hotel');
+  hSel.innerHTML=Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order)
+    .map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join('');
+  onSaidaHotel();
+  document.getElementById('saida-data').value=_pdfDate||todayKey();
+  document.getElementById('overlay-saida').classList.add('show');
+}
+function onSaidaHotel(){
+  const h=document.getElementById('saida-hotel').value;
+  const aSel=document.getElementById('saida-apto');
+  aSel.innerHTML=Object.keys(ROOMS[h].apts).sort((a,b)=>parseInt(a)-parseInt(b))
+    .map(a=>`<option value="${a}">${a} · ${CFG_LABEL[ROOMS[h].apts[a]]}</option>`).join('');
+}
+function closeSaida(){document.getElementById('overlay-saida').classList.remove('show');}
+async function addSaidaManual(){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const hotel=document.getElementById('saida-hotel').value;
+  const apt=document.getElementById('saida-apto').value;
+  const dia=document.getElementById('saida-data').value;
+  if(!hotel||!apt||!dia){showToast('Preencha hotel, apto e data');return;}
+  const {error}=await sb.from('trocas')
+    .upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
+  if(error){showToast('Erro ao adicionar saída');return;}
+  // limpeza própria Comf em dia de limpeza (dom/ter/qui/sáb)
+  const [yy,mm,dd]=dia.split('-').map(Number);
+  const dow=new Date(yy,mm-1,dd).getDay();
+  if(hotel==='Comf' && [0,2,4,6].includes(dow)){
+    await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
+  }
+  // se for o dia carregado na lista, reflete lá também (para o enxoval do dia)
+  if(_pdfDate===dia){
+    const k=hotel+'||'+apt;
+    if(!_dep[k])_dep[k]=[];
+    if(_dep[k].length===0){
+      const gdef=ROOMS[hotel].apts[apt]==='cs'?3:2;
+      _dep[k].push({name:'Saída manual',guests:gdef});
+      await salvarListaAtual(document.getElementById('drop-label').textContent);
+    }
+  }
+  try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
+  closeSaida();
+  _lavMonth=String(dia).substring(0,7);
+  renderLavanderia();
+  if(abaAtiva()==='lista' && _pdfDate) atualizarListaDoDia();
+  showToast('Saída adicionada · '+hotel+' '+apt);
+}
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
 }
-
 // ── FILE HANDLING ─────────────────────────────────────────────────────────────
 const dz=document.getElementById('drop-zone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleFile(e.dataTransfer.files[0]);});
 document.getElementById('file-input').addEventListener('change',e=>handleFile(e.target.files[0]));
-
 async function handleFile(file){
   if(!file)return;
   document.getElementById('drop-label').textContent='Carregando...';
@@ -1209,13 +1698,12 @@ async function handleFile(file){
       .sort((a,b)=>{const[pa,ya]=a.split('_').map(Number);const[pb,yb]=b.split('_').map(Number);return pa!==pb?pa-pb:yb-ya;})
       .map(k=>map[k].sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim())
       .filter(l=>l.length>0);
-    parseAndRender(lines,file.name);
+    await parseAndRender(lines,file.name);
   }catch(err){
     document.getElementById('drop-label').textContent='Erro ao ler PDF';
     document.getElementById('drop-sub').textContent=err.message;
   }
 }
-
 // ── HOTEL DETECTOR ────────────────────────────────────────────────────────────
 const HOTEL_TESTS=[
   {r:/go\s*inn?/i,h:'Go Inn'},{r:/comf\s*t\b|comft\b/i,h:'Comft'},{r:/\bcomf\b/i,h:'Comf'},
@@ -1223,7 +1711,6 @@ const HOTEL_TESTS=[
   {r:/\bsaint\b/i,h:'Saint'},{r:/\bramada\b/i,h:'Ramada'},{r:/\btryp\b/i,h:'Tryp'},
 ];
 const HOTEL_CLEAN_RE=new RegExp(HOTEL_TESTS.map(t=>t.r.source).join('|'),'gi');
-
 function aptKey(raw){return raw.replace(/^0+/,'').replace(/-\d+$/,'');}
 function findMatch(line){
   for(const t of HOTEL_TESTS){
@@ -1253,11 +1740,18 @@ function extractGuests(line){
   m=stripped.match(/\b([1-9])\b/);
   return m?parseInt(m[1]):1;
 }
-
 // ── PARSE ─────────────────────────────────────────────────────────────────────
-let _arr={},_dep={},_filt='all',_srch='',_detalhes=[];
-
-function parseAndRender(lines,filename){
+let _arr={},_dep={},_hotelFilt='',_srch='',_detalhes=[];
+function formatPdfDate(key){
+  if(!key)return '';
+  const[y,m,d]=key.split('-').map(Number);
+  const dow=new Date(y,m-1,d).getDay();
+  const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return `${dias[dow]}, ${d} de ${meses[m-1]} de ${y}`;
+}
+let _pdfDate=null;
+async function parseAndRender(lines,filename){
   _arr={};_dep={};let sec=null;
   lines.forEach(line=>{
     if(/chegadas/i.test(line)){sec='in';return;}
@@ -1278,16 +1772,21 @@ function parseAndRender(lines,filename){
       break;
     }
   }
-  const newCount=registerCheckouts(_dep,pdfDateKey);
-  registerLimpeza(_dep,pdfDateKey);
-  if(newCount>0)showToast(newCount+' troca'+(newCount>1?'s':'')+' registrada'+(newCount>1?'s':'')+' na lavanderia');
-  else showToast('Dia já registrado na lavanderia');
+  _pdfDate=pdfDateKey;
+  if(_ready){
+    const novas=await registrarTrocas(pdfDateKey);
+    await registrarLimpezas(_dep,pdfDateKey);
+    if(novas>0)showToast(novas+' troca'+(novas>1?'s':'')+' registrada'+(novas>1?'s':'')+' na lavanderia');
+    else showToast('Dia já registrado na lavanderia');
+  }else{
+    showToast('Sem conexão com o banco — configure o Supabase');
+  }
   dz.classList.add('loaded');
   document.getElementById('drop-label').textContent=filename;
   document.getElementById('drop-sub').textContent='Clique para trocar o arquivo';
+  if(_ready) await salvarListaAtual(filename);
   renderUI();
 }
-
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
 function calcTotals(){
   const tot={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
@@ -1297,8 +1796,9 @@ function calcTotals(){
       const k=hotel+'||'+apt,config=ROOMS[hotel].apts[apt];
       const hasIn=(_arr[k]?.length>0),hasOut=(_dep[k]?.length>0);
       if(!hasOut)return;
+      if(aptoForaDoEnxoval(k))return;        // extensão ou retirado manualmente → não conta enxoval
       const guests=hasIn?(_arr[k][0]?.guests??null):null;
-      const lin=calcLinen(config,guests,isKing(hotel,apt));
+      const lin=calcLinen(config,guests,isKing(hotel,apt),SEM_ROSTO.has(hotel));
       const tipo=hasIn&&hasOut?'troca':hasIn?'chegada':'saída';
       const msg=tipo==='troca'?`troca (${guests}px entrando)`:`${tipo}${guests?` (${guests}px)`:' (cap. máx)'}`;
       detalhes.push({hotel,apt,config,tipo,msg,lin});
@@ -1312,8 +1812,77 @@ function calcTotals(){
   });
   return{tot,detalhes};
 }
-
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
+async function fecharDia(){
+  if(!_pdfDate){showToast('Carregue um PDF primeiro');return;}
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const {tot:lin}=calcTotals();
+  const totalUsar=lin.lc+lin.lk+lin.ls+lin.f+lin.t+lin.tr+lin.tp;
+  if(totalUsar===0){showToast('Nenhum item para descontar');return;}
+  if(!confirm(`Fechar o dia ${_pdfDate.split('-').reverse().join('/')}?\n\nVai descontar ${totalUsar} peças do estoque.`))return;
+  const {data,error}=await sb.rpc('fechar_dia',{
+    p_dia:_pdfDate,p_lc:lin.lc,p_lk:lin.lk,p_ls:lin.ls,p_f:lin.f,p_t:lin.t,p_tr:lin.tr,p_tp:lin.tp
+  });
+  if(error){showToast('Erro ao fechar o dia');return;}
+  try{await Promise.all([carregarEstoque(),carregarDias()]);}catch(e){}
+  if(data===true)showToast('✓ Dia fechado · estoque atualizado');
+  else showToast('Este dia já estava fechado');
+  refreshEstoquePreview();
+}
+async function reabrirDia(){
+  if(!_pdfDate||!_ready)return;
+  const {data,error}=await sb.rpc('reabrir_dia',{p_dia:_pdfDate});
+  if(error){showToast('Erro ao reabrir');return;}
+  try{await Promise.all([carregarEstoque(),carregarDias()]);}catch(e){}
+  if(data===true)showToast('Dia reaberto · estoque restaurado');
+  refreshEstoquePreview();
+}
+function refreshEstoquePreview(){
+  const root=document.getElementById('estoque-preview-root');
+  if(!root)return;
+  const {tot:lin}=calcTotals();
+  root.innerHTML=renderEstoquePreview(lin);
+}
+function renderEstoquePreview(lin){
+  const d=cache.estoque;
+  // Quanto falta de cada peça para conseguir fechar o dia
+  const falta={};
+  ESTOQUE_ITEMS.forEach(i=>{
+    const tem=d[i.key]||0;
+    const usar=lin[i.key]||0;
+    falta[i.key]=Math.max(0,usar-tem);
+  });
+  const algumFalta=ESTOQUE_ITEMS.some(i=>falta[i.key]>0);
+  const fechado=_pdfDate&&diaFechado(_pdfDate);
+  return `
+  <div class="enxoval-section">
+    <div class="enxoval-title">📦 Estoque atual</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val">${d.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
+    </div>
+  </div>
+  <div class="enxoval-section ${algumFalta?'enxoval-warn':''}">
+    <div class="enxoval-title">${algumFalta?'⚠️ Falta para fechar o dia':'✅ Tudo ok para fechar o dia'}</div>
+    <div class="enxoval-grid">
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
+      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
+    </div>
+    ${fechado
+      ? `<button class="fechar-btn fechado" onclick="reabrirDia()">✓ Dia fechado &middot; toque para reabrir</button>`
+      : `<button class="fechar-btn" onclick="fecharDia()">✓ Fechar o dia &middot; descontar do estoque</button>`}
+  </div>`;
+}
 function toggleDetalhamento(btn){
   btn.classList.toggle('active');
   const section=document.getElementById('detalhamento-section');
@@ -1334,23 +1903,8 @@ function toggleDetalhamento(btn){
     section.style.display='none';
   }
 }
-
-function renderUI(){
-  let tIn=0,tOut=0,tBoth=0;
-  Object.keys(ROOMS).forEach(h=>Object.keys(ROOMS[h].apts).forEach(a=>{
-    const k=h+'||'+a,i=_arr[k]?.length>0,o=_dep[k]?.length>0;
-    if(i)tIn++;if(o)tOut++;if(i&&o)tBoth++;
-  }));
-  const total=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
-  const{tot:lin,detalhes}=calcTotals();
-  _detalhes=detalhes;
-  document.getElementById('results').innerHTML=`
-  <div class="summary-grid">
-    <div class="metric"><div class="metric-label">Chegadas</div><div class="metric-value">${tIn}</div></div>
-    <div class="metric"><div class="metric-label">Saídas</div><div class="metric-value">${tOut}</div></div>
-    <div class="metric"><div class="metric-label">Troca</div><div class="metric-value">${tBoth}</div></div>
-    <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
-  </div>
+function enxovalDiaHTML(lin){
+  return `
   <div class="enxoval-section">
     <div class="enxoval-title">🛏 Enxoval do dia</div>
     <div class="enxoval-grid">
@@ -1362,38 +1916,77 @@ function renderUI(){
       <div class="enxoval-item"><div class="enxoval-val">${lin.tr}</div><div class="enxoval-lbl">Toalha rosto</div></div>
       <div class="enxoval-item"><div class="enxoval-val">${lin.tp}</div><div class="enxoval-lbl">Tapete</div></div>
     </div>
+  </div>`;
+}
+// Atualiza só as partes que dependem dos dados (sem mexer na busca/filtros)
+function atualizarListaDoDia(){
+  if(!_pdfDate)return;
+  const er=document.getElementById('enxoval-dia-root');
+  if(er){const {tot:lin}=calcTotals();er.innerHTML=enxovalDiaHTML(lin);}
+  refreshEstoquePreview();
+  renderCards();
+}
+// Botão: tira/recoloca o ENXOVAL FÍSICO de um apto (não mexe no R$8,50).
+async function toggleEnxoval(hotel,apt){
+  if(!_ready||!_pdfDate){showToast('Sem conexão com o banco');return;}
+  const k=hotel+'||'+apt;
+  const conta=aptoForaDoEnxoval(k);   // está fora → passa a ter enxoval; tem enxoval → tira
+  const {error}=await sb.from('override_enxoval')
+    .upsert({hotel,apt,dia:_pdfDate,conta},{onConflict:'hotel,apt,dia'});
+  if(error){showToast('Rode o supabase-add-enxoval-override.sql para ativar este botão');return;}
+  cache.overrides[k+'||'+_pdfDate]=conta;
+  try{await carregarOverrides();}catch(e){}
+  atualizarListaDoDia();
+  showToast(conta?'Enxoval incluído (R$8,50 segue contando)':'Enxoval retirado (R$8,50 segue contando)');
+}
+function renderUI(){
+  let tIn=0,tOut=0,tBoth=0;
+  Object.keys(ROOMS).forEach(h=>Object.keys(ROOMS[h].apts).forEach(a=>{
+    const k=h+'||'+a,i=_arr[k]?.length>0,o=_dep[k]?.length>0;
+    if(i)tIn++;if(o)tOut++;if(i&&o)tBoth++;
+  }));
+  const total=Object.values(ROOMS).reduce((s,h)=>s+Object.keys(h.apts).length,0);
+  const{tot:lin,detalhes}=calcTotals();
+  _detalhes=detalhes;
+  document.getElementById('results').innerHTML=`
+  ${_pdfDate?`<div class="date-banner"><span class="date-banner-icon">📅</span><span>${formatPdfDate(_pdfDate)}</span></div>`:''}
+  <div class="summary-grid">
+    <div class="metric"><div class="metric-label">Chegadas</div><div class="metric-value">${tIn}</div></div>
+    <div class="metric"><div class="metric-label">Saídas</div><div class="metric-value">${tOut}</div></div>
+    <div class="metric"><div class="metric-label">Troca</div><div class="metric-value">${tBoth}</div></div>
+    <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
   </div>
+  <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
+  <div id="estoque-preview-root">${renderEstoquePreview(lin)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">
   <div class="filter-row">
-    <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
-    <button class="filter-btn" onclick="setFilter('both',this)">Troca</button>
-    <button class="filter-btn" onclick="setFilter('in',this)">Só chegada</button>
-    <button class="filter-btn" onclick="setFilter('out',this)">Só saída</button>
-    <button class="filter-btn" onclick="setFilter('empty',this)">Sem mov.</button>
+    ${Object.keys(ROOMS).sort((a,b)=>ROOMS[b].order-ROOMS[a].order).map(h=>`<button class="filter-btn ${_hotelFilt===h?'active':''}" onclick="setHotel('${esc(h)}',this)">${esc(h)}</button>`).join('')}
   </div>
   <div id="cards-root"></div>`;
   document.getElementById('results').style.display='block';
+  const si=document.getElementById('search-input'); if(si&&_srch) si.value=_srch;
   renderCards();
 }
-
 function onSearch(v){_srch=v.toLowerCase();renderCards();}
-function setFilter(f,btn){_filt=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderCards();}
-
+// Filtro por hotel — clicar no mesmo botão desativa (mostra todos)
+function setHotel(hotel,btn){
+  _hotelFilt=(_hotelFilt===hotel)?'':hotel;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(_hotelFilt)btn.classList.add('active');
+  renderCards();
+}
 function renderCards(){
   const root=document.getElementById('cards-root');if(!root)return;
   let html='',any=false;
   Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order).forEach(hotel=>{
+    if(_hotelFilt && hotel!==_hotelFilt) return;   // filtro por hotel
     let sec='';
     Object.keys(ROOMS[hotel].apts).sort((a,b)=>parseInt(a)-parseInt(b)).forEach(apt=>{
       const k=hotel+'||'+apt;
       const iL=_arr[k]||[],oL=_dep[k]||[];
       const hi=iL.length>0,ho=oL.length>0,emp=!hi&&!ho,both=hi&&ho;
-      if(_filt==='both'&&!both)return;
-      if(_filt==='in'&&(!hi||both))return;
-      if(_filt==='out'&&(!ho||both))return;
-      if(_filt==='empty'&&!emp)return;
       if(_srch){const s=(hotel+' '+apt).toLowerCase(),n=[...iL,...oL].map(x=>x.name.toLowerCase()).join(' ');if(!s.includes(_srch)&&!n.includes(_srch))return;}
       any=true;
       const config=ROOMS[hotel].apts[apt],cfgLabel=CFG_LABEL[config]||config;
@@ -1402,14 +1995,30 @@ function renderCards(){
       oL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-out"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 12:00</span></div>`;});
       iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
       if(emp)rows=`<div class="no-movement">sem movimentação hoje</div>`;
-      let chipsHtml='';
-      if(ho){const guests=hi?(iL[0]?.guests??null):null;const lin=calcLinen(config,guests,isKing(hotel,apt));const chips=linenChips(lin);chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;}
-      sec+=`<div class="apt-card ${emp?'':'has-movement'}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
+      let chipsHtml='',foraEnx=false;
+      if(ho){
+        foraEnx=aptoForaDoEnxoval(k);
+        if(foraEnx){
+          const ext=hi&&ehExtensao(k);
+          chipsHtml=`<div class="enx-excluded">${ext?'🔁 Extensão · sem troca de enxoval':'✋ Sem enxoval (retirado)'} · R$8,50 conta</div>`;
+          if(_ready)chipsHtml+=`<button class="enx-toggle out" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">+ Incluir no enxoval</button>`;
+        }else{
+          const guests=hi?(iL[0]?.guests??null):null;
+          const lin=calcLinen(config,guests,isKing(hotel,apt),SEM_ROSTO.has(hotel));
+          const chips=linenChips(lin);
+          chipsHtml=`<div class="enxoval-chips">${chips.map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;
+          if(_ready)chipsHtml+=`<button class="enx-toggle in" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">− Tirar do enxoval</button>`;
+        }
+      }
+      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;
   });
   root.innerHTML=any?html:`<div class="empty-state">Nenhum resultado encontrado.</div>`;
 }
+// ── INICIALIZAÇÃO ───────────────────────────────────────────────────────────────
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initApp);
+else initApp();
 </script>
 </body>
 </html>

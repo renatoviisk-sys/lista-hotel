@@ -548,6 +548,39 @@ html,body{
   white-space:nowrap;
   letter-spacing:0.01em;
 }
+/* ── Enxoval por hotel (breakdown) ── */
+.enx-hotel-wrap{margin-bottom:1.75rem;}
+.enx-hotel-card{
+  background:var(--bg-1);
+  border:1px solid var(--b1);
+  border-radius:var(--r-md);
+  padding:0.85rem 1.1rem;
+  margin-bottom:8px;
+  box-shadow:var(--sh-sm);
+}
+.enx-hotel-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom:0.6rem;
+}
+.enx-hotel-name{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--t1);
+}
+.enx-hotel-apts{
+  font-size:11px;
+  font-weight:500;
+  color:var(--t3);
+}
+.enx-hotel-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
 /* ── Tirar/incluir do enxoval (extensão de reserva) ── */
 .enx-excluded{
   margin-top:9px;padding-top:9px;
@@ -1903,6 +1936,33 @@ function toggleDetalhamento(btn){
     section.style.display='none';
   }
 }
+function enxovalPorHotelHTML(detalhes){
+  const porHotel={};
+  detalhes.forEach(d=>{
+    if(!porHotel[d.hotel]) porHotel[d.hotel]={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0,aptos:0};
+    const h=porHotel[d.hotel];
+    h.lc+=d.lin.lc;h.lk+=d.lin.lk;h.ls+=d.lin.ls;h.f+=d.lin.f;h.t+=d.lin.t;h.tr+=d.lin.tr;h.tp+=d.lin.tp;h.aptos++;
+  });
+  const hoteis=Object.keys(porHotel).sort((a,b)=>ROOMS[a].order-ROOMS[b].order);
+  if(hoteis.length<=1) return '';   // só um hotel no dia → o quadro geral já basta
+  const LBL=[['lc','lençol casal'],['lk','lençol king'],['ls','lençol solteiro'],['f','fronha'],['t','toalha banho'],['tr','toalha rosto'],['tp','tapete']];
+  let cards='';
+  hoteis.forEach(hotel=>{
+    const h=porHotel[hotel];
+    const chips=LBL.filter(([k])=>h[k]>0).map(([k,lbl])=>`<span class="chip">${h[k]} ${lbl}</span>`).join('');
+    cards+=`<div class="enx-hotel-card">
+      <div class="enx-hotel-head">
+        <span class="enx-hotel-name">${esc(hotel)}</span>
+        <span class="enx-hotel-apts">${h.aptos} apto${h.aptos>1?'s':''}</span>
+      </div>
+      <div class="enx-hotel-chips">${chips}</div>
+    </div>`;
+  });
+  return `<div class="enx-hotel-wrap">
+    <div class="enxoval-title" style="margin-bottom:0.75rem;">🏨 Enxoval por hotel</div>
+    ${cards}
+  </div>`;
+}
 function enxovalDiaHTML(lin){
   return `
   <div class="enxoval-section">
@@ -1921,8 +1981,11 @@ function enxovalDiaHTML(lin){
 // Atualiza só as partes que dependem dos dados (sem mexer na busca/filtros)
 function atualizarListaDoDia(){
   if(!_pdfDate)return;
+  const {tot:lin,detalhes}=calcTotals();
   const er=document.getElementById('enxoval-dia-root');
-  if(er){const {tot:lin}=calcTotals();er.innerHTML=enxovalDiaHTML(lin);}
+  if(er) er.innerHTML=enxovalDiaHTML(lin);
+  const hr=document.getElementById('enxoval-hotel-root');
+  if(hr) hr.innerHTML=enxovalPorHotelHTML(detalhes);
   refreshEstoquePreview();
   renderCards();
 }
@@ -1957,6 +2020,7 @@ function renderUI(){
     <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
   </div>
   <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
+  <div id="enxoval-hotel-root">${enxovalPorHotelHTML(detalhes)}</div>
   <div id="estoque-preview-root">${renderEstoquePreview(lin)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>

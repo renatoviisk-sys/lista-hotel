@@ -846,65 +846,152 @@ html,body{
 /* ══════════════════════════════════════════════════════════════
    TOAST — slide-up + fade
    ══════════════════════════════════════════════════════════════ */
-/* Estoque tab — mobile first, clean */
-.est-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;}
-.est-title{font-size:15px;font-weight:500;color:var(--txt);}
-.est-sub{font-size:12px;color:var(--txt3);margin-top:2px;}
-.est-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.5rem;}
-.est-summary-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem 1rem;text-align:center;}
-.est-summary-val{font-size:24px;font-weight:500;color:var(--amber);}
-.est-summary-lbl{font-size:11px;color:var(--txt3);margin-top:3px;}
-.est-summary-val.warn{color:var(--red);}
-.est-summary-val.ok{color:var(--green);}
-.val-red{color:var(--red)!important;}
-.fechar-btn{
-  width:100%;
-  margin-top:1rem;
-  padding:0.85rem 1rem;
-  border:none;
-  border-radius:var(--r-sm);
-  background:var(--green);
-  color:#062013;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  transition:opacity .15s, background .15s;
-  font-family:inherit;
-  touch-action:manipulation;
-  user-select:none;
-  -webkit-user-select:none;
+/* ══════════════════════════════════════════════════════════════
+   MANUTENÇÃO
+   ══════════════════════════════════════════════════════════════ */
+.mt-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:1.5rem;}
+.mt-section{
+  background:var(--bg-1);border:1px solid var(--b1);border-radius:var(--r-lg);
+  padding:1.1rem 1.25rem 1.25rem;margin-bottom:1.5rem;box-shadow:var(--sh-sm);
 }
-.fechar-btn:active{opacity:0.7;}
-.fechar-btn.fechado{
-  background:transparent;
-  color:var(--green);
-  border:1px solid var(--green);
-  font-weight:500;
+.mt-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;}
+.mt-section-title{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);}
+.mt-mini-btn{
+  font-size:11px;font-family:var(--font);font-weight:600;padding:5px 11px;border-radius:var(--r-pill);
+  border:1px solid var(--b1);background:var(--bg-2);color:var(--t2);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:all .15s;
 }
-.enxoval-section.enxoval-warn{border-color:var(--red-bdr);background:linear-gradient(180deg,var(--red-dim) 0%,var(--bg-1) 100%);}
-.estoque-warn{
-  margin-top:0.85rem;
-  padding:0.65rem 0.85rem;
-  background:var(--red-dim);
-  border:1px solid var(--red-bdr);
-  border-radius:var(--r-sm);
-  font-size:12px;
-  font-weight:500;
-  color:var(--red);
-  line-height:1.4;
+.mt-mini-btn:hover{color:var(--t1);border-color:var(--b2);}
+.mt-stock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mt-stock{
+  background:var(--bg-2);border:1px solid var(--b0);border-radius:var(--r-md);
+  padding:0.8rem 0.6rem 0.65rem;text-align:center;display:flex;flex-direction:column;gap:6px;
+  transition:border-color .2s;
 }
-.est-row{background:var(--bg1);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:6px;}
-.est-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.est-row-name{font-size:14px;color:var(--txt);font-weight:500;}
-.est-row-qty{font-size:24px;font-weight:600;color:var(--amber);line-height:1;cursor:pointer;display:inline-flex;align-items:center;}
-.est-row-qty:active{opacity:.6;}
-.est-edit{font-size:12px;color:var(--t3);margin-left:6px;}
-.est-row-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
-.est-btn{padding:14px 0;border-radius:8px;border:none;font-size:15px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;background:var(--bg3);color:var(--txt);transition:transform .08s, opacity .08s;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
-.est-btn:active{transform:scale(0.94);opacity:0.8;}
-.est-btn.m{background:#3a1a1a;color:#fca5a5;}
-.est-btn.p{background:#1a3a1a;color:#86efac;}
+.mt-stock:hover{border-color:var(--b2);}
+.mt-stock.low{border-color:var(--red-bdr);background:linear-gradient(180deg,var(--red-dim) 0%,var(--bg-2) 100%);}
+.mt-stock-qty{
+  font-size:26px;font-weight:700;color:var(--amber);letter-spacing:-0.03em;line-height:1;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.mt-stock.low .mt-stock-qty{color:var(--red);}
+.mt-stock-name{font-size:11px;font-weight:500;color:var(--t2);line-height:1.3;min-height:2.6em;display:flex;align-items:center;justify-content:center;}
+.mt-stock-btns{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.mt-step{
+  padding:8px 0;border-radius:var(--r-sm);border:1px solid var(--b1);background:var(--bg-3);
+  color:var(--t1);font-size:16px;font-weight:600;font-family:var(--font);cursor:pointer;line-height:1;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;transition:transform .08s,background .15s;
+}
+.mt-step:active{transform:scale(0.93);}
+.mt-step.minus:hover{background:var(--red-dim);border-color:var(--red-bdr);color:var(--red);}
+.mt-step.plus:hover{background:var(--green-dim);border-color:var(--green-bdr);color:var(--green);}
+.mt-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;}
+.mt-metric{background:var(--bg-1);border:1px solid var(--b1);border-radius:var(--r-md);padding:1rem 0.6rem;text-align:center;box-shadow:var(--sh-sm);}
+.mt-metric-val{font-size:26px;font-weight:700;letter-spacing:-0.03em;line-height:1;color:var(--t1);}
+.mt-metric-val.amber{color:var(--amber);}
+.mt-metric-val.green{color:var(--green);}
+.mt-metric-lbl{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;margin-top:7px;}
+.mt-seg{display:flex;background:var(--bg-1);border:1px solid var(--b1);border-radius:var(--r-pill);padding:3px;margin-bottom:0.875rem;}
+.mt-seg button{
+  flex:1;padding:8px 0;border:none;border-radius:var(--r-pill);background:transparent;color:var(--t3);
+  font-size:12px;font-weight:600;font-family:var(--font);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.mt-seg button.active{background:var(--bg-3);color:var(--t1);box-shadow:var(--sh-sm);}
+.mt-seg .count{font-weight:500;color:var(--t3);margin-left:4px;}
+#mt-search{
+  width:100%;padding:11px 16px;border-radius:var(--r-md);border:1px solid var(--b1);font-size:14px;
+  font-family:var(--font);background:var(--bg-1);color:var(--t1);outline:none;margin-bottom:0.875rem;-webkit-appearance:none;
+}
+#mt-search::placeholder{color:var(--t3);}
+#mt-search:focus{border-color:var(--indigo-bdr);box-shadow:0 0 0 3px var(--indigo-dim);}
+.mt-apt{
+  background:var(--bg-1);border:1px solid var(--b1);border-radius:var(--r-md);margin-bottom:8px;
+  display:flex;box-shadow:var(--sh-sm);overflow:hidden;
+}
+.mt-apt-left{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  min-width:64px;padding:0.9rem 0.6rem;border-right:1px solid var(--b0);background:var(--bg-0);
+}
+.mt-apt-num{font-size:18px;font-weight:700;color:var(--t1);letter-spacing:-0.01em;line-height:1;}
+.mt-apt-add{
+  width:26px;height:26px;border-radius:50%;border:1px solid var(--b1);background:var(--bg-2);color:var(--t2);
+  font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.mt-apt-add:hover{color:var(--amber);border-color:var(--amber-bdr);background:var(--amber-dim);}
+.mt-apt-right{flex:1;min-width:0;}
+.mt-rep{padding:0.85rem 1rem;border-top:1px solid var(--b0);}
+.mt-rep:first-child{border-top:none;}
+.mt-rep-top{display:flex;align-items:flex-start;gap:10px;}
+.mt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.mt-dot.pend{background:var(--amber);box-shadow:0 0 8px rgba(251,191,36,0.55);}
+.mt-dot.ok{background:var(--green);box-shadow:0 0 8px rgba(45,212,160,0.5);}
+.mt-rep-desc{flex:1;min-width:0;font-size:14px;font-weight:500;color:var(--t1);line-height:1.45;word-wrap:break-word;white-space:pre-wrap;}
+.mt-rep.done .mt-rep-desc{color:var(--t2);}
+.mt-del{
+  background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:6px;
+  -webkit-tap-highlight-color:transparent;opacity:.6;transition:opacity .15s,color .15s;
+}
+.mt-del:hover{opacity:1;color:var(--red);}
+.mt-meta{font-size:11.5px;color:var(--t3);margin:5px 0 0 18px;line-height:1.55;}
+.mt-meta b{color:var(--t2);font-weight:600;}
+.mt-age{
+  display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:var(--r-pill);margin-left:4px;
+  background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-bdr);vertical-align:1px;
+}
+.mt-age.late{background:var(--red-dim);color:var(--red);border-color:var(--red-bdr);}
+.mt-done-line{color:var(--green);}
+.mt-done-line b{color:var(--green);}
+.mt-chip{
+  display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);margin-left:4px;
+  background:var(--violet-dim);color:var(--violet);border:1px solid var(--violet-bdr);
+}
+.mt-obs{font-style:italic;color:var(--t3);}
+.mt-actions{margin:9px 0 0 18px;display:flex;gap:6px;}
+.mt-btn-ok{
+  font-size:12px;font-family:var(--font);font-weight:600;padding:7px 14px;border-radius:var(--r-pill);cursor:pointer;
+  border:1px solid var(--green-bdr);background:var(--green-dim);color:var(--green);-webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.mt-btn-ok:hover{background:rgba(45,212,160,0.18);}
+.mt-btn-ghost{
+  font-size:12px;font-family:var(--font);font-weight:500;padding:7px 14px;border-radius:var(--r-pill);cursor:pointer;
+  border:1px solid var(--b1);background:transparent;color:var(--t3);-webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.mt-btn-ghost:hover{color:var(--t1);border-color:var(--b2);}
+.mt-fab{
+  position:fixed;right:max(1.25rem, calc(50% - 290px + 1.25rem));bottom:1.5rem;z-index:30;
+  display:none;align-items:center;gap:8px;padding:14px 20px 14px 16px;border-radius:var(--r-pill);border:none;
+  background:var(--amber);color:#1f1300;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;
+  box-shadow:0 10px 30px rgba(251,191,36,0.25),var(--sh-lg);-webkit-tap-highlight-color:transparent;transition:transform .15s;
+}
+.mt-fab span{font-size:20px;line-height:1;font-weight:600;}
+.mt-fab:active{transform:scale(0.95);}
+.mt-fab.show{display:inline-flex;}
+.dialog.dialog-scroll{max-height:90vh;overflow-y:auto;}
+textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
+.dialog-row{display:grid;grid-template-columns:2fr 1fr;gap:8px;}
+.dialog-hint{font-size:12px;color:var(--t3);margin-top:6px;line-height:1.5;}
+.dialog-quote{
+  background:var(--bg-3);border:1px solid var(--b1);border-radius:var(--r-md);padding:10px 12px;
+  font-size:13px;color:var(--t1);line-height:1.45;margin-bottom:4px;white-space:pre-wrap;
+}
+.btn-primary{
+  flex:1;padding:11px;border-radius:var(--r-md);border:1px solid var(--amber-bdr);background:var(--amber);
+  color:#1f1300;font-size:14px;font-family:var(--font);font-weight:700;cursor:pointer;transition:opacity .15s;
+}
+.btn-primary:active{opacity:.8;}
+.btn-primary.green{background:var(--green);border-color:var(--green-bdr);color:#062013;}
+.btn-danger-ghost{
+  padding:11px 14px;border-radius:var(--r-md);border:1px solid var(--red-bdr);background:transparent;color:var(--red);
+  font-size:14px;font-family:var(--font);font-weight:600;cursor:pointer;
+}
+@media(max-width:420px){
+  .mt-stock{padding:0.7rem 0.45rem 0.55rem;}
+  .mt-stock-qty{font-size:22px;}
+  .mt-fab{right:1rem;bottom:1.25rem;}
+}
+@media(max-width:340px){ .mt-stock-grid{grid-template-columns:repeat(2,1fr);} }
+#tab-manut{padding-bottom:4rem;}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1065,7 +1152,7 @@ html,body{
   <div class="tab-bar">
     <div class="tab active" onclick="switchTab('lista',this)">Lista do Dia</div>
     <div class="tab" onclick="switchTab('lavanderia',this)">Lavanderia</div>
-    <div class="tab" onclick="switchTab('estoque',this)">Estoque</div>
+    <div class="tab" onclick="switchTab('manut',this)">Manutenção</div>
   </div>
   <div class="sync-bar">
     <span class="sync-pill" id="sync-pill"><span class="sync-dot"></span><span id="sync-text">Conectando…</span></span>
@@ -1085,8 +1172,8 @@ html,body{
     <div id="lav-content"></div>
   </div>
   <!-- TAB: ESTOQUE -->
-  <div id="tab-estoque" class="tab-content">
-    <div id="est-content"></div>
+  <div id="tab-manut" class="tab-content">
+    <div id="manut-content"></div>
   </div>
 </div>
 <!-- Toast -->
@@ -1119,6 +1206,81 @@ html,body{
     </div>
   </div>
 </div>
+<!-- ── MANUTENÇÃO: botão flutuante ── -->
+<button class="mt-fab" id="mt-fab" onclick="openReparo()"><span>＋</span> Novo reparo</button>
+<!-- Novo reparo -->
+<div class="overlay" id="ov-reparo">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title">Novo reparo</div>
+    <div class="dialog-sub">Registre o que precisa ser arrumado no apartamento.</div>
+    <div class="dialog-row">
+      <div><label>Hotel</label><select class="dialog-field" id="rp-hotel" onchange="onRpHotel()"></select></div>
+      <div><label>Apto</label><select class="dialog-field" id="rp-apto"></select></div>
+    </div>
+    <label>O que precisa arrumar</label>
+    <textarea class="dialog-field" id="rp-desc" placeholder="Ex.: chuveiro não esquenta, trocar lâmpada do banheiro..."></textarea>
+    <label>Seu nome</label>
+    <input class="dialog-field" id="rp-nome" placeholder="Quem está registrando" autocomplete="name">
+    <label>Colocado para arrumar em</label>
+    <input class="dialog-field" type="date" id="rp-data">
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-cancel" onclick="closeOv('ov-reparo')">Cancelar</button>
+      <button class="btn-primary" id="rp-salvar" onclick="salvarReparo()">Registrar</button>
+    </div>
+  </div>
+</div>
+<!-- Resolver reparo -->
+<div class="overlay" id="ov-resolver">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title" id="rs-title">Marcar como resolvido</div>
+    <div class="dialog-quote" id="rs-desc"></div>
+    <label>Quem arrumou</label>
+    <input class="dialog-field" id="rs-nome" placeholder="Seu nome" autocomplete="name">
+    <label>Arrumado em</label>
+    <input class="dialog-field" type="date" id="rs-data">
+    <label>Usou peça do estoque?</label>
+    <div class="dialog-row">
+      <select class="dialog-field" id="rs-item"></select>
+      <input class="dialog-field" type="number" id="rs-qtd" min="1" value="1" inputmode="numeric">
+    </div>
+    <div class="dialog-hint">Se escolher uma peça, ela é descontada do estoque automaticamente.</div>
+    <label>Observação (opcional)</label>
+    <input class="dialog-field" id="rs-obs" placeholder="Ex.: troquei a resistência">
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-cancel" onclick="closeOv('ov-resolver')">Cancelar</button>
+      <button class="btn-primary green" id="rs-salvar" onclick="confirmarResolver()">✓ Resolvido</button>
+    </div>
+  </div>
+</div>
+<!-- Item do estoque de manutenção -->
+<div class="overlay" id="ov-item">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title" id="it-title">Item do estoque</div>
+    <label>Nome da peça</label>
+    <input class="dialog-field" id="it-nome" placeholder="Ex.: Lâmpada LED 9W">
+    <div class="dialog-row" style="grid-template-columns:1fr 1fr;">
+      <div><label>Quantidade</label><input class="dialog-field" type="number" id="it-qtd" min="0" inputmode="numeric"></div>
+      <div><label>Avisar abaixo de</label><input class="dialog-field" type="number" id="it-min" min="0" inputmode="numeric"></div>
+    </div>
+    <div class="dialog-hint">Quando a quantidade chegar no mínimo, o card fica vermelho.</div>
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-danger-ghost" id="it-excluir" onclick="excluirItem()">Excluir</button>
+      <button class="btn-cancel" onclick="closeOv('ov-item')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarItem()">Salvar</button>
+    </div>
+  </div>
+</div>
+<!-- Confirmação genérica -->
+<div class="overlay" id="ov-confirm">
+  <div class="dialog">
+    <div class="dialog-title" id="cf-title">Tem certeza?</div>
+    <div class="dialog-sub" id="cf-sub"></div>
+    <div class="dialog-btns">
+      <button class="btn-cancel" onclick="closeOv('ov-confirm')">Cancelar</button>
+      <button class="btn-confirm" id="cf-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1131,7 +1293,7 @@ const SUPABASE_URL      = 'https://bmhnvnlbcgegsgplkuea.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtaG52bmxiY2dlZ3NncGxrdWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3ODcyMDcsImV4cCI6MjA5NzM2MzIwN30.cyaCBafC3DtAJN5r8Fc-jEX44_3WM8on-2QfCrgmra0';
 
 let sb = null;                                         // cliente Supabase
-const cache = { estoque:{}, dias:{}, trocas:[], limpezas:[], lista:null, overrides:{} };
+const cache = { trocas:[], limpezas:[], lista:null, overrides:{}, manutItens:[], manut:[] };
 let _ready = false;                                    // conectado ao banco?
 
 function configurado(){
@@ -1168,23 +1330,13 @@ async function initApp(){
 }
 function avisoConfig(msg){
   const aviso = msg || 'Configure o Supabase para começar — abra o arquivo GUIA-SUPABASE.md e siga os passos. Enquanto isso, o app fica sem conexão com o banco.';
-  ['lav-content','est-content'].forEach(id=>{
+  ['lav-content','manut-content'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.innerHTML=`<div class="empty-state">⚙️ ${esc(aviso)}</div>`;
   });
 }
 async function recarregarTudo(){
-  await Promise.all([carregarEstoque(), carregarDias(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
-}
-async function carregarEstoque(){
-  const {data,error}=await sb.from('estoque').select('*');
-  if(error)throw error;
-  cache.estoque={}; (data||[]).forEach(r=>cache.estoque[r.item]=r.quantidade);
-}
-async function carregarDias(){
-  const {data,error}=await sb.from('dias_fechados').select('*');
-  if(error)throw error;
-  cache.dias={}; (data||[]).forEach(r=>cache.dias[r.dia]=r);
+  await Promise.all([carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
 }
 // O Supabase devolve no máximo 1000 linhas por consulta. Quando a tabela passa
 // disso, as trocas mais novas somem da Lavanderia. Aqui buscamos em páginas
@@ -1257,8 +1409,8 @@ function aplicarListaAtual(){
 }
 function assinarTempoReal(){
   sb.channel('lavanderia-rt')
-    .on('postgres_changes',{event:'*',schema:'public',table:'estoque'},       async()=>{try{await carregarEstoque();}catch(e){} rerenderCompartilhado();})
-    .on('postgres_changes',{event:'*',schema:'public',table:'dias_fechados'}, async()=>{try{await carregarDias();}catch(e){}    rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'manut_itens'},   ()=>recarregarDepois('manut_itens',carregarManutItens))
+    .on('postgres_changes',{event:'*',schema:'public',table:'manutencoes'},   ()=>recarregarDepois('manutencoes',carregarManut))
     .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        ()=>recarregarDepois('trocas',carregarTrocas))
     .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      ()=>recarregarDepois('limpezas',carregarLimpezas))
     .on('postgres_changes',{event:'*',schema:'public',table:'lista_atual'},   async()=>{try{await carregarListaAtual();}catch(e){} aplicarListaAtual();})
@@ -1267,17 +1419,15 @@ function assinarTempoReal(){
 }
 function abaAtiva(){
   if(document.getElementById('tab-lavanderia').classList.contains('active'))return 'lavanderia';
-  if(document.getElementById('tab-estoque').classList.contains('active'))return 'estoque';
+  if(document.getElementById('tab-manut').classList.contains('active'))return 'manut';
   return 'lista';
 }
 function rerenderCompartilhado(){
   const aba=abaAtiva();
-  if(aba==='estoque') renderEstoque();
+  if(aba==='manut') renderManut();
   else if(aba==='lavanderia') renderLavanderia();
   else if(aba==='lista' && _pdfDate) atualizarListaDoDia();
 }
-function estoqueQty(k){ return cache.estoque[k]||0; }
-function diaFechado(dia){ return !!cache.dias[dia]; }
 
 // ── ROOMS ────────────────────────────────────────────────────────────────────
 const ROOMS={
@@ -1331,12 +1481,13 @@ function linenChips(lin){
 }
 // ── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(name,el){
+  const fab=document.getElementById('mt-fab'); if(fab) fab.classList.remove('show');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='lavanderia'){ _lavMonth=mesLavPadrao(); renderLavanderia(); }
-  if(name==='estoque') renderEstoque();
+  if(name==='manut') renderManut();
   if(name==='lista' && _pdfDate) atualizarListaDoDia();
 }
 // ── DATAS ────────────────────────────────────────────────────────────────────
@@ -1572,81 +1723,341 @@ function renderLavanderia(){
   }
   document.getElementById('lav-content').innerHTML=html;
 }
-// ── ESTOQUE ────────────────────────────────────────────────────────────────────
-const ESTOQUE_ITEMS=[
-  {key:'lc',name:'Lençol casal'},
-  {key:'lk',name:'Lençol king'},
-  {key:'ls',name:'Lençol solteiro'},
-  {key:'f',name:'Fronha'},
-  {key:'t',name:'Toalha banho'},
-  {key:'tr',name:'Toalha rosto'},
-  {key:'tp',name:'Tapete'},
-];
-// Soma/subtrai uma peça — atualização otimista + confirmação no banco
-async function adjustEstoque(key,delta){
-  if(!_ready){showToast('Sem conexão com o banco');return;}
-  cache.estoque[key]=Math.max(0,(cache.estoque[key]||0)+delta);
-  renderEstoque();
-  const {data,error}=await sb.rpc('adjust_estoque',{p_item:key,p_delta:delta});
-  if(error){showToast('Erro ao salvar');try{await carregarEstoque();}catch(e){} renderEstoque();return;}
-  cache.estoque[key]=data;
-  renderEstoque();
+// ── MANUTENÇÃO ──────────────────────────────────────────────────────────────────
+// Tabelas: manut_itens (peças) e manutencoes (reparos por apto).
+// RPCs: adjust_manut_item, resolver_manutencao, reabrir_manutencao.
+let _mtFiltro='pend', _mtHotel='', _mtBusca='', _mtResolverId=null, _mtItemId=null;
+async function carregarManutItens(){
+  try{
+    const {data,error}=await sb.from('manut_itens').select('*').order('nome',{ascending:true});
+    if(error)throw error;
+    cache.manutItens=data||[];
+  }catch(e){ cache.manutItens=[]; }
 }
-// Digitar a quantidade exata (toque no número). Usa a mesma RPC atômica.
-async function setEstoqueExato(key,nome){
-  if(!_ready){showToast('Sem conexão com o banco');return;}
-  const atual=cache.estoque[key]||0;
-  const txt=prompt('Definir quantidade de '+nome+':',atual);
-  if(txt===null)return;                                   // cancelou
-  const novo=parseInt(String(txt).replace(/[^0-9]/g,''),10);
-  if(isNaN(novo)){showToast('Valor inválido');return;}
-  const delta=novo-atual;
-  if(delta===0)return;
-  await adjustEstoque(key,delta);
+async function carregarManut(){
+  try{
+    const PAGINA=1000; let todas=[], de=0;
+    while(true){
+      const {data,error}=await sb.from('manutencoes').select('*').order('id',{ascending:true}).range(de,de+PAGINA-1);
+      if(error)throw error;
+      const lote=data||[]; todas=todas.concat(lote);
+      if(lote.length<PAGINA)break; de+=PAGINA;
+    }
+    cache.manut=todas;
+  }catch(e){ cache.manut=[]; }
 }
-function renderEstoque(){
-  if(!configurado()){
-    document.getElementById('est-content').innerHTML=`<div class="empty-state">⚙️ Configure o Supabase para usar o app (veja o GUIA-SUPABASE.md).</div>`;
+function nomeSalvo(){ try{return localStorage.getItem('manut_nome')||'';}catch(e){return '';} }
+function salvarNome(n){ try{localStorage.setItem('manut_nome',n);}catch(e){} }
+function fmtData(d){ if(!d)return ''; const[y,m,dd]=String(d).substring(0,10).split('-'); return dd+'/'+m+'/'+y.substring(2); }
+function diasEntre(a,b){
+  const pa=String(a).substring(0,10).split('-').map(Number), pb=String(b).substring(0,10).split('-').map(Number);
+  return Math.round((Date.UTC(pb[0],pb[1]-1,pb[2])-Date.UTC(pa[0],pa[1]-1,pa[2]))/86400000);
+}
+function txtDias(n){ return n<=0?'hoje':n===1?'há 1 dia':'há '+n+' dias'; }
+function openOv(id){ document.getElementById(id).classList.add('show'); }
+function closeOv(id){ document.getElementById(id).classList.remove('show'); }
+function confirmar(titulo,sub,txtOk,fn){
+  document.getElementById('cf-title').textContent=titulo;
+  document.getElementById('cf-sub').textContent=sub;
+  const ok=document.getElementById('cf-ok');
+  ok.textContent=txtOk||'Confirmar';
+  ok.onclick=async()=>{ closeOv('ov-confirm'); await fn(); };
+  openOv('ov-confirm');
+}
+function hoteisOrdenados(){ return Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order); }
+
+function renderManut(){
+  const root=document.getElementById('manut-content');
+  if(!root)return;
+  const fab=document.getElementById('mt-fab');
+  if(fab) fab.classList.toggle('show', abaAtiva()==='manut' && _ready);
+  if(!configurado()||!_ready){
+    root.innerHTML=`<div class="empty-state">⚙️ Sem conexão com o banco. Verifique a internet e recarregue a página.</div>`;
     return;
   }
-  const d=cache.estoque;
-  let html=`
-  <div class="est-header">
-    <div>
-      <div class="est-title">Estoque</div>
-      <div class="est-sub">Enxoval limpo disponível</div>
-    </div>
-  </div>
-  <div class="enxoval-section">
-    <div class="enxoval-title">📦 Estoque atual</div>
-    <div class="enxoval-grid">
-      <div class="enxoval-item"><div class="enxoval-val">${d.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
-    </div>
-  </div>`;
-  ESTOQUE_ITEMS.forEach(i=>{
-    const qty=d[i.key]||0;
-    html+=`<div class="est-row">
-      <div class="est-row-top">
-        <span class="est-row-name">${i.name}</span>
-        <span class="est-row-qty" onclick="setEstoqueExato('${i.key}','${i.name}')" title="Tocar para digitar a quantidade">${qty}<span class="est-edit">✎</span></span>
-      </div>
-      <div class="est-row-btns">
-        <button class="est-btn p" onclick="adjustEstoque('${i.key}',1)">+1</button>
-        <button class="est-btn p" onclick="adjustEstoque('${i.key}',5)">+5</button>
-        <button class="est-btn p" onclick="adjustEstoque('${i.key}',20)">+20</button>
-        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-1)">−1</button>
-        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-5)">−5</button>
-        <button class="est-btn m" onclick="adjustEstoque('${i.key}',-20)">−20</button>
+  const hoje=todayKey(), mes=currentMonthKey();
+  const todos=cache.manut;
+  const pend=todos.filter(r=>!r.resolvido_em);
+  const resMes=todos.filter(r=>r.resolvido_em && String(r.resolvido_em).startsWith(mes));
+  const mediaDias=resMes.length?Math.round(resMes.reduce((s,r)=>s+Math.max(0,diasEntre(r.solicitado_em,r.resolvido_em)),0)/resMes.length):null;
+
+  // ── Estoque de peças
+  const itens=cache.manutItens;
+  let stock=itens.map(it=>{
+    const low=it.quantidade<=(it.minimo||0) && (it.minimo>0 || it.quantidade===0);
+    return `<div class="mt-stock ${low?'low':''}">
+      <div class="mt-stock-qty" onclick="openItem(${it.id})" title="Tocar para editar">${it.quantidade}</div>
+      <div class="mt-stock-name">${esc(it.nome)}</div>
+      <div class="mt-stock-btns">
+        <button class="mt-step minus" onclick="ajustarItem(${it.id},-1)">−</button>
+        <button class="mt-step plus" onclick="ajustarItem(${it.id},1)">+</button>
       </div>
     </div>`;
+  }).join('');
+  if(!itens.length) stock=`<div class="no-movement">Nenhuma peça cadastrada. Toque em "+ Peça".</div>`;
+
+  const cards=mtCardsHTML();
+  const hoteisComReparo=[...new Set(todos.map(r=>r.hotel))].sort((a,b)=>(ROOMS[a]?.order??99)-(ROOMS[b]?.order??99));
+  const nOk=todos.length-pend.length;
+
+  root.innerHTML=`
+  <div class="mt-head">
+    <div>
+      <div class="lav-month">Manutenção</div>
+      <div class="lav-sub">Reparos por apartamento e peças em estoque</div>
+    </div>
+  </div>
+  <div class="mt-section">
+    <div class="mt-section-head">
+      <span class="mt-section-title">🧰 Estoque de peças</span>
+      <button class="mt-mini-btn" onclick="openItem()">+ Peça</button>
+    </div>
+    <div class="mt-stock-grid">${stock}</div>
+  </div>
+  <div class="mt-metrics">
+    <div class="mt-metric"><div class="mt-metric-val amber">${pend.length}</div><div class="mt-metric-lbl">Pendentes</div></div>
+    <div class="mt-metric"><div class="mt-metric-val green">${resMes.length}</div><div class="mt-metric-lbl">Resolvidos no mês</div></div>
+    <div class="mt-metric"><div class="mt-metric-val">${mediaDias===null?'–':mediaDias+'d'}</div><div class="mt-metric-lbl">Tempo médio</div></div>
+  </div>
+  <div class="mt-seg">
+    <button class="${_mtFiltro==='pend'?'active':''}" onclick="setMtFiltro('pend')">Pendentes<span class="count">${pend.length}</span></button>
+    <button class="${_mtFiltro==='ok'?'active':''}" onclick="setMtFiltro('ok')">Resolvidos<span class="count">${nOk}</span></button>
+    <button class="${_mtFiltro==='all'?'active':''}" onclick="setMtFiltro('all')">Todos<span class="count">${todos.length}</span></button>
+  </div>
+  <input type="text" id="mt-search" placeholder="Buscar apto, problema ou pessoa..." value="${esc(_mtBusca)}" oninput="onMtBusca(this.value)">
+  ${hoteisComReparo.length>1?`<div class="filter-row">${hoteisComReparo.map(h=>`<button class="filter-btn ${_mtHotel===h?'active':''}" onclick="setMtHotel('${esc(h)}')">${esc(h)}</button>`).join('')}</div>`:''}
+  <div id="mt-list">${cards}</div>`;
+}
+function mtCardsHTML(){
+  const hoje=todayKey(), todos=cache.manut;
+  // ── Filtro da lista
+  const busca=_mtBusca.trim().toLowerCase();
+  let lista=todos.filter(r=>{
+    if(_mtFiltro==='pend' && r.resolvido_em)return false;
+    if(_mtFiltro==='ok' && !r.resolvido_em)return false;
+    if(_mtHotel && r.hotel!==_mtHotel)return false;
+    if(busca){
+      const s=(r.hotel+' '+r.apt+' '+r.descricao+' '+r.solicitado_por+' '+(r.resolvido_por||'')).toLowerCase();
+      if(!s.includes(busca))return false;
+    }
+    return true;
   });
-  document.getElementById('est-content').innerHTML=html;
+  // agrupa por hotel → apto
+  const grupos={};
+  lista.forEach(r=>{const k=r.hotel+'||'+r.apt;(grupos[k]=grupos[k]||[]).push(r);});
+  const chaves=Object.keys(grupos).sort((a,b)=>{
+    const[ha,aa]=a.split('||'),[hb,ab]=b.split('||');
+    const oa=ROOMS[ha]?.order??99, ob=ROOMS[hb]?.order??99;
+    if(oa!==ob)return oa-ob;
+    return parseInt(aa)-parseInt(ab);
+  });
+  let cards='', hotelAtual=null;
+  chaves.forEach(k=>{
+    const[hotel,apt]=k.split('||');
+    if(hotel!==hotelAtual){
+      if(hotelAtual!==null)cards+=`</div>`;
+      cards+=`<div class="hotel-section"><div class="hotel-header">${esc(hotel)}</div>`;
+      hotelAtual=hotel;
+    }
+    const reps=grupos[k].sort((a,b)=>{
+      if(!a.resolvido_em!==!b.resolvido_em)return a.resolvido_em?1:-1;   // pendentes primeiro
+      return String(b.solicitado_em).localeCompare(String(a.solicitado_em)) || b.id-a.id;
+    });
+    const repsHtml=reps.map(r=>{
+      const done=!!r.resolvido_em;
+      const idade=diasEntre(r.solicitado_em,hoje);
+      let meta=`Aberto por <b>${esc(r.solicitado_por)}</b> em ${fmtData(r.solicitado_em)}`;
+      if(!done) meta+=`<span class="mt-age ${idade>=7?'late':''}">${txtDias(idade)}</span>`;
+      if(done){
+        const dur=Math.max(0,diasEntre(r.solicitado_em,r.resolvido_em));
+        const item=r.item_id?cache.manutItens.find(i=>i.id===r.item_id):null;
+        meta+=`<br><span class="mt-done-line">✓ Resolvido por <b>${esc(r.resolvido_por||'')}</b> em ${fmtData(r.resolvido_em)} · ${dur===0?'no mesmo dia':dur===1?'em 1 dia':'em '+dur+' dias'}</span>`;
+        if(item&&r.item_qtd>0) meta+=`<span class="mt-chip">${r.item_qtd}× ${esc(item.nome)}</span>`;
+        if(r.obs_resolucao) meta+=`<br><span class="mt-obs">“${esc(r.obs_resolucao)}”</span>`;
+      }
+      const acts=done
+        ?`<button class="mt-btn-ghost" onclick="reabrirReparo(${r.id})">Reabrir</button>`
+        :`<button class="mt-btn-ok" onclick="openResolver(${r.id})">✓ Marcar como resolvido</button>`;
+      return `<div class="mt-rep ${done?'done':''}">
+        <div class="mt-rep-top">
+          <span class="mt-dot ${done?'ok':'pend'}"></span>
+          <div class="mt-rep-desc">${esc(r.descricao)}</div>
+          <button class="mt-del" onclick="excluirReparo(${r.id})" title="Excluir">🗑</button>
+        </div>
+        <div class="mt-meta">${meta}</div>
+        <div class="mt-actions">${acts}</div>
+      </div>`;
+    }).join('');
+    cards+=`<div class="mt-apt">
+      <div class="mt-apt-left">
+        <span class="mt-apt-num">${esc(apt)}</span>
+        <button class="mt-apt-add" onclick="openReparo('${esc(hotel)}','${esc(apt)}')" title="Novo reparo neste apto">+</button>
+      </div>
+      <div class="mt-apt-right">${repsHtml}</div>
+    </div>`;
+  });
+  if(hotelAtual!==null)cards+=`</div>`;
+  if(!chaves.length){
+    const vazio = _mtFiltro==='pend' && !busca && !_mtHotel
+      ? '🎉 Nenhum reparo pendente.<br>Toque em <b>＋ Novo reparo</b> para registrar um.'
+      : 'Nenhum reparo encontrado com esse filtro.';
+    cards=`<div class="lav-empty"><div class="lav-empty-icon">🔧</div>${vazio}</div>`;
+  }
+  return cards;
+}
+function setMtFiltro(f){ _mtFiltro=f; renderManut(); }
+function setMtHotel(h){ _mtHotel=(_mtHotel===h)?'':h; renderManut(); }
+function onMtBusca(v){
+  _mtBusca=v;
+  const el=document.getElementById('mt-list');
+  if(el) el.innerHTML=mtCardsHTML();
+}
+
+// ── Novo reparo
+function openReparo(hotel,apt){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const hSel=document.getElementById('rp-hotel');
+  hSel.innerHTML=hoteisOrdenados().map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join('');
+  if(hotel) hSel.value=hotel;
+  onRpHotel();
+  if(apt) document.getElementById('rp-apto').value=apt;
+  document.getElementById('rp-desc').value='';
+  document.getElementById('rp-nome').value=nomeSalvo();
+  document.getElementById('rp-data').value=todayKey();
+  openOv('ov-reparo');
+  setTimeout(()=>document.getElementById('rp-desc').focus(),50);
+}
+function onRpHotel(){
+  const h=document.getElementById('rp-hotel').value;
+  document.getElementById('rp-apto').innerHTML=Object.keys(ROOMS[h].apts).sort((a,b)=>parseInt(a)-parseInt(b))
+    .map(a=>`<option value="${a}">${a}</option>`).join('');
+}
+async function salvarReparo(){
+  const hotel=document.getElementById('rp-hotel').value;
+  const apt=document.getElementById('rp-apto').value;
+  const descricao=document.getElementById('rp-desc').value.trim();
+  const nome=document.getElementById('rp-nome').value.trim();
+  const dia=document.getElementById('rp-data').value||todayKey();
+  if(!descricao){showToast('Descreva o que precisa arrumar');document.getElementById('rp-desc').focus();return;}
+  if(!nome){showToast('Coloque seu nome');document.getElementById('rp-nome').focus();return;}
+  const btn=document.getElementById('rp-salvar'); btn.disabled=true;
+  const {error}=await sb.from('manutencoes').insert({hotel,apt,descricao,solicitado_por:nome,solicitado_em:dia});
+  btn.disabled=false;
+  if(error){showToast('Erro ao registrar o reparo');return;}
+  salvarNome(nome);
+  closeOv('ov-reparo');
+  await carregarManut();
+  _mtFiltro='pend';
+  renderManut();
+  showToast('Reparo registrado · '+hotel+' '+apt);
+}
+
+// ── Resolver / reabrir / excluir
+function openResolver(id){
+  const r=cache.manut.find(x=>x.id===id); if(!r)return;
+  _mtResolverId=id;
+  document.getElementById('rs-title').textContent='Resolver · '+r.hotel+' '+r.apt;
+  document.getElementById('rs-desc').textContent=r.descricao;
+  document.getElementById('rs-nome').value=nomeSalvo();
+  document.getElementById('rs-data').value=todayKey();
+  document.getElementById('rs-obs').value='';
+  document.getElementById('rs-qtd').value=1;
+  document.getElementById('rs-item').innerHTML=`<option value="">Não usou peça</option>`+
+    cache.manutItens.map(i=>`<option value="${i.id}">${esc(i.nome)} (${i.quantidade} em estoque)</option>`).join('');
+  openOv('ov-resolver');
+}
+async function confirmarResolver(){
+  const id=_mtResolverId; if(!id)return;
+  const nome=document.getElementById('rs-nome').value.trim();
+  const dia=document.getElementById('rs-data').value||todayKey();
+  const obs=document.getElementById('rs-obs').value.trim();
+  const itemV=document.getElementById('rs-item').value;
+  const item=itemV?Number(itemV):null;
+  const qtd=item?Math.max(1,parseInt(document.getElementById('rs-qtd').value,10)||1):0;
+  if(!nome){showToast('Coloque o nome de quem arrumou');document.getElementById('rs-nome').focus();return;}
+  const r=cache.manut.find(x=>x.id===id);
+  if(r && dia<String(r.solicitado_em)){showToast('A data não pode ser antes da abertura');return;}
+  const btn=document.getElementById('rs-salvar'); btn.disabled=true;
+  const {data,error}=await sb.rpc('resolver_manutencao',{p_id:id,p_por:nome,p_em:dia,p_obs:obs,p_item:item,p_qtd:qtd});
+  btn.disabled=false;
+  if(error){showToast('Erro ao salvar');return;}
+  salvarNome(nome);
+  closeOv('ov-resolver');
+  await Promise.all([carregarManut(),carregarManutItens()]);
+  renderManut();
+  showToast(data===false?'Esse reparo já estava resolvido':'✓ Reparo resolvido'+(qtd?' · peça descontada':''));
+}
+function reabrirReparo(id){
+  const r=cache.manut.find(x=>x.id===id); if(!r)return;
+  confirmar('Reabrir reparo?',
+    r.hotel+' '+r.apt+': "'+r.descricao+'" volta para pendentes.'+(r.item_id&&r.item_qtd>0?' A peça usada volta para o estoque.':''),
+    'Reabrir',
+    async()=>{
+      const {error}=await sb.rpc('reabrir_manutencao',{p_id:id});
+      if(error){showToast('Erro ao reabrir');return;}
+      await Promise.all([carregarManut(),carregarManutItens()]);
+      renderManut(); showToast('Reparo reaberto');
+    });
+}
+function excluirReparo(id){
+  const r=cache.manut.find(x=>x.id===id); if(!r)return;
+  confirmar('Excluir reparo?',
+    r.hotel+' '+r.apt+': "'+r.descricao+'". O registro some do histórico e não dá para desfazer.',
+    'Excluir',
+    async()=>{
+      const {error}=await sb.from('manutencoes').delete().eq('id',id);
+      if(error){showToast('Erro ao excluir');return;}
+      await carregarManut(); renderManut(); showToast('Reparo excluído');
+    });
+}
+
+// ── Estoque de peças
+async function ajustarItem(id,delta){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const it=cache.manutItens.find(i=>i.id===id); if(!it)return;
+  if(delta<0 && it.quantidade<=0)return;
+  it.quantidade=Math.max(0,it.quantidade+delta);
+  renderManut();
+  const {data,error}=await sb.rpc('adjust_manut_item',{p_id:id,p_delta:delta});
+  if(error){showToast('Erro ao salvar');await carregarManutItens();renderManut();return;}
+  if(typeof data==='number') it.quantidade=data;
+  renderManut();
+}
+function openItem(id){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const it=id?cache.manutItens.find(i=>i.id===id):null;
+  _mtItemId=it?it.id:null;
+  document.getElementById('it-title').textContent=it?'Editar peça':'Nova peça';
+  document.getElementById('it-nome').value=it?it.nome:'';
+  document.getElementById('it-qtd').value=it?it.quantidade:0;
+  document.getElementById('it-min').value=it?(it.minimo||0):0;
+  document.getElementById('it-excluir').style.display=it?'':'none';
+  openOv('ov-item');
+  setTimeout(()=>document.getElementById(it?'it-qtd':'it-nome').focus(),50);
+}
+async function salvarItem(){
+  const nome=document.getElementById('it-nome').value.trim();
+  const quantidade=Math.max(0,parseInt(document.getElementById('it-qtd').value,10)||0);
+  const minimo=Math.max(0,parseInt(document.getElementById('it-min').value,10)||0);
+  if(!nome){showToast('Dê um nome para a peça');return;}
+  const q=_mtItemId
+    ? sb.from('manut_itens').update({nome,quantidade,minimo}).eq('id',_mtItemId)
+    : sb.from('manut_itens').insert({nome,quantidade,minimo});
+  const {error}=await q;
+  if(error){showToast(error.code==='23505'?'Já existe uma peça com esse nome':'Erro ao salvar a peça');return;}
+  closeOv('ov-item');
+  await carregarManutItens(); renderManut();
+  showToast(_mtItemId?'Peça atualizada':'Peça adicionada');
+}
+function excluirItem(){
+  const it=cache.manutItens.find(i=>i.id===_mtItemId); if(!it)return;
+  closeOv('ov-item');
+  confirmar('Excluir "'+it.nome+'"?','A peça sai do estoque. Os reparos que usaram essa peça continuam no histórico.','Excluir',
+    async()=>{
+      const {error}=await sb.from('manut_itens').delete().eq('id',it.id);
+      if(error){showToast('Erro ao excluir');return;}
+      await carregarManutItens(); renderManut(); showToast('Peça excluída');
+    });
 }
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
@@ -1867,76 +2278,6 @@ function calcTotals(){
   return{tot,detalhes};
 }
 // ── RENDER LISTA ──────────────────────────────────────────────────────────────
-async function fecharDia(){
-  if(!_pdfDate){showToast('Carregue um PDF primeiro');return;}
-  if(!_ready){showToast('Sem conexão com o banco');return;}
-  const {tot:lin}=calcTotals();
-  const totalUsar=lin.lc+lin.lk+lin.ls+lin.f+lin.t+lin.tr+lin.tp;
-  if(totalUsar===0){showToast('Nenhum item para descontar');return;}
-  if(!confirm(`Fechar o dia ${_pdfDate.split('-').reverse().join('/')}?\n\nVai descontar ${totalUsar} peças do estoque.`))return;
-  const {data,error}=await sb.rpc('fechar_dia',{
-    p_dia:_pdfDate,p_lc:lin.lc,p_lk:lin.lk,p_ls:lin.ls,p_f:lin.f,p_t:lin.t,p_tr:lin.tr,p_tp:lin.tp
-  });
-  if(error){showToast('Erro ao fechar o dia');return;}
-  try{await Promise.all([carregarEstoque(),carregarDias()]);}catch(e){}
-  if(data===true)showToast('✓ Dia fechado · estoque atualizado');
-  else showToast('Este dia já estava fechado');
-  refreshEstoquePreview();
-}
-async function reabrirDia(){
-  if(!_pdfDate||!_ready)return;
-  const {data,error}=await sb.rpc('reabrir_dia',{p_dia:_pdfDate});
-  if(error){showToast('Erro ao reabrir');return;}
-  try{await Promise.all([carregarEstoque(),carregarDias()]);}catch(e){}
-  if(data===true)showToast('Dia reaberto · estoque restaurado');
-  refreshEstoquePreview();
-}
-function refreshEstoquePreview(){
-  const root=document.getElementById('estoque-preview-root');
-  if(!root)return;
-  const {tot:lin}=calcTotals();
-  root.innerHTML=renderEstoquePreview(lin);
-}
-function renderEstoquePreview(lin){
-  const d=cache.estoque;
-  // Quanto falta de cada peça para conseguir fechar o dia
-  const falta={};
-  ESTOQUE_ITEMS.forEach(i=>{
-    const tem=d[i.key]||0;
-    const usar=lin[i.key]||0;
-    falta[i.key]=Math.max(0,usar-tem);
-  });
-  const algumFalta=ESTOQUE_ITEMS.some(i=>falta[i.key]>0);
-  const fechado=_pdfDate&&diaFechado(_pdfDate);
-  return `
-  <div class="enxoval-section">
-    <div class="enxoval-title">📦 Estoque atual</div>
-    <div class="enxoval-grid">
-      <div class="enxoval-item"><div class="enxoval-val">${d.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
-      <div class="enxoval-item"><div class="enxoval-val">${d.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
-    </div>
-  </div>
-  <div class="enxoval-section ${algumFalta?'enxoval-warn':''}">
-    <div class="enxoval-title">${algumFalta?'⚠️ Falta para fechar o dia':'✅ Tudo ok para fechar o dia'}</div>
-    <div class="enxoval-grid">
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.lc||0}</div><div class="enxoval-lbl">Lençol casal</div></div>
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.lk||0}</div><div class="enxoval-lbl">Lençol king</div></div>
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.ls||0}</div><div class="enxoval-lbl">Lençol solteiro</div></div>
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.f||0}</div><div class="enxoval-lbl">Fronha</div></div>
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.t||0}</div><div class="enxoval-lbl">Toalha banho</div></div>
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tr||0}</div><div class="enxoval-lbl">Toalha rosto</div></div>
-      <div class="enxoval-item"><div class="enxoval-val val-red">${falta.tp||0}</div><div class="enxoval-lbl">Tapete</div></div>
-    </div>
-    ${fechado
-      ? `<button class="fechar-btn fechado" onclick="reabrirDia()">✓ Dia fechado &middot; toque para reabrir</button>`
-      : `<button class="fechar-btn" onclick="fecharDia()">✓ Fechar o dia &middot; descontar do estoque</button>`}
-  </div>`;
-}
 function toggleDetalhamento(btn){
   btn.classList.toggle('active');
   const section=document.getElementById('detalhamento-section');
@@ -2008,7 +2349,6 @@ function atualizarListaDoDia(){
   if(er) er.innerHTML=enxovalDiaHTML(lin);
   const hr=document.getElementById('enxoval-hotel-root');
   if(hr) hr.innerHTML=enxovalPorHotelHTML(detalhes);
-  refreshEstoquePreview();
   renderCards();
 }
 // Botão: tira/recoloca o ENXOVAL FÍSICO de um apto (não mexe no R$8,50).
@@ -2043,7 +2383,6 @@ function renderUI(){
   </div>
   <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
   <div id="enxoval-hotel-root">${enxovalPorHotelHTML(detalhes)}</div>
-  <div id="estoque-preview-root">${renderEstoquePreview(lin)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
   <input type="text" id="search-input" placeholder="Buscar apto ou hóspede..." oninput="onSearch(this.value)">

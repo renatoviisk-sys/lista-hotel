@@ -992,6 +992,88 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 }
 @media(max-width:340px){ .mt-stock-grid{grid-template-columns:repeat(2,1fr);} }
 #tab-manut{padding-bottom:4rem;}
+/* ══════════════════════════════════════════════════════════════
+   CADASTRO + FECHAMENTO
+   ══════════════════════════════════════════════════════════════ */
+.cfg-gear{
+  font-size:11px;font-weight:600;font-family:var(--font);padding:4px 11px;border-radius:var(--r-pill);
+  border:1px solid var(--b1);background:var(--bg-1);color:var(--t2);cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.cfg-gear:hover{color:var(--t1);border-color:var(--b2);}
+.btn-fech{
+  font-size:12px;font-family:var(--font);font-weight:600;padding:7px 14px;border-radius:var(--r-pill);white-space:nowrap;
+  border:1px solid var(--indigo-bdr);background:var(--indigo-dim);color:var(--indigo);cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.lav-header{flex-wrap:wrap;gap:10px;}
+.fech-warn{
+  background:var(--amber-dim);border:1px solid var(--amber-bdr);color:var(--amber);border-radius:var(--r-md);
+  padding:0.85rem 1rem;font-size:13px;line-height:1.55;margin-bottom:1rem;
+}
+.fech-warn b{color:var(--amber);}
+.fech-ok{
+  background:var(--green-dim);border:1px solid var(--green-bdr);color:var(--green);border-radius:var(--r-md);
+  padding:0.7rem 1rem;font-size:13px;font-weight:500;margin-bottom:1rem;
+}
+.fech-total{
+  background:linear-gradient(135deg,rgba(52,211,153,0.14) 0%,var(--bg-1) 70%);border:1px solid var(--sage-bdr);
+  border-radius:var(--r-lg);padding:1.25rem;text-align:center;margin-bottom:10px;box-shadow:var(--sh-sm);
+}
+.fech-total-lbl{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);}
+.fech-total-val{font-size:34px;font-weight:700;color:var(--sage);letter-spacing:-0.03em;margin-top:6px;line-height:1;}
+.lav-total-val.val-neg{color:var(--red);}
+.lav-total-grid .lav-total-val{font-size:20px;}
+.fech-download{
+  width:100%;padding:13px;border-radius:var(--r-md);border:1px solid var(--green-bdr);background:var(--green);
+  color:#062013;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;margin-bottom:1.5rem;
+  -webkit-tap-highlight-color:transparent;transition:opacity .15s;
+}
+.fech-download:disabled{opacity:.6;cursor:default;}
+.fech-table{background:var(--bg-1);border:1px solid var(--b1);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh-sm);}
+.fech-head,.fech-row{display:grid;grid-template-columns:1fr 56px 48px 92px;gap:6px;align-items:center;padding:9px 12px;}
+.fech-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);border-bottom:1px solid var(--b1);}
+.fech-head span:not(:first-child){text-align:right;}
+.fech-hotel{
+  display:flex;justify-content:space-between;padding:10px 12px 6px;font-size:10px;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--t3);background:var(--bg-0);border-top:1px solid var(--b0);
+}
+.fech-hotel span:last-child{color:var(--t2);letter-spacing:0;}
+.fech-row{border-top:1px solid var(--b0);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;}
+.fech-row:hover{background:var(--bg-2);}
+.fech-apt{font-size:13px;font-weight:600;color:var(--t1);min-width:0;}
+.fech-obs{font-size:11px;font-weight:400;color:var(--t3);font-style:italic;margin-top:2px;}
+.fech-n{font-size:14px;font-weight:600;color:var(--violet);text-align:right;line-height:1.1;}
+.fech-n small{display:block;font-size:9px;font-weight:500;color:var(--t3);}
+.fech-val{font-size:13px;font-weight:700;color:var(--t1);text-align:right;white-space:nowrap;}
+.fech-aj{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:var(--r-pill);margin-left:6px;
+  background:var(--green-dim);color:var(--green);border:1px solid var(--green-bdr);}
+.fech-aj.neg{background:var(--red-dim);color:var(--red);border-color:var(--red-bdr);}
+.fech-tag{display:inline-block;font-size:9px;font-weight:600;padding:1px 6px;border-radius:var(--r-pill);margin-left:6px;background:var(--bg-3);color:var(--t3);}
+.cfg-hotel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:0.9rem;}
+.cfg-hotel-name{font-size:16px;font-weight:700;color:var(--t1);}
+.cfg-count{font-size:11px;font-weight:500;color:var(--t3);margin-left:4px;}
+.cfg-hotel-sub{font-size:11.5px;color:var(--t3);margin-top:3px;}
+.cfg-hotel-sub b{color:var(--t2);font-weight:600;}
+.cfg-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:var(--r-pill);margin-right:4px;
+  background:var(--violet-dim);color:var(--violet);border:1px solid var(--violet-bdr);}
+.cfg-apts{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:6px;}
+.cfg-apt{
+  background:var(--bg-2);border:1px solid var(--b0);border-radius:var(--r-sm);padding:8px 4px;cursor:pointer;
+  font-family:var(--font);color:var(--t1);display:flex;flex-direction:column;align-items:center;gap:2px;
+  -webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s;
+}
+.cfg-apt:hover{border-color:var(--b2);background:var(--bg-3);}
+.cfg-apt b{font-size:14px;font-weight:700;}
+.cfg-apt small{font-size:9px;color:var(--t3);font-weight:500;}
+.cfg-apt.add{border-style:dashed;border-color:var(--b2);color:var(--amber);}
+.cfg-precos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.cfg-precos label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.05em;display:flex;flex-direction:column;gap:6px;}
+.dialog-form label.cfg-check{
+  display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--t1);
+  margin:14px 0 0;cursor:pointer;
+}
+.cfg-check input{width:20px;height:20px;accent-color:var(--amber);}
+.dialog-field:disabled{opacity:.55;}
+@media(max-width:420px){ .cfg-precos{grid-template-columns:1fr;} }
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1035,7 +1117,7 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .sync-pill.online .sync-dot{background:var(--green);box-shadow:0 0 7px rgba(45,212,160,0.55);}
 .sync-pill.offline{color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);}
 .sync-pill.offline .sync-dot{background:var(--red);}
-.sync-bar{display:flex;justify-content:flex-end;padding:0 1.25rem;margin-top:-0.5rem;margin-bottom:0.75rem;}
+.sync-bar{display:flex;justify-content:space-between;align-items:center;padding:0 1.25rem;margin-top:-0.5rem;margin-bottom:0.75rem;}
 /* ══════════════════════════════════════════════════════════════
    DIALOG — blur overlay
    ══════════════════════════════════════════════════════════════ */
@@ -1155,6 +1237,7 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     <div class="tab" onclick="switchTab('manut',this)">Manutenção</div>
   </div>
   <div class="sync-bar">
+    <button class="cfg-gear" onclick="switchTab('config',null)" title="Cadastro de hotéis, aptos e preços">⚙️ Cadastro</button>
     <span class="sync-pill" id="sync-pill"><span class="sync-dot"></span><span id="sync-text">Conectando…</span></span>
   </div>
   <!-- TAB: LISTA -->
@@ -1166,6 +1249,14 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
       <input type="file" id="file-input" accept=".pdf">
     </div>
     <div id="results"></div>
+  </div>
+  <!-- TELA: FECHAMENTO DO MÊS (aberta pela Lavanderia) -->
+  <div id="tab-fechamento" class="tab-content">
+    <div id="fech-content"></div>
+  </div>
+  <!-- TELA: CADASTRO (hotéis, aptos e preços) -->
+  <div id="tab-config" class="tab-content">
+    <div id="config-content"></div>
   </div>
   <!-- TAB: LAVANDERIA -->
   <div id="tab-lavanderia" class="tab-content">
@@ -1281,6 +1372,68 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     </div>
   </div>
 </div>
+<!-- Ajuste do fechamento -->
+<div class="overlay" id="ov-ajuste">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title" id="aj-title">Ajuste</div>
+    <div class="dialog-sub" id="aj-sub"></div>
+    <label>Valor (R$)</label>
+    <input class="dialog-field" id="aj-valor" inputmode="decimal" placeholder="Ex.: -269,50 ou 50">
+    <label>Motivo</label>
+    <input class="dialog-field" id="aj-obs" placeholder="Ex.: desconto combinado com o proprietário">
+    <div class="dialog-hint">Deixe o valor vazio para remover o ajuste.</div>
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-cancel" onclick="closeOv('ov-ajuste')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarAjuste()">Salvar</button>
+    </div>
+  </div>
+</div>
+<!-- Apto -->
+<div class="overlay" id="ov-apto">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title" id="ap-title">Apto</div>
+    <label>Número do apto</label>
+    <input class="dialog-field" id="ap-num" inputmode="numeric" placeholder="Ex.: 1204">
+    <label>Cama</label>
+    <select class="dialog-field" id="ap-cfg">
+      <option value="c">Casal</option>
+      <option value="2s">2 de solteiro</option>
+      <option value="cs">Casal + solteiro</option>
+    </select>
+    <label class="cfg-check"><input type="checkbox" id="ap-king"> Cama king (usa lençol king)</label>
+    <label>Nome na planilha (opcional)</label>
+    <input class="dialog-field" id="ap-rotulo">
+    <div class="dialog-hint">Deixe vazio para usar o padrão do hotel.</div>
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-danger-ghost" id="ap-remover" onclick="removerApto()">Remover</button>
+      <button class="btn-cancel" onclick="closeOv('ov-apto')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarApto()">Salvar</button>
+    </div>
+  </div>
+</div>
+<!-- Hotel -->
+<div class="overlay" id="ov-hotel">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title" id="ht-title">Hotel</div>
+    <label>Nome do hotel</label>
+    <input class="dialog-field" id="ht-nome" placeholder="Ex.: Ibis">
+    <div class="dialog-hint" id="ht-nome-hint">O nome não muda depois de criado, para não perder o histórico.</div>
+    <label>Como aparece no PDF</label>
+    <input class="dialog-field" id="ht-pdf" placeholder="Ex.: Ibis">
+    <div class="dialog-hint">Escreva exatamente como o nome do hotel vem escrito na lista de entradas e saídas.</div>
+    <div class="dialog-row" style="grid-template-columns:2fr 1fr;">
+      <div><label>Nome na planilha</label><input class="dialog-field" id="ht-sigla" placeholder="Ex.: IBIS DF"></div>
+      <div><label>Ordem</label><input class="dialog-field" type="number" id="ht-ordem" inputmode="numeric"></div>
+    </div>
+    <label class="cfg-check"><input type="checkbox" id="ht-rosto"> Não leva toalha de rosto</label>
+    <label class="cfg-check"><input type="checkbox" id="ht-limp"> Cobra limpeza (dom, ter, qui e sáb)</label>
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-danger-ghost" id="ht-desativar" onclick="desativarHotel()">Desativar</button>
+      <button class="btn-cancel" onclick="closeOv('ov-hotel')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarHotel()">Salvar</button>
+    </div>
+  </div>
+</div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1336,6 +1489,7 @@ function avisoConfig(msg){
   });
 }
 async function recarregarTudo(){
+  await carregarCadastro();
   await Promise.all([carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
 }
 // O Supabase devolve no máximo 1000 linhas por consulta. Quando a tabela passa
@@ -1409,6 +1563,10 @@ function aplicarListaAtual(){
 }
 function assinarTempoReal(){
   sb.channel('lavanderia-rt')
+    .on('postgres_changes',{event:'*',schema:'public',table:'hoteis'},        ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
+    .on('postgres_changes',{event:'*',schema:'public',table:'aptos'},         ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
+    .on('postgres_changes',{event:'*',schema:'public',table:'config'},        ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
+    .on('postgres_changes',{event:'*',schema:'public',table:'ajustes_mes'},   ()=>recarregarDepois('ajustes',carregarAjustesMesAtual))
     .on('postgres_changes',{event:'*',schema:'public',table:'manut_itens'},   ()=>recarregarDepois('manut_itens',carregarManutItens))
     .on('postgres_changes',{event:'*',schema:'public',table:'manutencoes'},   ()=>recarregarDepois('manutencoes',carregarManut))
     .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        ()=>recarregarDepois('trocas',carregarTrocas))
@@ -1420,17 +1578,21 @@ function assinarTempoReal(){
 function abaAtiva(){
   if(document.getElementById('tab-lavanderia').classList.contains('active'))return 'lavanderia';
   if(document.getElementById('tab-manut').classList.contains('active'))return 'manut';
+  if(document.getElementById('tab-fechamento').classList.contains('active'))return 'fechamento';
+  if(document.getElementById('tab-config').classList.contains('active'))return 'config';
   return 'lista';
 }
 function rerenderCompartilhado(){
   const aba=abaAtiva();
   if(aba==='manut') renderManut();
+  else if(aba==='fechamento') renderFechamento();
+  else if(aba==='config') renderConfig();
   else if(aba==='lavanderia') renderLavanderia();
   else if(aba==='lista' && _pdfDate) atualizarListaDoDia();
 }
 
 // ── ROOMS ────────────────────────────────────────────────────────────────────
-const ROOMS={
+let ROOMS={
   "Comf":{order:1,apts:{"109":"2s","202":"cs","207":"cs","811":"c","1014":"cs","1102":"c","1111":"c","1301":"cs"}},
   "Lets":{order:2,apts:{"506":"c","913":"2s","1301":"c","1407":"c"}},
   "Kubit":{order:3,apts:{"113":"c","117":"c","305":"c","519":"c"}},
@@ -1442,9 +1604,9 @@ const ROOMS={
   "Go Inn":{order:9,apts:{"101":"c","114":"c","117":"2s","119":"c","207":"2s","210":"2s","305":"cs","308":"2s","310":"2s","313":"2s","408":"2s","411":"c","413":"cs","418":"c","503":"c","506":"c","509":"c","512":"c","515":"2s","516":"c","517":"c","519":"c","603":"c","605":"cs","609":"cs","610":"2s","611":"c","617":"c","703":"cs","708":"c","715":"c","806":"c","815":"c","906":"c","909":"c","913":"2s","914":"c"}}
 };
 const CFG_LABEL={"c":"casal","2s":"2 solteiro","cs":"casal + solteiro"};
-const KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
-const SEM_ROSTO=new Set(["Comft","Go Inn"]);   // hotéis que NÃO levam mais toalha de rosto (só tapete)
-const PRECO={
+let KING_APTS=new Set(["Tryp||06","Tryp||105","Tryp||207","Lets||1301","Lets||506","Comft||705","Comft||206"]);
+let SEM_ROSTO=new Set(["Comft","Go Inn"]);   // hotéis que NÃO levam mais toalha de rosto (só tapete)
+let PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
   limpezaComf:  25,
@@ -1484,10 +1646,13 @@ function switchTab(name,el){
   const fab=document.getElementById('mt-fab'); if(fab) fab.classList.remove('show');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
+  window.scrollTo(0,0);
   if(name==='lavanderia'){ _lavMonth=mesLavPadrao(); renderLavanderia(); }
   if(name==='manut') renderManut();
+  if(name==='fechamento') abrirFechamentoMes();
+  if(name==='config') renderConfig();
   if(name==='lista' && _pdfDate) atualizarListaDoDia();
 }
 // ── DATAS ────────────────────────────────────────────────────────────────────
@@ -1570,7 +1735,7 @@ async function registrarLimpezas(depMap, dia){
     if(!depMap[k]||depMap[k].length===0)return;
     const i=k.indexOf('||');
     const hotel=k.substring(0,i);
-    if(hotel!=='Comf')return;
+    if(!LIMPEZA_HOTEIS.has(hotel))return;
     rows.push({hotel,apt:k.substring(i+2),dia});
   });
   if(rows.length===0)return 0;
@@ -1656,6 +1821,7 @@ function renderLavanderia(){
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn-add-saida" onclick="openSaida()">＋ Saída</button>
+      <button class="btn-fech" onclick="switchTab('fechamento',null)">📊 Fechamento</button>
       <button class="btn-reset" onclick="openDialog()">Zerar mês</button>
     </div>
   </div>
@@ -1699,7 +1865,7 @@ function renderLavanderia(){
   const totalLimpezas=limpEntries.reduce((s,e)=>s+e.count,0);
   if(limpEntries.length>0){
     html+=`<div class="limpeza-section">
-      <div class="limpeza-title">🧹 Limpeza própria — Comf<span class="limpeza-tag">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</span></div>
+      <div class="limpeza-title">🧹 Limpeza própria · ${esc([...LIMPEZA_HOTEIS].join(', '))}<span class="limpeza-tag">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</span></div>
       <div class="lav-total-grid lav-total-grid--sm">
         <div class="lav-total-card"><div class="lav-total-val lav-green">${totalLimpezas}</div><div class="lav-total-lbl">Limpezas no mês</div></div>
         <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.limpezaComf)} por limpeza</div></div>
@@ -2059,6 +2225,396 @@ function excluirItem(){
       await carregarManutItens(); renderManut(); showToast('Peça excluída');
     });
 }
+// ── CADASTRO (hotéis, aptos e preços vêm do banco) ─────────────────────────────
+// Se as tabelas não existirem ou falharem, o app continua com os valores
+// escritos acima no código (ROOMS, KING_APTS, SEM_ROSTO, PRECO, HOTEL_TESTS).
+let LIMPEZA_HOTEIS=new Set(['Comf']);
+let HOTEIS_INFO={}, APTOS_INFO={}, _cadastroDoBanco=false, _cadastroMudou=false;
+async function carregarCadastro(){
+  try{
+    const [h,a,c]=await Promise.all([
+      sb.from('hoteis').select('*'),
+      sb.from('aptos').select('*'),
+      sb.from('config').select('*'),
+    ]);
+    if(h.error||a.error||c.error) throw (h.error||a.error||c.error);
+    if(!(h.data||[]).length) return;
+    aplicarCadastro(h.data,a.data||[],c.data||[]);
+    _cadastroDoBanco=true;
+  }catch(e){ console.warn('Cadastro: usando o padrão do código',e); }
+}
+function aplicarCadastro(hoteis,aptos,config){
+  HOTEIS_INFO={}; APTOS_INFO={};
+  const rooms={},king=new Set(),sem=new Set(),limp=new Set(),tests=[];
+  hoteis.forEach(x=>{
+    HOTEIS_INFO[x.nome]=x;
+    if(x.ativo===false)return;
+    rooms[x.nome]={order:x.ordem,apts:{}};
+    if(x.sem_rosto)sem.add(x.nome);
+    if(x.limpeza_propria)limp.add(x.nome);
+    if(x.pdf_regex){ try{ tests.push({r:new RegExp(x.pdf_regex,'i'),h:x.nome,len:(x.pdf_nome||x.nome).length}); }catch(e){} }
+  });
+  aptos.forEach(a=>{
+    APTOS_INFO[a.hotel+'||'+a.apt]=a;
+    if(a.ativo===false||!rooms[a.hotel])return;
+    rooms[a.hotel].apts[a.apt]=a.config;
+    if(a.king)king.add(a.hotel+'||'+a.apt);
+  });
+  ROOMS=rooms; KING_APTS=king; SEM_ROSTO=sem; LIMPEZA_HOTEIS=limp;
+  // nomes maiores primeiro, para "Comf T" ser testado antes de "Comf"
+  tests.sort((p,q)=>q.len-p.len);
+  if(tests.length){ HOTEL_TESTS=tests; HOTEL_CLEAN_RE=new RegExp(tests.map(t=>t.r.source).join('|'),'gi'); }
+  const cfg={}; config.forEach(r=>cfg[r.chave]=Number(r.valor));
+  if(!isNaN(cfg.admin_por_apto))PRECO.adminPorApto=cfg.admin_por_apto;
+  if(!isNaN(cfg.troca_enxoval))PRECO.trocaEnxoval=cfg.troca_enxoval;
+  if(!isNaN(cfg.limpeza))PRECO.limpezaComf=cfg.limpeza;
+}
+async function recarregarCadastroERenderizar(){
+  await carregarCadastro();
+  _cadastroMudou=true;
+  if(abaAtiva()==='lista' && _pdfDate){ renderUI(); _cadastroMudou=false; }
+}
+function hoteisAtivosOrdenados(){ return Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order); }
+function aptosOrdenados(hotel){ return Object.keys(ROOMS[hotel]?.apts||{}).sort((a,b)=>parseInt(a)-parseInt(b)||a.localeCompare(b)); }
+function rotuloApto(hotel,apt){
+  const a=APTOS_INFO[hotel+'||'+apt];
+  if(a&&a.rotulo) return a.rotulo;
+  const sigla=(HOTEIS_INFO[hotel]&&HOTEIS_INFO[hotel].sigla)||hotel;
+  return sigla+' '+apt;
+}
+function gerarRegexPdf(txt){
+  const w=String(txt||'').trim().toLowerCase().split(/\s+/).filter(Boolean).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  return w.length?'\\b'+w.join('\\s*')+'\\b':'';
+}
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+function nomeMes(mes){ const[y,m]=mes.split('-'); return MESES[parseInt(m)-1]+' '+y; }
+const fmtR=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+// ── FECHAMENTO DO MÊS ─────────────────────────────────────────────────────────
+let _fechMes=null;
+cache.ajustes={}; cache.ajustesMes=null;
+async function carregarAjustes(mes){
+  try{
+    const {data,error}=await sb.from('ajustes_mes').select('*').eq('mes',mes);
+    if(error)throw error;
+    cache.ajustes={}; cache.ajustesMes=mes;
+    (data||[]).forEach(r=>cache.ajustes[r.hotel+'||'+r.apt]={valor:Number(r.valor)||0,obs:r.obs||''});
+  }catch(e){ cache.ajustes={}; cache.ajustesMes=mes; }
+}
+async function carregarAjustesMesAtual(){ if(_fechMes) await carregarAjustes(_fechMes); }
+async function abrirFechamentoMes(){
+  _fechMes=_lavMonth||currentMonthKey();
+  if(cache.ajustesMes!==_fechMes){ cache.ajustes={}; renderFechamento(); await carregarAjustes(_fechMes); }
+  renderFechamento();
+}
+async function fechMudarMes(delta){
+  const nx=shiftMonth(_fechMes,delta);
+  if(nx>currentMonthKey())return;
+  _fechMes=nx; cache.ajustes={}; renderFechamento();
+  await carregarAjustes(_fechMes); renderFechamento();
+}
+function dadosFechamento(mes){
+  const tro=aggPorApto(cache.trocas,mes), lim=aggPorApto(cache.limpezas,mes);
+  const linhas=[], vistos=new Set();
+  hoteisAtivosOrdenados().forEach(hotel=>{
+    aptosOrdenados(hotel).forEach(apt=>{
+      const k=hotel+'||'+apt; vistos.add(k);
+      const aj=cache.ajustes[k]||{valor:0,obs:''};
+      linhas.push({hotel,apt,rotulo:rotuloApto(hotel,apt),admin:PRECO.adminPorApto,
+        trocas:tro[k]?.count||0, limpezas:lim[k]?.count||0, ajuste:aj.valor, obs:aj.obs, fora:false});
+    });
+  });
+  // trocas de aptos que saíram do cadastro (não cobram administração)
+  Object.keys(tro).concat(Object.keys(lim)).forEach(k=>{
+    if(vistos.has(k))return; vistos.add(k);
+    const i=k.indexOf('||'), hotel=k.substring(0,i), apt=k.substring(i+2);
+    const aj=cache.ajustes[k]||{valor:0,obs:''};
+    linhas.push({hotel,apt,rotulo:rotuloApto(hotel,apt),admin:0,trocas:tro[k]?.count||0,limpezas:lim[k]?.count||0,ajuste:aj.valor,obs:aj.obs,fora:true});
+  });
+  linhas.forEach(l=>{
+    l.vLav=l.trocas*PRECO.trocaEnxoval; l.vLimp=l.limpezas*PRECO.limpezaComf;
+    l.soma=l.admin+l.vLav+l.vLimp+(l.ajuste||0);
+  });
+  return linhas;
+}
+function diasSemPdf(mes){
+  const[y,m]=mes.split('-').map(Number);
+  const ultimo=(mes===currentMonthKey())?new Date().getDate():new Date(y,m,0).getDate();
+  const com=new Set(cache.trocas.filter(r=>String(r.dia).startsWith(mes)).map(r=>String(r.dia).substring(8,10)));
+  const faltam=[];
+  for(let d=1;d<=ultimo;d++){const dd=String(d).padStart(2,'0'); if(!com.has(dd))faltam.push(dd);}
+  return faltam;
+}
+function renderFechamento(){
+  const root=document.getElementById('fech-content'); if(!root)return;
+  if(!_ready){root.innerHTML=`<div class="empty-state">⚙️ Sem conexão com o banco.</div>`;return;}
+  const mes=_fechMes||currentMonthKey();
+  const L=dadosFechamento(mes);
+  const tot={admin:0,trocas:0,vLav:0,limpezas:0,vLimp:0,ajuste:0,soma:0};
+  L.forEach(l=>Object.keys(tot).forEach(k=>tot[k]+=l[k]||0));
+  const nAdm=L.filter(l=>!l.fora).length;
+  const faltam=diasSemPdf(mes);
+  const earliest=earliestMonth();
+  const prevDis=!earliest||mes<=earliest, nextDis=mes>=currentMonthKey();
+  const aviso=faltam.length
+    ?`<div class="fech-warn"><b>⚠️ Faltam PDFs de ${faltam.length} dia${faltam.length>1?'s':''}:</b> ${faltam.join(', ')}.<br>As trocas desses dias não estão contadas. Carregue esses PDFs na Lista do Dia antes de fechar o mês.</div>`
+    :`<div class="fech-ok">✓ Todos os dias do mês têm PDF carregado.</div>`;
+  let tabela='', hotelAtual=null;
+  L.forEach(l=>{
+    if(l.hotel!==hotelAtual){
+      const sub=L.filter(x=>x.hotel===l.hotel).reduce((s,x)=>s+x.soma,0);
+      tabela+=`<div class="fech-hotel"><span>${esc(l.hotel)}</span><span>${fmtR(sub)}</span></div>`;
+      hotelAtual=l.hotel;
+    }
+    const k=l.hotel+'||'+l.apt;
+    tabela+=`<div class="fech-row" data-k="${esc(k)}" onclick="openAjuste(this.dataset.k)">
+      <div class="fech-apt">${esc(l.rotulo)}${l.fora?'<span class="fech-tag">fora do cadastro</span>':''}
+        ${l.ajuste?`<span class="fech-aj ${l.ajuste<0?'neg':''}">${l.ajuste>0?'+':''}${fmtR(l.ajuste)}</span>`:''}
+        ${l.obs?`<div class="fech-obs">${esc(l.obs)}</div>`:''}</div>
+      <div class="fech-n" title="Trocas">${l.trocas}<small>trocas</small></div>
+      <div class="fech-n" title="Limpezas">${l.limpezas?l.limpezas:'–'}<small>limp.</small></div>
+      <div class="fech-val">${fmtR(l.soma)}</div>
+    </div>`;
+  });
+  root.innerHTML=`
+  <div class="lav-header">
+    <div class="lav-nav">
+      <button class="lav-nav-btn" onclick="fechMudarMes(-1)" ${prevDis?'disabled':''}>‹</button>
+      <div><div class="lav-month">${nomeMes(mes)}</div><div class="lav-sub">Fechamento do mês</div></div>
+      <button class="lav-nav-btn" onclick="fechMudarMes(1)" ${nextDis?'disabled':''}>›</button>
+    </div>
+    <button class="mt-btn-ghost" onclick="switchTab('lavanderia',document.querySelectorAll('.tab')[1])">‹ Lavanderia</button>
+  </div>
+  ${aviso}
+  <div class="fech-total">
+    <div class="fech-total-lbl">Total a receber</div>
+    <div class="fech-total-val">${fmtR(tot.soma)}</div>
+  </div>
+  <div class="lav-total-grid">
+    <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.admin)}</div><div class="lav-total-lbl">Administração</div><div class="lav-total-sub">${fmtR(PRECO.adminPorApto)} × ${nAdm} aptos</div></div>
+    <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLav)}</div><div class="lav-total-lbl">Lavanderia</div><div class="lav-total-sub">${tot.trocas} trocas × ${fmtR(PRECO.trocaEnxoval)}</div></div>
+    <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLimp)}</div><div class="lav-total-lbl">Limpeza</div><div class="lav-total-sub">${tot.limpezas} limpezas × ${fmtR(PRECO.limpezaComf)}</div></div>
+    <div class="lav-total-card"><div class="lav-total-val ${tot.ajuste<0?'val-neg':'lav-green'}">${fmtR(tot.ajuste)}</div><div class="lav-total-lbl">Ajustes</div><div class="lav-total-sub">toque num apto para ajustar</div></div>
+  </div>
+  <button class="fech-download" id="fech-dl" onclick="baixarExcelFechamento()">⬇ Baixar planilha (Excel)</button>
+  <div class="fech-table">
+    <div class="fech-head"><span>Apto</span><span>Trocas</span><span>Limp.</span><span>Soma</span></div>
+    ${tabela||'<div class="empty-state">Nenhum apto cadastrado.</div>'}
+  </div>`;
+}
+// Ajuste por apto (desconto ou acréscimo no mês)
+let _ajK=null;
+function openAjuste(k){
+  _ajK=k;
+  const i=k.indexOf('||'), hotel=k.substring(0,i), apt=k.substring(i+2);
+  const aj=cache.ajustes[k]||{valor:0,obs:''};
+  document.getElementById('aj-title').textContent='Ajuste · '+rotuloApto(hotel,apt);
+  document.getElementById('aj-sub').textContent=nomeMes(_fechMes)+'. Use negativo para desconto (ex.: -269,50).';
+  document.getElementById('aj-valor').value=aj.valor?String(aj.valor).replace('.',','):'';
+  document.getElementById('aj-obs').value=aj.obs||'';
+  openOv('ov-ajuste');
+  setTimeout(()=>document.getElementById('aj-valor').focus(),50);
+}
+async function salvarAjuste(){
+  const k=_ajK; if(!k)return;
+  const i=k.indexOf('||'), hotel=k.substring(0,i), apt=k.substring(i+2);
+  const txt=document.getElementById('aj-valor').value.trim().replace(/\s/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.');
+  const valor=txt===''?0:Number(txt);
+  const obs=document.getElementById('aj-obs').value.trim();
+  if(isNaN(valor)){showToast('Valor inválido');return;}
+  let error;
+  if(!valor && !obs) ({error}=await sb.from('ajustes_mes').delete().eq('mes',_fechMes).eq('hotel',hotel).eq('apt',apt));
+  else ({error}=await sb.from('ajustes_mes').upsert({mes:_fechMes,hotel,apt,valor,obs:obs||null,atualizado_em:new Date().toISOString()},{onConflict:'mes,hotel,apt'}));
+  if(error){showToast('Erro ao salvar o ajuste');return;}
+  closeOv('ov-ajuste');
+  await carregarAjustes(_fechMes); renderFechamento();
+  showToast(valor||obs?'Ajuste salvo':'Ajuste removido');
+}
+function carregarScript(src){
+  return new Promise((ok,erro)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>erro(new Error('Não consegui baixar '+src));document.head.appendChild(s);});
+}
+async function baixarExcelFechamento(){
+  const btn=document.getElementById('fech-dl');
+  try{
+    if(btn){btn.disabled=true;btn.textContent='Gerando planilha…';}
+    if(!window.ExcelJS) await carregarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
+    const mes=_fechMes, L=dadosFechamento(mes);
+    const wb=new ExcelJS.Workbook();
+    const ws=wb.addWorksheet('Planilha1',{views:[{state:'frozen',ySplit:1}]});
+    ws.columns=[
+      {header:'apto',width:20},{header:'valor administração',width:19},{header:'valor lavanderia ',width:16},
+      {header:'trocas de roupa de cama',width:23},{header:'valor total de lavanderia',width:23},{header:'valor da limpeza',width:16},
+      {header:'limpezas realizadas',width:19},{header:'valor total da limpeza',width:21},{header:'soma',width:15},
+      {header:'ajuste',width:13},{header:'observação',width:34},
+    ];
+    L.forEach((l,i)=>{
+      const r=i+2;
+      ws.addRow([l.rotulo,l.admin,PRECO.trocaEnxoval,l.trocas,{formula:`C${r}*D${r}`,result:l.vLav},
+        PRECO.limpezaComf,l.limpezas,{formula:`F${r}*G${r}`,result:l.vLimp},
+        {formula:`B${r}+E${r}+H${r}+J${r}`,result:l.soma},l.ajuste||0,l.obs||null]);
+    });
+    const n=L.length+1, t=n+1, S=(c,k)=>({formula:`SUM(${c}2:${c}${n})`,result:L.reduce((s,l)=>s+(l[k]||0),0)});
+    ws.addRow(['TOTAL',S('B','admin'),null,S('D','trocas'),S('E','vLav'),null,S('G','limpezas'),S('H','vLimp'),S('I','soma'),S('J','ajuste'),null]);
+    const money='"R$" #,##0.00';
+    ['B','C','E','F','H','I','J'].forEach(c=>{ws.getColumn(c).numFmt=money;});
+    const head=ws.getRow(1); head.font={bold:true,color:{argb:'FFFFFFFF'}}; head.alignment={vertical:'middle',wrapText:true}; head.height=30;
+    head.eachCell(c=>{c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F2937'}};});
+    const tr=ws.getRow(t); tr.font={bold:true}; tr.eachCell(c=>{c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFEF3C7'}};c.border={top:{style:'thin'}};});
+    // aba com a cama de cada apto, como na planilha original
+    const ws2=wb.addWorksheet('Página1');
+    ws2.columns=[{header:'apto',width:22},{header:'cama',width:20}];
+    ws2.getRow(1).font={bold:true};
+    L.filter(l=>!l.fora).forEach(l=>ws2.addRow([l.rotulo,CFG_LABEL[ROOMS[l.hotel]?.apts[l.apt]]||'']));
+    const buf=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='PLANILHA HOTEL - '+nomeMes(mes).toUpperCase()+'.xlsx';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    showToast('Planilha baixada');
+  }catch(e){ showToast('Erro ao gerar a planilha'); console.error(e); }
+  finally{ if(btn){btn.disabled=false;btn.textContent='⬇ Baixar planilha (Excel)';} }
+}
+
+// ── TELA DE CADASTRO ──────────────────────────────────────────────────────────
+function renderConfig(){
+  const root=document.getElementById('config-content'); if(!root)return;
+  if(!_ready){root.innerHTML=`<div class="empty-state">⚙️ Sem conexão com o banco.</div>`;return;}
+  const hoteis=Object.values(HOTEIS_INFO).filter(h=>h.ativo!==false).sort((a,b)=>a.ordem-b.ordem);
+  const total=hoteisAtivosOrdenados().reduce((s,h)=>s+aptosOrdenados(h).length,0);
+  const cards=hoteis.map(h=>{
+    const apts=aptosOrdenados(h.nome);
+    const chips=apts.map(a=>{
+      const cfg=ROOMS[h.nome].apts[a], k=KING_APTS.has(h.nome+'||'+a);
+      return `<button class="cfg-apt" data-h="${esc(h.nome)}" data-a="${esc(a)}" onclick="openApto(this.dataset.h,this.dataset.a)">
+        <b>${esc(a)}</b><small>${({c:'casal','2s':'2 solt.',cs:'cas+solt'})[cfg]||cfg}${k?' · king':''}</small></button>`;
+    }).join('');
+    const tags=[h.sem_rosto?'sem toalha de rosto':'',h.limpeza_propria?'cobra limpeza':''].filter(Boolean)
+      .map(t=>`<span class="cfg-tag">${t}</span>`).join('');
+    return `<div class="mt-section">
+      <div class="cfg-hotel-head">
+        <div><div class="cfg-hotel-name">${esc(h.nome)} <span class="cfg-count">${apts.length} apto${apts.length!==1?'s':''}</span></div>
+        <div class="cfg-hotel-sub">Planilha: <b>${esc(h.sigla||'–')}</b> · No PDF: <b>${esc(h.pdf_nome||'–')}</b></div>${tags?`<div style="margin-top:6px;">${tags}</div>`:''}</div>
+        <button class="mt-mini-btn" data-h="${esc(h.nome)}" onclick="openHotel(this.dataset.h)">✎ Editar</button>
+      </div>
+      <div class="cfg-apts">${chips}<button class="cfg-apt add" data-h="${esc(h.nome)}" onclick="openApto(this.dataset.h)"><b>＋</b><small>apto</small></button></div>
+    </div>`;
+  }).join('');
+  root.innerHTML=`
+  <div class="lav-header">
+    <div><div class="lav-month">Cadastro</div><div class="lav-sub">${hoteis.length} hotéis · ${total} aptos ativos</div></div>
+    <button class="mt-btn-ghost" onclick="voltarDoCadastro()">‹ Voltar</button>
+  </div>
+  ${_cadastroDoBanco?'':`<div class="fech-warn">O cadastro ainda não está no banco. Rode o arquivo supabase-cadastro.sql no Supabase.</div>`}
+  <div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">💰 Preços</span></div>
+    <div class="cfg-precos">
+      <label>Administração por apto<input class="dialog-field" id="cfg-admin" inputmode="decimal" value="${String(PRECO.adminPorApto).replace('.',',')}"></label>
+      <label>Troca de enxoval<input class="dialog-field" id="cfg-troca" inputmode="decimal" value="${String(PRECO.trocaEnxoval).replace('.',',')}"></label>
+      <label>Limpeza<input class="dialog-field" id="cfg-limp" inputmode="decimal" value="${String(PRECO.limpezaComf).replace('.',',')}"></label>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="salvarPrecos()">Salvar preços</button>
+  </div>
+  ${cards}
+  <button class="fech-download" style="background:var(--bg-1);color:var(--t1);border:1px dashed var(--b3);" onclick="openHotel()">＋ Novo hotel</button>`;
+}
+function voltarDoCadastro(){
+  switchTab('lista',document.querySelectorAll('.tab')[0]);
+  if(_cadastroMudou && _pdfDate){ renderUI(); _cadastroMudou=false; }
+}
+function numBR(v){ return Number(String(v).trim().replace(/\s/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.')); }
+async function salvarPrecos(){
+  const vals={admin_por_apto:numBR(document.getElementById('cfg-admin').value),
+    troca_enxoval:numBR(document.getElementById('cfg-troca').value),
+    limpeza:numBR(document.getElementById('cfg-limp').value)};
+  if(Object.values(vals).some(v=>isNaN(v)||v<0)){showToast('Confira os valores');return;}
+  const {error}=await sb.from('config').upsert(Object.entries(vals).map(([chave,valor])=>({chave,valor})),{onConflict:'chave'});
+  if(error){showToast('Erro ao salvar os preços');return;}
+  await carregarCadastro(); _cadastroMudou=true; renderConfig(); showToast('Preços salvos');
+}
+let _cfgApto=null, _cfgHotel=null;
+function openApto(hotel,apt){
+  const info=apt?APTOS_INFO[hotel+'||'+apt]:null;
+  _cfgApto=info?{id:info.id,hotel,apt}:{id:null,hotel,apt:null};
+  document.getElementById('ap-title').textContent=info?(hotel+' · '+apt):('Novo apto · '+hotel);
+  const num=document.getElementById('ap-num'); num.value=info?apt:''; num.disabled=!!info;
+  document.getElementById('ap-cfg').value=info?info.config:'c';
+  document.getElementById('ap-king').checked=info?!!info.king:false;
+  document.getElementById('ap-rotulo').value=info&&info.rotulo?info.rotulo:'';
+  document.getElementById('ap-rotulo').placeholder=((HOTEIS_INFO[hotel]&&HOTEIS_INFO[hotel].sigla)||hotel)+' '+(apt||'101');
+  document.getElementById('ap-remover').style.display=info?'':'none';
+  openOv('ov-apto');
+  if(!info) setTimeout(()=>num.focus(),50);
+}
+async function salvarApto(){
+  const c=_cfgApto; if(!c)return;
+  const apt=c.apt||document.getElementById('ap-num').value.trim();
+  const dados={config:document.getElementById('ap-cfg').value,king:document.getElementById('ap-king').checked,
+    rotulo:document.getElementById('ap-rotulo').value.trim()||null,ativo:true};
+  if(!apt){showToast('Digite o número do apto');return;}
+  if(!c.id && ROOMS[c.hotel]?.apts[apt]!==undefined){showToast('Esse apto já está cadastrado');return;}
+  const {error}=c.id
+    ? await sb.from('aptos').update(dados).eq('id',c.id)
+    : await sb.from('aptos').upsert(Object.assign({hotel:c.hotel,apt},dados),{onConflict:'hotel,apt'});
+  if(error){showToast('Erro ao salvar o apto');return;}
+  closeOv('ov-apto'); await carregarCadastro(); _cadastroMudou=true; renderConfig();
+  showToast(c.id?'Apto atualizado':'Apto '+apt+' adicionado ao '+c.hotel);
+}
+function removerApto(){
+  const c=_cfgApto; if(!c||!c.id)return;
+  closeOv('ov-apto');
+  confirmar('Remover '+c.hotel+' '+c.apt+'?','O apto sai da lista e deixa de cobrar administração. O histórico de trocas e reparos continua guardado, e dá para cadastrar de novo depois.','Remover',
+    async()=>{
+      const {error}=await sb.from('aptos').update({ativo:false}).eq('id',c.id);
+      if(error){showToast('Erro ao remover');return;}
+      await carregarCadastro(); _cadastroMudou=true; renderConfig(); showToast('Apto removido');
+    });
+}
+function openHotel(nome){
+  const h=nome?HOTEIS_INFO[nome]:null;
+  _cfgHotel=h?h.nome:null;
+  document.getElementById('ht-title').textContent=h?'Editar '+h.nome:'Novo hotel';
+  const n=document.getElementById('ht-nome'); n.value=h?h.nome:''; n.disabled=!!h;
+  document.getElementById('ht-nome-hint').style.display=h?'':'none';
+  document.getElementById('ht-sigla').value=h?h.sigla:'';
+  document.getElementById('ht-pdf').value=h?h.pdf_nome:'';
+  const ordens=Object.values(HOTEIS_INFO).map(x=>x.ordem||0);
+  document.getElementById('ht-ordem').value=h?h.ordem:(Math.max(0,...ordens)+1);
+  document.getElementById('ht-rosto').checked=h?!!h.sem_rosto:false;
+  document.getElementById('ht-limp').checked=h?!!h.limpeza_propria:false;
+  document.getElementById('ht-desativar').style.display=h?'':'none';
+  openOv('ov-hotel');
+  if(!h) setTimeout(()=>n.focus(),50);
+}
+async function salvarHotel(){
+  const nome=_cfgHotel||document.getElementById('ht-nome').value.trim();
+  const pdf=document.getElementById('ht-pdf').value.trim();
+  if(!nome){showToast('Digite o nome do hotel');return;}
+  if(!pdf){showToast('Diga como o hotel aparece no PDF');return;}
+  if(!_cfgHotel && HOTEIS_INFO[nome] && HOTEIS_INFO[nome].ativo!==false){showToast('Já existe um hotel com esse nome');return;}
+  const atual=HOTEIS_INFO[nome];
+  const dados={sigla:document.getElementById('ht-sigla').value.trim()||nome,pdf_nome:pdf,
+    ordem:parseInt(document.getElementById('ht-ordem').value,10)||99,
+    sem_rosto:document.getElementById('ht-rosto').checked,limpeza_propria:document.getElementById('ht-limp').checked,ativo:true};
+  // só gera um padrão novo de leitura do PDF se o nome no PDF mudou
+  if(!atual || atual.pdf_nome!==pdf || !atual.pdf_regex) dados.pdf_regex=gerarRegexPdf(pdf);
+  const {error}=atual
+    ? await sb.from('hoteis').update(dados).eq('nome',nome)
+    : await sb.from('hoteis').insert(Object.assign({nome},dados));
+  if(error){showToast('Erro ao salvar o hotel');return;}
+  closeOv('ov-hotel'); await carregarCadastro(); _cadastroMudou=true; renderConfig();
+  showToast(atual?'Hotel atualizado':'Hotel '+nome+' criado. Agora adicione os aptos.');
+}
+function desativarHotel(){
+  const nome=_cfgHotel; if(!nome)return;
+  closeOv('ov-hotel');
+  confirmar('Desativar '+nome+'?','O hotel e os aptos dele somem das listas e do fechamento. O histórico continua guardado.','Desativar',
+    async()=>{
+      const {error}=await sb.from('hoteis').update({ativo:false}).eq('nome',nome);
+      if(error){showToast('Erro ao desativar');return;}
+      await carregarCadastro(); _cadastroMudou=true; renderConfig(); showToast('Hotel desativado');
+    });
+}
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
   const month=_lavMonth||currentMonthKey();
@@ -2112,7 +2668,7 @@ async function addSaidaManual(){
   // limpeza própria Comf em dia de limpeza (dom/ter/qui/sáb)
   const [yy,mm,dd]=dia.split('-').map(Number);
   const dow=new Date(yy,mm-1,dd).getDay();
-  if(hotel==='Comf' && [0,2,4,6].includes(dow)){
+  if(LIMPEZA_HOTEIS.has(hotel) && [0,2,4,6].includes(dow)){
     await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
   }
   // se for o dia carregado na lista, reflete lá também (para o enxoval do dia)
@@ -2170,12 +2726,12 @@ async function handleFile(file){
   }
 }
 // ── HOTEL DETECTOR ────────────────────────────────────────────────────────────
-const HOTEL_TESTS=[
+let HOTEL_TESTS=[
   {r:/go\s*inn?/i,h:'Go Inn'},{r:/comf\s*t\b|comft\b/i,h:'Comft'},{r:/\bcomf\b/i,h:'Comf'},
   {r:/\blets\b/i,h:'Lets'},{r:/\bkubit\b/i,h:'Kubit'},{r:/\bbona\b/i,h:'Bona'},
   {r:/\bsaint\b/i,h:'Saint'},{r:/\bramada\b/i,h:'Ramada'},{r:/\btryp\b/i,h:'Tryp'},
 ];
-const HOTEL_CLEAN_RE=new RegExp(HOTEL_TESTS.map(t=>t.r.source).join('|'),'gi');
+let HOTEL_CLEAN_RE=new RegExp(HOTEL_TESTS.map(t=>t.r.source).join('|'),'gi');
 function aptKey(raw){return raw.replace(/^0+/,'').replace(/-\d+$/,'');}
 function findMatch(line){
   for(const t of HOTEL_TESTS){
@@ -2249,7 +2805,11 @@ async function parseAndRender(lines,filename){
   dz.classList.add('loaded');
   document.getElementById('drop-label').textContent=filename;
   document.getElementById('drop-sub').textContent='Clique para trocar o arquivo';
-  if(_ready) await salvarListaAtual(filename);
+  if(_ready){
+    const atual=cache.lista&&cache.lista.dia?String(cache.lista.dia):'';
+    if(!atual || pdfDateKey>=atual) await salvarListaAtual(filename);
+    else setTimeout(()=>showToast('PDF de '+pdfDateKey.split('-').reverse().join('/')+' registrado · a lista de hoje não mudou'),2600);
+  }
   renderUI();
 }
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────

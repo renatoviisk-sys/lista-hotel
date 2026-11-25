@@ -991,7 +991,7 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
   .mt-fab{right:1rem;bottom:1.25rem;}
 }
 @media(max-width:340px){ .mt-stock-grid{grid-template-columns:repeat(2,1fr);} }
-#tab-manut{padding-bottom:4rem;}
+#tab-manut,#tab-lavanderia{padding-bottom:4rem;}
 /* ══════════════════════════════════════════════════════════════
    CADASTRO + FECHAMENTO
    ══════════════════════════════════════════════════════════════ */
@@ -1280,20 +1280,26 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     </div>
   </div>
 </div>
-<!-- Adicionar saída manual -->
+<!-- Registrar saída ou limpeza manual (Lavanderia) -->
+<button class="mt-fab" id="lav-fab" onclick="openSaida()"><span>＋</span> Registrar</button>
 <div class="overlay" id="overlay-saida">
-  <div class="dialog dialog-form">
-    <div class="dialog-title">Adicionar saída manual</div>
-    <div class="dialog-sub">Registra 1 troca (R$ 8,50) e o enxoval do apartamento na data escolhida. Aparece na Lavanderia.</div>
-    <label>Hotel</label>
-    <select class="dialog-field" id="saida-hotel" onchange="onSaidaHotel()"></select>
-    <label>Apartamento</label>
-    <select class="dialog-field" id="saida-apto"></select>
-    <label>Data da saída</label>
-    <input class="dialog-field" type="date" id="saida-data">
+  <div class="dialog dialog-form dialog-scroll">
+    <div class="dialog-title">Registrar na lavanderia</div>
+    <div class="mt-seg" style="margin:0.75rem 0 0.25rem;">
+      <button id="sd-modo-saida" onclick="setModoSaida('saida')">↑ Saída</button>
+      <button id="sd-modo-limp" onclick="setModoSaida('limpeza')">🧹 Só limpeza</button>
+    </div>
+    <div class="dialog-hint" id="sd-hint"></div>
+    <div class="dialog-row">
+      <div><label>Hotel</label><select class="dialog-field" id="saida-hotel" onchange="onSaidaHotel()"></select></div>
+      <div><label>Apto</label><select class="dialog-field" id="saida-apto"></select></div>
+    </div>
+    <label id="sd-data-lbl">Data da saída</label>
+    <input class="dialog-field" type="date" id="saida-data" onchange="atualizarCheckLimpeza()">
+    <label class="cfg-check" id="sd-limp-wrap"><input type="checkbox" id="sd-limp"> Teve limpeza também (R$ 25)</label>
     <div class="dialog-btns" style="margin-top:1.5rem;">
       <button class="btn-cancel" onclick="closeSaida()">Cancelar</button>
-      <button class="btn-add-saida" style="flex:1;text-align:center;" onclick="addSaidaManual()">Adicionar saída</button>
+      <button class="btn-primary" id="sd-salvar" onclick="addSaidaManual()">Registrar saída</button>
     </div>
   </div>
 </div>
@@ -1644,7 +1650,7 @@ function linenChips(lin){
 }
 // ── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(name,el){
-  const fab=document.getElementById('mt-fab'); if(fab) fab.classList.remove('show');
+  document.querySelectorAll('.mt-fab').forEach(f=>f.classList.remove('show'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -1821,7 +1827,6 @@ function renderLavanderia(){
       <button class="lav-nav-btn" onclick="lavNextMonth()" ${nextDisabled?'disabled':''} title="Próximo mês">›</button>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn-add-saida" onclick="openSaida()">＋ Saída</button>
       <button class="btn-fech" onclick="switchTab('fechamento',null)">📊 Fechamento</button>
       <button class="btn-reset" onclick="openDialog()">Zerar mês</button>
     </div>
@@ -1889,6 +1894,7 @@ function renderLavanderia(){
     html+=`</div>`;
   }
   document.getElementById('lav-content').innerHTML=html;
+  const lf=document.getElementById('lav-fab'); if(lf) lf.classList.toggle('show', abaAtiva()==='lavanderia' && _ready);
 }
 // ── MANUTENÇÃO ──────────────────────────────────────────────────────────────────
 // Tabelas: manut_itens (peças) e manutencoes (reparos por apto).
@@ -2702,19 +2708,47 @@ async function confirmReset(){
   showToast('Mês zerado com sucesso');
 }
 // ── SAÍDA MANUAL ──────────────────────────────────────────────────────────────
-function openSaida(){
-  const hSel=document.getElementById('saida-hotel');
-  hSel.innerHTML=Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order)
-    .map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join('');
-  onSaidaHotel();
+let _modoSaida='saida';
+function openSaida(modo){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
   document.getElementById('saida-data').value=_pdfDate||todayKey();
+  setModoSaida(modo||'saida');
   document.getElementById('overlay-saida').classList.add('show');
+}
+function setModoSaida(modo){
+  _modoSaida=modo;
+  const limp=modo==='limpeza';
+  document.getElementById('sd-modo-saida').classList.toggle('active',!limp);
+  document.getElementById('sd-modo-limp').classList.toggle('active',limp);
+  document.getElementById('sd-hint').textContent=limp
+    ?'Para quando o hóspede continua no apto (in house). Conta só a limpeza (R$ '+PRECO.limpezaComf.toFixed(2).replace('.',',')+'), sem troca de enxoval.'
+    :'Conta 1 troca (R$ '+PRECO.trocaEnxoval.toFixed(2).replace('.',',')+') e o enxoval do apto na data escolhida.';
+  document.getElementById('sd-data-lbl').textContent=limp?'Data da limpeza':'Data da saída';
+  document.getElementById('sd-salvar').textContent=limp?'Registrar limpeza':'Registrar saída';
+  // só limpeza: só hotéis que cobram limpeza (se nenhum estiver marcado, mostra todos)
+  const hSel=document.getElementById('saida-hotel'), antes=hSel.value;
+  let hoteis=hoteisAtivosOrdenados();
+  if(limp){ const comLimp=hoteis.filter(h=>LIMPEZA_HOTEIS.has(h)); if(comLimp.length) hoteis=comLimp; }
+  hSel.innerHTML=hoteis.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join('');
+  if(hoteis.includes(antes)) hSel.value=antes;
+  onSaidaHotel();
 }
 function onSaidaHotel(){
   const h=document.getElementById('saida-hotel').value;
-  const aSel=document.getElementById('saida-apto');
-  aSel.innerHTML=Object.keys(ROOMS[h].apts).sort((a,b)=>parseInt(a)-parseInt(b))
-    .map(a=>`<option value="${a}">${a} · ${CFG_LABEL[ROOMS[h].apts[a]]}</option>`).join('');
+  const aSel=document.getElementById('saida-apto'), antes=aSel.value;
+  aSel.innerHTML=aptosOrdenados(h).map(a=>`<option value="${a}">${a}</option>`).join('');
+  if(ROOMS[h]?.apts[antes]!==undefined) aSel.value=antes;
+  atualizarCheckLimpeza();
+}
+// Na saída, marca "teve limpeza" sozinho quando o hotel cobra limpeza e é dom/ter/qui/sáb (dá para desmarcar)
+function atualizarCheckLimpeza(){
+  const wrap=document.getElementById('sd-limp-wrap'), chk=document.getElementById('sd-limp');
+  const h=document.getElementById('saida-hotel').value, dia=document.getElementById('saida-data').value;
+  const mostra=_modoSaida==='saida' && LIMPEZA_HOTEIS.has(h);
+  wrap.style.display=mostra?'':'none';
+  if(!mostra){chk.checked=false;return;}
+  let dow=-1; if(dia){const[y,m,d]=dia.split('-').map(Number); dow=new Date(y,m-1,d).getDay();}
+  chk.checked=[0,2,4,6].includes(dow);
 }
 function closeSaida(){document.getElementById('overlay-saida').classList.remove('show');}
 async function addSaidaManual(){
@@ -2723,31 +2757,39 @@ async function addSaidaManual(){
   const apt=document.getElementById('saida-apto').value;
   const dia=document.getElementById('saida-data').value;
   if(!hotel||!apt||!dia){showToast('Preencha hotel, apto e data');return;}
-  const {error}=await sb.from('trocas')
-    .upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
-  if(error){showToast('Erro ao adicionar saída');return;}
-  // limpeza própria Comf em dia de limpeza (dom/ter/qui/sáb)
-  const [yy,mm,dd]=dia.split('-').map(Number);
-  const dow=new Date(yy,mm-1,dd).getDay();
-  if(LIMPEZA_HOTEIS.has(hotel) && [0,2,4,6].includes(dow)){
-    await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
-  }
-  // se for o dia carregado na lista, reflete lá também (para o enxoval do dia)
-  if(_pdfDate===dia){
-    const k=hotel+'||'+apt;
-    if(!_dep[k])_dep[k]=[];
-    if(_dep[k].length===0){
-      const gdef=ROOMS[hotel].apts[apt]==='cs'?3:2;
-      _dep[k].push({name:'Saída manual',guests:gdef});
-      await salvarListaAtual(document.getElementById('drop-label').textContent);
+  const btn=document.getElementById('sd-salvar'); btn.disabled=true;
+  try{
+    if(_modoSaida==='limpeza'){
+      const {data,error}=await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
+      if(error){showToast('Erro ao registrar a limpeza');return;}
+      await carregarLimpezas();
+      closeSaida(); _lavMonth=String(dia).substring(0,7); renderLavanderia();
+      showToast((data&&data.length)?'Limpeza registrada · '+hotel+' '+apt:'Essa limpeza já estava registrada');
+      return;
     }
-  }
-  try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
-  closeSaida();
-  _lavMonth=String(dia).substring(0,7);
-  renderLavanderia();
-  if(abaAtiva()==='lista' && _pdfDate) atualizarListaDoDia();
-  showToast('Saída adicionada · '+hotel+' '+apt);
+    const {data,error}=await sb.from('trocas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
+    if(error){showToast('Erro ao adicionar saída');return;}
+    const novaTroca=!!(data&&data.length);
+    if(document.getElementById('sd-limp').checked && LIMPEZA_HOTEIS.has(hotel)){
+      await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
+    }
+    // se for o dia carregado na lista, reflete lá também (para o enxoval do dia)
+    if(_pdfDate===dia){
+      const k=hotel+'||'+apt;
+      if(!_dep[k])_dep[k]=[];
+      if(_dep[k].length===0){
+        const gdef=ROOMS[hotel].apts[apt]==='cs'?3:2;
+        _dep[k].push({name:'Saída manual',guests:gdef});
+        await salvarListaAtual(document.getElementById('drop-label').textContent);
+      }
+    }
+    try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
+    closeSaida();
+    _lavMonth=String(dia).substring(0,7);
+    renderLavanderia();
+    if(abaAtiva()==='lista' && _pdfDate) atualizarListaDoDia();
+    showToast(novaTroca?'Saída registrada · '+hotel+' '+apt:'Essa saída já estava registrada');
+  } finally { btn.disabled=false; }
 }
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg){

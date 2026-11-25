@@ -2298,6 +2298,19 @@ function toggleDetalhamento(btn){
     section.style.display='none';
   }
 }
+let _enxHotelAberto=false;
+function toggleEnxHotel(){
+  _enxHotelAberto=!_enxHotelAberto;
+  const hr=document.getElementById('enxoval-hotel-root');
+  if(hr) hr.innerHTML=enxovalPorHotelHTML(_detalhes);
+}
+// Soma o enxoval só do hotel filtrado (ou devolve o total do dia sem filtro)
+function enxovalDoFiltro(lin,detalhes){
+  if(!_hotelFilt) return lin;
+  const t={lc:0,lk:0,ls:0,f:0,t:0,tr:0,tp:0};
+  detalhes.filter(d=>d.hotel===_hotelFilt).forEach(d=>{Object.keys(t).forEach(k=>t[k]+=d.lin[k]);});
+  return t;
+}
 function enxovalPorHotelHTML(detalhes){
   const porHotel={};
   detalhes.forEach(d=>{
@@ -2307,6 +2320,8 @@ function enxovalPorHotelHTML(detalhes){
   });
   const hoteis=Object.keys(porHotel).sort((a,b)=>ROOMS[a].order-ROOMS[b].order);
   if(hoteis.length<=1) return '';   // só um hotel no dia → o quadro geral já basta
+  const btn=`<button class="detalhamento-btn ${_enxHotelAberto?'active':''}" onclick="toggleEnxHotel()">🏨 ${_enxHotelAberto?'Esconder':'Ver'} enxoval por hotel</button>`;
+  if(!_enxHotelAberto) return btn;
   const LBL=[['lc','lençol casal'],['lk','lençol king'],['ls','lençol solteiro'],['f','fronha'],['t','toalha banho'],['tr','toalha rosto'],['tp','tapete']];
   let cards='';
   hoteis.forEach(hotel=>{
@@ -2320,15 +2335,15 @@ function enxovalPorHotelHTML(detalhes){
       <div class="enx-hotel-chips">${chips}</div>
     </div>`;
   });
-  return `<div class="enx-hotel-wrap">
-    <div class="enxoval-title" style="margin-bottom:0.75rem;">🏨 Enxoval por hotel</div>
-    ${cards}
-  </div>`;
+  return `${btn}<div class="enx-hotel-wrap">${cards}</div>`;
 }
-function enxovalDiaHTML(lin){
+function enxovalDiaHTML(lin,hotel){
+  const titulo=hotel
+    ? `🛏 Enxoval · <span style="color:var(--amber);">${esc(hotel)}</span> <span onclick="limparFiltroHotel()" style="cursor:pointer;color:var(--t3);text-transform:none;letter-spacing:0;font-weight:500;margin-left:6px;">✕ ver todos</span>`
+    : '🛏 Enxoval do dia';
   return `
   <div class="enxoval-section">
-    <div class="enxoval-title">🛏 Enxoval do dia</div>
+    <div class="enxoval-title">${titulo}</div>
     <div class="enxoval-grid">
       <div class="enxoval-item"><div class="enxoval-val">${lin.lc}</div><div class="enxoval-lbl">Lençol casal</div></div>
       <div class="enxoval-item"><div class="enxoval-val">${lin.lk}</div><div class="enxoval-lbl">Lençol king</div></div>
@@ -2396,6 +2411,11 @@ function renderUI(){
 }
 function onSearch(v){_srch=v.toLowerCase();renderCards();}
 // Filtro por hotel — clicar no mesmo botão desativa (mostra todos)
+function limparFiltroHotel(){
+  _hotelFilt='';
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  renderCards();
+}
 function setHotel(hotel,btn){
   _hotelFilt=(_hotelFilt===hotel)?'':hotel;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
@@ -2439,7 +2459,12 @@ function renderCards(){
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;
   });
-  root.innerHTML=any?html:`<div class="empty-state">Nenhum resultado encontrado.</div>`;
+  let topo='';
+  if(_hotelFilt && _pdfDate){
+    const {tot,detalhes}=calcTotals();
+    topo=enxovalDiaHTML(enxovalDoFiltro(tot,detalhes),_hotelFilt);
+  }
+  root.innerHTML=topo+(any?html:`<div class="empty-state">Nenhum resultado encontrado.</div>`);
 }
 // ── INICIALIZAÇÃO ───────────────────────────────────────────────────────────────
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initApp);

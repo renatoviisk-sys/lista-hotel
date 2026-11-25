@@ -1065,7 +1065,7 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .cfg-apt b{font-size:14px;font-weight:700;}
 .cfg-apt small{font-size:9px;color:var(--t3);font-weight:500;}
 .cfg-apt.add{border-style:dashed;border-color:var(--b2);color:var(--amber);}
-.cfg-precos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.cfg-precos{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
 .cfg-precos label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.05em;display:flex;flex-direction:column;gap:6px;}
 .dialog-form label.cfg-check{
   display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--t1);
@@ -1610,6 +1610,7 @@ let PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
   limpezaComf:  25,
+  pacote30:     250,   // preço combinado de 30 trocas (o desconto é 30×troca − pacote)
 };
 function esc(str){
   return String(str)
@@ -2268,6 +2269,7 @@ function aplicarCadastro(hoteis,aptos,config){
   if(!isNaN(cfg.admin_por_apto))PRECO.adminPorApto=cfg.admin_por_apto;
   if(!isNaN(cfg.troca_enxoval))PRECO.trocaEnxoval=cfg.troca_enxoval;
   if(!isNaN(cfg.limpeza))PRECO.limpezaComf=cfg.limpeza;
+  if(!isNaN(cfg.pacote_30_trocas))PRECO.pacote30=cfg.pacote_30_trocas;
 }
 async function recarregarCadastroERenderizar(){
   await carregarCadastro();
@@ -2337,6 +2339,13 @@ function dadosFechamento(mes){
   });
   return linhas;
 }
+// Preço combinado: R$ 250 a cada 30 trocas. Cobra-se R$ 8,50 por troca (30 × 8,50 = 255),
+// então a cada 30 trocas completas do mês devolve-se a diferença (R$ 5).
+function descontoPacote(totTrocas){
+  const porBloco=Math.max(0, Math.round((30*PRECO.trocaEnxoval-PRECO.pacote30)*100)/100);
+  const blocos=Math.floor((totTrocas||0)/30);
+  return {blocos,porBloco,valor:blocos*porBloco};
+}
 function diasSemPdf(mes){
   const[y,m]=mes.split('-').map(Number);
   const ultimo=(mes===currentMonthKey())?new Date().getDate():new Date(y,m,0).getDate();
@@ -2353,6 +2362,8 @@ function renderFechamento(){
   const tot={admin:0,trocas:0,vLav:0,limpezas:0,vLimp:0,ajuste:0,soma:0};
   L.forEach(l=>Object.keys(tot).forEach(k=>tot[k]+=l[k]||0));
   const nAdm=L.filter(l=>!l.fora).length;
+  const dp=descontoPacote(tot.trocas);
+  const totalReceber=tot.soma-dp.valor;
   const faltam=diasSemPdf(mes);
   const earliest=earliestMonth();
   const prevDis=!earliest||mes<=earliest, nextDis=mes>=currentMonthKey();
@@ -2388,13 +2399,14 @@ function renderFechamento(){
   ${aviso}
   <div class="fech-total">
     <div class="fech-total-lbl">Total a receber</div>
-    <div class="fech-total-val">${fmtR(tot.soma)}</div>
+    <div class="fech-total-val">${fmtR(totalReceber)}</div>
   </div>
   <div class="lav-total-grid">
     <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.admin)}</div><div class="lav-total-lbl">Administração</div><div class="lav-total-sub">${fmtR(PRECO.adminPorApto)} × ${nAdm} aptos</div></div>
     <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLav)}</div><div class="lav-total-lbl">Lavanderia</div><div class="lav-total-sub">${tot.trocas} trocas × ${fmtR(PRECO.trocaEnxoval)}</div></div>
     <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLimp)}</div><div class="lav-total-lbl">Limpeza</div><div class="lav-total-sub">${tot.limpezas} limpezas × ${fmtR(PRECO.limpezaComf)}</div></div>
     <div class="lav-total-card"><div class="lav-total-val ${tot.ajuste<0?'val-neg':'lav-green'}">${fmtR(tot.ajuste)}</div><div class="lav-total-lbl">Ajustes</div><div class="lav-total-sub">toque num apto para ajustar</div></div>
+    ${dp.porBloco>0?`<div class="lav-total-card" style="grid-column:1/-1;"><div class="lav-total-val val-neg">− ${fmtR(dp.valor)}</div><div class="lav-total-lbl">Desconto do pacote</div><div class="lav-total-sub">${tot.trocas.toLocaleString('pt-BR')} trocas ÷ 30 = ${dp.blocos} × ${fmtR(dp.porBloco)} (pacote de ${fmtR(PRECO.pacote30)} por 30 trocas)</div></div>`:''}
   </div>
   <button class="fech-download" id="fech-dl" onclick="baixarExcelFechamento()">⬇ Baixar planilha (Excel)</button>
   <div class="fech-table">
@@ -2463,8 +2475,16 @@ async function baixarExcelFechamento(){
         PRECO.limpezaComf,l.limpezas,{formula:`F${r}*G${r}`,result:l.vLimp},
         {formula:`B${r}+E${r}+H${r}+J${r}`,result:l.soma},l.ajuste||0,l.obs||null]);
     });
-    const n=L.length+1, t=n+1, S=(c,k)=>({formula:`SUM(${c}2:${c}${n})`,result:L.reduce((s,l)=>s+(l[k]||0),0)});
-    ws.addRow(['TOTAL',S('B','admin'),null,S('D','trocas'),S('E','vLav'),null,S('G','limpezas'),S('H','vLimp'),S('I','soma'),S('J','ajuste'),null]);
+    const n=L.length+1, dl=n+1, t=n+2;
+    const somaCol=k=>L.reduce((s,l)=>s+(l[k]||0),0);
+    const dp=descontoPacote(somaCol('trocas'));
+    // linha do desconto do pacote (fórmula: parte inteira de trocas÷30 × diferença por bloco)
+    ws.addRow(['desconto pacote lavanderia',null,null,null,
+      {formula:`-INT(SUM(D2:D${n})/30)*${dp.porBloco}`,result:-dp.valor},null,null,null,
+      {formula:`E${dl}`,result:-dp.valor},null,
+      `${dp.blocos} × R$ ${dp.porBloco.toFixed(2).replace('.',',')} (pacote R$ ${PRECO.pacote30.toFixed(2).replace('.',',')} por 30 trocas)`]);
+    const S=(c,k,extra)=>({formula:`SUM(${c}2:${c}${dl})`,result:somaCol(k)+(extra||0)});
+    ws.addRow(['TOTAL',S('B','admin'),null,S('D','trocas'),S('E','vLav',-dp.valor),null,S('G','limpezas'),S('H','vLimp'),S('I','soma',-dp.valor),S('J','ajuste'),null]);
     const moneyCols=new Set([2,3,5,6,8,9,10]);
     // cabeçalho
     const head=ws.getRow(1); head.height=40;
@@ -2484,6 +2504,13 @@ async function baixarExcelFechamento(){
       if(l.ajuste<0) row.getCell(10).font={name:FONT,size:12,bold:true,color:{argb:'FFC0392B'}};
       if(l.ajuste>0) row.getCell(10).font={name:FONT,size:12,bold:true,color:{argb:'FF1E8449'}};
     });
+    // desconto
+    const dr=ws.getRow(dl); dr.height=26;
+    for(let c=1;c<=11;c++){const x=dr.getCell(c);
+      x.font={name:FONT,size:12,italic:true,bold:c===1||c===5||c===9,color:{argb:(c===5||c===9)?'FFC0392B':'FF000000'}};
+      x.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFDECEA'}}; x.border=borda;
+      x.alignment=c===11?{horizontal:'left',vertical:'middle',wrapText:true}:centro;
+      if(moneyCols.has(c)) x.numFmt=money;}
     // TOTAL
     const tr=ws.getRow(t); tr.height=32;
     for(let c=1;c<=11;c++){const x=tr.getCell(c);
@@ -2544,6 +2571,7 @@ function renderConfig(){
       <label>Administração por apto<input class="dialog-field" id="cfg-admin" inputmode="decimal" value="${String(PRECO.adminPorApto).replace('.',',')}"></label>
       <label>Troca de enxoval<input class="dialog-field" id="cfg-troca" inputmode="decimal" value="${String(PRECO.trocaEnxoval).replace('.',',')}"></label>
       <label>Limpeza<input class="dialog-field" id="cfg-limp" inputmode="decimal" value="${String(PRECO.limpezaComf).replace('.',',')}"></label>
+      <label>Pacote de 30 trocas<input class="dialog-field" id="cfg-pacote" inputmode="decimal" value="${String(PRECO.pacote30).replace('.',',')}"></label>
     </div>
     <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="salvarPrecos()">Salvar preços</button>
   </div>
@@ -2558,7 +2586,8 @@ function numBR(v){ return Number(String(v).trim().replace(/\s/g,'').replace(/\.(
 async function salvarPrecos(){
   const vals={admin_por_apto:numBR(document.getElementById('cfg-admin').value),
     troca_enxoval:numBR(document.getElementById('cfg-troca').value),
-    limpeza:numBR(document.getElementById('cfg-limp').value)};
+    limpeza:numBR(document.getElementById('cfg-limp').value),
+    pacote_30_trocas:numBR(document.getElementById('cfg-pacote').value)};
   if(Object.values(vals).some(v=>isNaN(v)||v<0)){showToast('Confira os valores');return;}
   const {error}=await sb.from('config').upsert(Object.entries(vals).map(([chave,valor])=>({chave,valor})),{onConflict:'chave'});
   if(error){showToast('Erro ao salvar os preços');return;}

@@ -2440,12 +2440,22 @@ async function baixarExcelFechamento(){
     if(!window.ExcelJS) await carregarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
     const mes=_fechMes, L=dadosFechamento(mes);
     const wb=new ExcelJS.Workbook();
-    const ws=wb.addWorksheet('Planilha1',{views:[{state:'frozen',ySplit:1}]});
+    // ── Estilo igual à planilha original (Arial 12, cabeçalho azul, bordas, R$ contábil, TOTAL preto)
+    const FONT='Arial', AZUL='FF4D94D8', FAIXA='FFEAF2FB', PRETO='FF000000', BRANCO='FFFFFFFF';
+    const money='_-"R$"\\ * #,##0.00_-;\\-"R$"\\ * #,##0.00_-;_-"R$"\\ * "-"??_-;_-@';
+    const borda={top:{style:'thin'},left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}};
+    const centro={horizontal:'center',vertical:'middle',wrapText:true};
+    const ws=wb.addWorksheet('Planilha1',{
+      views:[{state:'frozen',ySplit:1,zoomScale:100}],
+      pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,printTitlesRow:'1:1',
+        margins:{left:0.4,right:0.4,top:0.5,bottom:0.5,header:0.2,footer:0.2}},
+      headerFooter:{oddHeader:'&C&"Arial,Bold"&12Fênix Flats · Fechamento '+nomeMes(mes),oddFooter:'&CPágina &P de &N'},
+    });
     ws.columns=[
-      {header:'apto',width:20},{header:'valor administração',width:19},{header:'valor lavanderia ',width:16},
-      {header:'trocas de roupa de cama',width:23},{header:'valor total de lavanderia',width:23},{header:'valor da limpeza',width:16},
-      {header:'limpezas realizadas',width:19},{header:'valor total da limpeza',width:21},{header:'soma',width:15},
-      {header:'ajuste',width:13},{header:'observação',width:34},
+      {header:'apto',width:20},{header:'valor administração',width:19.9},{header:'valor lavanderia ',width:16.8},
+      {header:'trocas de roupa de cama',width:24.6},{header:'valor total de lavanderia',width:23.9},{header:'valor da limpeza',width:16.5},
+      {header:'limpezas realizadas',width:19.6},{header:'valor total da limpeza',width:21.4},{header:'soma',width:16},
+      {header:'ajuste',width:15},{header:'observação',width:32},
     ];
     L.forEach((l,i)=>{
       const r=i+2;
@@ -2455,16 +2465,38 @@ async function baixarExcelFechamento(){
     });
     const n=L.length+1, t=n+1, S=(c,k)=>({formula:`SUM(${c}2:${c}${n})`,result:L.reduce((s,l)=>s+(l[k]||0),0)});
     ws.addRow(['TOTAL',S('B','admin'),null,S('D','trocas'),S('E','vLav'),null,S('G','limpezas'),S('H','vLimp'),S('I','soma'),S('J','ajuste'),null]);
-    const money='"R$" #,##0.00';
-    ['B','C','E','F','H','I','J'].forEach(c=>{ws.getColumn(c).numFmt=money;});
-    const head=ws.getRow(1); head.font={bold:true,color:{argb:'FFFFFFFF'}}; head.alignment={vertical:'middle',wrapText:true}; head.height=30;
-    head.eachCell(c=>{c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F2937'}};});
-    const tr=ws.getRow(t); tr.font={bold:true}; tr.eachCell(c=>{c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFEF3C7'}};c.border={top:{style:'thin'}};});
+    const moneyCols=new Set([2,3,5,6,8,9,10]);
+    // cabeçalho
+    const head=ws.getRow(1); head.height=40;
+    for(let c=1;c<=11;c++){const x=head.getCell(c);
+      x.font={name:FONT,size:12,bold:true}; x.fill={type:'pattern',pattern:'solid',fgColor:{argb:AZUL}}; x.border=borda; x.alignment=centro;}
+    // linhas: faixa clara alternando por hotel, para separar visualmente
+    let hotelAnt=null, faixa=false;
+    L.forEach((l,i)=>{
+      if(l.hotel!==hotelAnt){faixa=!faixa;hotelAnt=l.hotel;}
+      const row=ws.getRow(i+2); row.height=26;
+      for(let c=1;c<=11;c++){const x=row.getCell(c);
+        x.font={name:FONT,size:12,bold:c===1||c===9};
+        x.border=borda; x.alignment=c===11?{horizontal:'left',vertical:'middle',wrapText:true}:centro;
+        if(moneyCols.has(c)) x.numFmt=money; else if(c===4||c===7) x.numFmt='0';
+        if(faixa) x.fill={type:'pattern',pattern:'solid',fgColor:{argb:FAIXA}};
+      }
+      if(l.ajuste<0) row.getCell(10).font={name:FONT,size:12,bold:true,color:{argb:'FFC0392B'}};
+      if(l.ajuste>0) row.getCell(10).font={name:FONT,size:12,bold:true,color:{argb:'FF1E8449'}};
+    });
+    // TOTAL
+    const tr=ws.getRow(t); tr.height=32;
+    for(let c=1;c<=11;c++){const x=tr.getCell(c);
+      x.font={name:FONT,size:13,bold:true,color:{argb:BRANCO}}; x.fill={type:'pattern',pattern:'solid',fgColor:{argb:PRETO}};
+      x.border=borda; x.alignment=centro;
+      if(moneyCols.has(c)) x.numFmt=money; else if(c===4||c===7) x.numFmt='0';}
     // aba com a cama de cada apto, como na planilha original
-    const ws2=wb.addWorksheet('Página1');
-    ws2.columns=[{header:'apto',width:22},{header:'cama',width:20}];
-    ws2.getRow(1).font={bold:true};
+    const ws2=wb.addWorksheet('Página1',{views:[{state:'frozen',ySplit:1}]});
+    ws2.columns=[{header:'apto',width:25.6},{header:'cama',width:22}];
     L.filter(l=>!l.fora).forEach(l=>ws2.addRow([l.rotulo,CFG_LABEL[ROOMS[l.hotel]?.apts[l.apt]]||'']));
+    ws2.eachRow((row,r)=>{row.height=r===1?30:24;
+      row.eachCell(x=>{x.font={name:FONT,size:12,bold:r===1||x.col===1}; x.border=borda; x.alignment=centro;
+        if(r===1)x.fill={type:'pattern',pattern:'solid',fgColor:{argb:AZUL}};});});
     const buf=await wb.xlsx.writeBuffer();
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const a=document.createElement('a');

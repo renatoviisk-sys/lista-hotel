@@ -1186,15 +1186,36 @@ async function carregarDias(){
   if(error)throw error;
   cache.dias={}; (data||[]).forEach(r=>cache.dias[r.dia]=r);
 }
+// O Supabase devolve no máximo 1000 linhas por consulta. Quando a tabela passa
+// disso, as trocas mais novas somem da Lavanderia. Aqui buscamos em páginas
+// de 1000 até acabar, em ordem estável (dia, hotel, apt = chave única).
+async function carregarTudoPaginado(tabela){
+  const PAGINA=1000;
+  let todas=[], de=0;
+  while(true){
+    const {data,error}=await sb.from(tabela).select('hotel,apt,dia')
+      .order('dia',{ascending:true}).order('hotel',{ascending:true}).order('apt',{ascending:true})
+      .range(de, de+PAGINA-1);
+    if(error)throw error;
+    const lote=data||[];
+    todas=todas.concat(lote);
+    if(lote.length<PAGINA)break;
+    de+=PAGINA;
+  }
+  return todas;
+}
 async function carregarTrocas(){
-  const {data,error}=await sb.from('trocas').select('*');
-  if(error)throw error;
-  cache.trocas=data||[];
+  cache.trocas=await carregarTudoPaginado('trocas');
 }
 async function carregarLimpezas(){
-  const {data,error}=await sb.from('limpezas').select('*');
-  if(error)throw error;
-  cache.limpezas=data||[];
+  cache.limpezas=await carregarTudoPaginado('limpezas');
+}
+// Ao carregar um PDF chegam dezenas de eventos de tempo real seguidos (um por linha).
+// Junta tudo numa recarga só, 400 ms depois do último evento.
+const _debTimers={};
+function recarregarDepois(nome,fn){
+  clearTimeout(_debTimers[nome]);
+  _debTimers[nome]=setTimeout(async()=>{try{await fn();}catch(e){} rerenderCompartilhado();},400);
 }
 async function carregarListaAtual(){
   try{
@@ -1238,8 +1259,8 @@ function assinarTempoReal(){
   sb.channel('lavanderia-rt')
     .on('postgres_changes',{event:'*',schema:'public',table:'estoque'},       async()=>{try{await carregarEstoque();}catch(e){} rerenderCompartilhado();})
     .on('postgres_changes',{event:'*',schema:'public',table:'dias_fechados'}, async()=>{try{await carregarDias();}catch(e){}    rerenderCompartilhado();})
-    .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        async()=>{try{await carregarTrocas();}catch(e){}  rerenderCompartilhado();})
-    .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      async()=>{try{await carregarLimpezas();}catch(e){}rerenderCompartilhado();})
+    .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        ()=>recarregarDepois('trocas',carregarTrocas))
+    .on('postgres_changes',{event:'*',schema:'public',table:'limpezas'},      ()=>recarregarDepois('limpezas',carregarLimpezas))
     .on('postgres_changes',{event:'*',schema:'public',table:'lista_atual'},   async()=>{try{await carregarListaAtual();}catch(e){} aplicarListaAtual();})
     .on('postgres_changes',{event:'*',schema:'public',table:'override_enxoval'},async()=>{try{await carregarOverrides();}catch(e){} rerenderCompartilhado();})
     .subscribe();
@@ -1982,6 +2003,7 @@ function enxovalDiaHTML(lin){
 function atualizarListaDoDia(){
   if(!_pdfDate)return;
   const {tot:lin,detalhes}=calcTotals();
+  _detalhes=detalhes;
   const er=document.getElementById('enxoval-dia-root');
   if(er) er.innerHTML=enxovalDiaHTML(lin);
   const hr=document.getElementById('enxoval-hotel-root');

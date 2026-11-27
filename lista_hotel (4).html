@@ -1189,6 +1189,8 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .ctrl-status{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);background:var(--bg-3);color:var(--t3);white-space:nowrap;}
 .ctrl-status.ok{background:var(--green-dim);color:var(--green);}
 .ctrl-status.falta{background:var(--red-dim);color:var(--red);}
+.ctrl-row.novo .ctrl-status{background:var(--indigo-dim);color:var(--indigo);}
+.mt-mini-btn.destaque{background:var(--green-dim);color:var(--green);border-color:var(--green-bdr);}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -3273,46 +3275,78 @@ async function gravarItemApto(hotel,apt,item,quantidade,motivo){
 }
 function ajustarCtrl(hotel,apt,tipo,delta){
   const r=cache.ctrl[tipo][hotel+'||'+apt];
-  const base=r?r.quantidade:ctrlEsperado(hotel,apt,tipo);   // primeira contagem parte do esperado
-  gravarItemApto(hotel,apt,CTRL[tipo].item,base+(r?delta:Math.min(0,delta)),'Atualizar os controles de '+rotuloApto(hotel,apt)+'.');
+  if(!r){ draftCtrl(hotel,apt,tipo,delta); return; }   // ainda não cadastrado: só mexe no rascunho
+  gravarItemApto(hotel,apt,CTRL[tipo].item,r.quantidade+delta,'Atualizar os controles de '+rotuloApto(hotel,apt)+'.');
+}
+// Primeira contagem: o número escolhido vira "quantos o apto tem" (fica N de N)
+const _ctrlDraft={};
+function draftValor(hotel,apt,tipo){
+  const k=hotel+'||'+apt+'|'+tipo;
+  return _ctrlDraft[k]!==undefined?_ctrlDraft[k]:ctrlEsperado(hotel,apt,tipo);
+}
+function draftCtrl(hotel,apt,tipo,delta){
+  const k=hotel+'||'+apt+'|'+tipo;
+  _ctrlDraft[k]=Math.max(0,draftValor(hotel,apt,tipo)+delta);
+  renderAptoHist();
 }
 function confirmarCtrlOk(hotel,apt){
-  // "está tudo aqui": grava presentes = esperado para TV e ar
   (async()=>{
-    const quem=await pedirNome('Confirmar os controles de '+rotuloApto(hotel,apt)+'.'); if(!quem)return;
-    const agora=new Date().toISOString(), rows=[];
-    ['tv','ar'].forEach(t=>{const e=ctrlEsperado(hotel,apt,t); if(e>0) rows.push({hotel,apt,item:CTRL[t].item,quantidade:e,atualizado_por:quem,atualizado_em:agora});});
-    if(!rows.length)return;
+    const k=hotel+'||'+apt;
+    const novos=['tv','ar'].filter(t=>!cache.ctrl[t][k]);
+    const quem=await pedirNome((novos.length?'Cadastrar':'Confirmar')+' os controles de '+rotuloApto(hotel,apt)+'.'); if(!quem)return;
+    const agora=new Date().toISOString(), rows=[], esperado={};
+    ['tv','ar'].forEach(t=>{
+      const e=cache.ctrl[t][k]?ctrlEsperado(hotel,apt,t):draftValor(hotel,apt,t);
+      esperado[t]=e;
+      rows.push({hotel,apt,item:CTRL[t].item,quantidade:e,atualizado_por:quem,atualizado_em:agora});
+    });
+    if(novos.length){
+      const upd={}; novos.forEach(t=>upd[CTRL[t].col]=esperado[t]);
+      const {error}=await sb.from('aptos').update(upd).eq('hotel',hotel).eq('apt',apt);
+      if(error){showToast('Erro ao cadastrar os controles');return;}
+    }
     const {error}=await sb.from('apto_itens').upsert(rows,{onConflict:'hotel,apt,item'});
     if(error){showToast('Erro ao salvar');return;}
-    await carregarPapel(); rerenderCompartilhado(); showToast('Controles conferidos · '+rotuloApto(hotel,apt));
+    novos.forEach(t=>delete _ctrlDraft[k+'|'+t]);
+    if(novos.length) logAcao('Controles cadastrados',rotuloApto(hotel,apt)+' · '+esperado.tv+' TV / '+esperado.ar+' ar',quem);
+    await Promise.all([carregarCadastro(),carregarPapel()]); rerenderCompartilhado();
+    showToast((novos.length?'Controles cadastrados · ':'Controles conferidos · ')+rotuloApto(hotel,apt));
   })();
 }
 function ctrlLinha(hotel,apt,tipo){
-  const c=CTRL[tipo], esp=ctrlEsperado(hotel,apt,tipo), r=cache.ctrl[tipo][hotel+'||'+apt];
+  const c=CTRL[tipo], r=cache.ctrl[tipo][hotel+'||'+apt];
+  const btns=(v,desab)=>`<button class="ctrl-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarCtrl(this.dataset.h,this.dataset.a,'${tipo}',-1)" ${desab?'disabled':''}>−</button>${v}<button class="ctrl-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarCtrl(this.dataset.h,this.dataset.a,'${tipo}',1)">+</button>`;
+  if(!r){
+    // ainda não cadastrado: o mesmo número em cima e embaixo (N de N)
+    const v=draftValor(hotel,apt,tipo);
+    return `<div class="ctrl-row novo">
+      <span class="ctrl-nome">${c.ico} ${c.nome}</span>
+      <span class="ctrl-ctl">${btns(`<span class="ctrl-qtd">${v===0?'<b>0</b> · sem '+(tipo==='ar'?'ar':'TV'):`<b>${v}</b> de ${v}`}</span>`,v<=0)}</span>
+      <span class="ctrl-status">a cadastrar</span>
+    </div>`;
+  }
+  const esp=ctrlEsperado(hotel,apt,tipo);
   if(esp===0) return `<div class="ctrl-row sem"><span class="ctrl-nome">${c.ico} ${c.nome}</span><span class="ctrl-status">apto sem ${tipo==='ar'?'ar-condicionado':'TV'}</span></div>`;
-  const falta=r?Math.max(0,esp-r.quantidade):null;
-  const status=r===undefined||r===null?'<span class="ctrl-status">não conferido</span>'
-    :falta?`<span class="ctrl-status falta">falta ${falta}</span>`:'<span class="ctrl-status ok">ok</span>';
+  const falta=Math.max(0,esp-r.quantidade);
   return `<div class="ctrl-row ${falta?'falta':''}">
     <span class="ctrl-nome">${c.ico} ${c.nome}</span>
-    <span class="ctrl-ctl">
-      <button class="ctrl-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarCtrl(this.dataset.h,this.dataset.a,'${tipo}',-1)" ${r&&r.quantidade<=0?'disabled':''}>−</button>
-      <span class="ctrl-qtd"><b>${r?r.quantidade:'–'}</b> de ${esp}</span>
-      <button class="ctrl-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarCtrl(this.dataset.h,this.dataset.a,'${tipo}',1)">+</button>
-    </span>
-    ${status}
+    <span class="ctrl-ctl">${btns(`<span class="ctrl-qtd"><b>${r.quantidade}</b> de ${esp}</span>`,r.quantidade<=0)}</span>
+    ${falta?`<span class="ctrl-status falta">falta ${falta}</span>`:'<span class="ctrl-status ok">ok</span>'}
   </div>`;
 }
 function ctrlSecaoApto(hotel,apt){
-  const tv=cache.ctrl.tv[hotel+'||'+apt], ar=cache.ctrl.ar[hotel+'||'+apt];
+  const k=hotel+'||'+apt, tv=cache.ctrl.tv[k], ar=cache.ctrl.ar[k];
+  const novo=!tv||!ar;
   const ult=[tv,ar].filter(Boolean).sort((a,b)=>String(b.atualizado_em).localeCompare(String(a.atualizado_em)))[0];
   const falta=(ctrlFalta(hotel,apt,'tv')||0)+(ctrlFalta(hotel,apt,'ar')||0);
+  const sub=novo
+    ?'<b>Primeira vez:</b> use − e + para dizer quantos controles o apto tem (0 no ar = sem ar) e toque em "Está tudo aqui" para cadastrar.'
+    :`Conferido por <b>${esc(ult.atualizado_por||'–')}</b> em ${fmtQuando(ult.atualizado_em)}`;
   return `<div class="mt-section ${falta?'papel-box low':''}">
     <div class="mt-section-head"><span class="mt-section-title">🎮 Controles</span>
-      <button class="mt-mini-btn" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="confirmarCtrlOk(this.dataset.h,this.dataset.a)">✓ Está tudo aqui</button></div>
+      <button class="mt-mini-btn ${novo?'destaque':''}" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="confirmarCtrlOk(this.dataset.h,this.dataset.a)">✓ Está tudo aqui</button></div>
     ${ctrlLinha(hotel,apt,'tv')}${ctrlLinha(hotel,apt,'ar')}
-    <div class="papel-sub">${ult?`Conferido por <b>${esc(ult.atualizado_por||'–')}</b> em ${fmtQuando(ult.atualizado_em)}`:'Ainda não conferido. Use − e + ou "Está tudo aqui".'}</div>
+    <div class="papel-sub">${sub}</div>
   </div>`;
 }
 function ctrlResumoManut(){

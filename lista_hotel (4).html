@@ -1084,6 +1084,7 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .pdf-lembrete.leve{background:var(--bg-1);border-color:var(--b2);color:var(--t2);}
 .pdf-lembrete.leve b{color:var(--t1);}
 .pdf-lembrete-ico{font-size:16px;line-height:1.3;}
+.pdf-lembrete a.lk{color:var(--amber);font-weight:700;text-decoration:underline;cursor:pointer;}
 .lav-day-chip.click{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .lav-day-chip.click:hover{border-color:var(--red-bdr);color:var(--red);}
 .lav-day-chip.manual{border-style:dashed;}
@@ -1221,6 +1222,21 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .btn-danger-ghost:disabled{opacity:.4;cursor:default;}
 .foto-bar button.foto-apagar{margin-left:auto;width:auto;height:auto;border-radius:var(--r-pill);padding:6px 12px;color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);font-family:var(--font);font-weight:600;}
 .foto-bar button.foto-apagar + button{margin-left:0;}
+/* ══ in-house ══ */
+.inhouse-box{background:var(--bg-1);border:1px solid var(--indigo-bdr);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.75rem;box-shadow:var(--sh-sm);}
+.inhouse-box .fotos-dia-head b{color:var(--indigo);}
+.badge-inhouse{background:var(--indigo-dim);color:var(--indigo);border-color:var(--indigo-bdr);}
+.badge-vago{background:rgba(255,255,255,0.03);color:var(--t3);border-color:var(--b0);}
+.badge-devida{background:var(--amber-dim);color:var(--amber);border-color:var(--amber-bdr);}
+.dot-house{background:var(--indigo);box-shadow:0 0 7px rgba(129,140,248,0.5);}
+.btn-troca-ih{margin-top:9px;font-size:12px;font-family:var(--font);font-weight:700;padding:8px 14px;border-radius:var(--r-pill);cursor:pointer;
+  border:1px solid var(--green-bdr);background:var(--green-dim);color:var(--green);-webkit-tap-highlight-color:transparent;}
+.ih-ok{margin-top:9px;font-size:11.5px;font-weight:600;color:var(--green);}
+.ih-prox{margin-top:6px;font-size:11.5px;color:var(--t3);}
+.estado-apto{font-size:12.5px;color:var(--t3);line-height:1.6;margin:-0.6rem 0 1.25rem;padding:0.7rem 0.9rem;border-radius:var(--r-md);background:var(--bg-1);border:1px solid var(--b1);}
+.estado-apto.ocupado{color:var(--t2);border-color:var(--indigo-bdr);background:var(--indigo-dim);}
+.estado-apto.ocupado b{color:var(--indigo);}
+.lav-day-chip.inhouse{border-color:var(--indigo-bdr);color:var(--indigo);}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1706,7 +1722,7 @@ function avisoConfig(msg){
 }
 async function recarregarTudo(){
   await Promise.all([carregarCadastro(),carregarPin()]);
-  await Promise.all([carregarFotosEnx(), carregarPapel(), carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
+  await Promise.all([carregarEntradas(), carregarFotosEnx(), carregarPapel(), carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
 }
 // O Supabase devolve no máximo 1000 linhas por consulta. Quando a tabela passa
 // disso, as trocas mais novas somem da Lavanderia. Aqui buscamos em páginas
@@ -1728,6 +1744,7 @@ async function carregarTudoPaginado(tabela){
 }
 async function carregarTrocas(){
   cache.trocas=await carregarTudoPaginado('trocas');
+  _movIdx=null;
 }
 async function carregarLimpezas(){
   cache.limpezas=await carregarTudoPaginado('limpezas');
@@ -1769,6 +1786,7 @@ function aplicarListaAtual(){
   _arr = row.arr || {};
   _dep = row.dep || {};
   _pdfDate = row.dia;
+  if(_ready) registrarEntradas(String(row.dia),true).then(n=>{ if(n) rerenderCompartilhado(); });
   if(dz)dz.classList.add('loaded');
   const lbl=document.getElementById('drop-label');
   const sub=document.getElementById('drop-sub');
@@ -1783,6 +1801,7 @@ function assinarTempoReal(){
     .on('postgres_changes',{event:'*',schema:'public',table:'aptos'},         ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
     .on('postgres_changes',{event:'*',schema:'public',table:'config'},        ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
     .on('postgres_changes',{event:'*',schema:'public',table:'ajustes_mes'},   ()=>recarregarDepois('ajustes',carregarAjustesMesAtual))
+    .on('postgres_changes',{event:'*',schema:'public',table:'entradas'},      ()=>recarregarDepois('entradas',carregarEntradas))
     .on('postgres_changes',{event:'*',schema:'public',table:'enxoval_fotos'}, ()=>recarregarDepois('fotosEnx',carregarFotosEnx))
     .on('postgres_changes',{event:'*',schema:'public',table:'apto_itens'},    ()=>recarregarDepois('papel',carregarPapel))
     .on('postgres_changes',{event:'*',schema:'public',table:'manut_itens'},   ()=>recarregarDepois('manut_itens',carregarManutItens))
@@ -2062,7 +2081,7 @@ function renderLavanderia(){
       const hotelEntries=entries.filter(e=>e.hotel===hotel);
       html+=`<div class="hotel-section"><div class="hotel-header">${esc(hotel)}</div>`;
       hotelEntries.forEach(e=>{
-        const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');const man=cache.trocas.concat(cache.limpezas).some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='manual');return`<span class="lav-day-chip click${man?' manual':''}" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)" title="${man?'registro manual · ':''}toque para ver ou remover">${dd}/${mm}</span>`;}).join('');
+        const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');const man=cache.trocas.concat(cache.limpezas).some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='manual');const ihc=cache.trocas.some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='inhouse');return`<span class="lav-day-chip click${man?' manual':''}${ihc?' inhouse':''}" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)" title="${man?'registro manual · ':''}toque para ver ou remover">${dd}/${mm}</span>`;}).join('');
         html+=`<div class="lav-apt-card">
           <div class="lav-apt-left apt-link" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">
             <div class="lav-apt-num">${esc(e.apt)}</div>
@@ -2094,7 +2113,7 @@ function renderLavanderia(){
         <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.limpezaComf)} por limpeza</div></div>
       </div>`;
     limpEntries.forEach(e=>{
-      const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');const man=cache.trocas.concat(cache.limpezas).some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='manual');return`<span class="lav-day-chip click${man?' manual':''}" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)" title="${man?'registro manual · ':''}toque para ver ou remover">${dd}/${mm}</span>`;}).join('');
+      const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');const man=cache.trocas.concat(cache.limpezas).some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='manual');const ihc=cache.trocas.some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='inhouse');return`<span class="lav-day-chip click${man?' manual':''}${ihc?' inhouse':''}" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)" title="${man?'registro manual · ':''}toque para ver ou remover">${dd}/${mm}</span>`;}).join('');
       html+=`<div class="lav-apt-card">
         <div class="lav-apt-left apt-link" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">
           <div class="lav-apt-num">${esc(e.apt)}</div>
@@ -2643,7 +2662,7 @@ function renderFechamento(){
   </div>
   <div class="lav-total-grid">
     <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.admin)}</div><div class="lav-total-lbl">Administração</div><div class="lav-total-sub">${fmtR(PRECO.adminPorApto)} × ${nAdm} aptos</div></div>
-    <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLav)}</div><div class="lav-total-lbl">Lavanderia</div><div class="lav-total-sub">${tot.trocas} trocas × ${fmtR(PRECO.trocaEnxoval)}</div></div>
+    <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLav)}</div><div class="lav-total-lbl">Lavanderia</div><div class="lav-total-sub">${tot.trocas} trocas × ${fmtR(PRECO.trocaEnxoval)}${(()=>{const n=cache.trocas.filter(r=>String(r.dia).startsWith(mes)&&r.origem==='inhouse').length;return n?' · '+n+' in-house':'';})()}</div></div>
     <div class="lav-total-card"><div class="lav-total-val lav-green">${fmtR(tot.vLimp)}</div><div class="lav-total-lbl">Limpeza</div><div class="lav-total-sub">${tot.limpezas} limpezas × ${fmtR(PRECO.limpezaComf)}</div></div>
     <div class="lav-total-card"><div class="lav-total-val ${tot.ajuste<0?'val-neg':'lav-green'}">${fmtR(tot.ajuste)}</div><div class="lav-total-lbl">Ajustes</div><div class="lav-total-sub">toque num apto para ajustar</div></div>
     ${dp.porBloco>0?`<div class="lav-total-card" style="grid-column:1/-1;"><div class="lav-total-val val-neg">− ${fmtR(dp.valor)}</div><div class="lav-total-lbl">Desconto do pacote</div><div class="lav-total-sub">${tot.trocas.toLocaleString('pt-BR')} trocas ÷ 30 = ${dp.blocos} × ${fmtR(dp.porBloco)} (pacote de ${fmtR(PRECO.pacote30)} por 30 trocas)</div></div>`:''}
@@ -3045,14 +3064,20 @@ function renderLembretePdf(){
   // nos primeiros dias do mês, lembra também do mês anterior
   if(new Date().getDate()<=7){ const ant=shiftMonth(mes,-1); faltam=diasSemPdf(ant).map(d=>fmt(ant,d)).concat(faltam); }
   const temHoje=cache.trocas.some(r=>String(r.dia)===todayKey());
-  if(!faltam.length && temHoje){el.innerHTML='';return;}
+  // chegada nova num apto que já estava ocupado = provável saída não registrada
+  const ss=(typeof chegadasSemSaida==='function')?chegadasSemSaida():[];
+  const ssHtml=ss.length?`<div class="pdf-lembrete" style="cursor:default;">
+    <span class="pdf-lembrete-ico">🔎</span>
+    <span><b>Possível saída não registrada</b> em ${ss.length} apto${ss.length>1?'s':''}: ${ss.slice(0,8).map(x=>`<a class="lk" data-h="${esc(x.hotel)}" data-a="${esc(x.apt)}" onclick="event.stopPropagation();openAptoHist(this.dataset.h,this.dataset.a)">${esc(rotuloApto(x.hotel,x.apt))}</a> (chegou ${fmtData(x.cur).substring(0,5)}, já estava ocupado desde ${fmtData(x.ant).substring(0,5)})`).join('; ')}${ss.length>8?' e mais '+(ss.length-8):''}. Provavelmente falta o PDF de algum dia no meio, e a troca não foi cobrada.</span>
+  </div>`:'';
+  if(!faltam.length && temHoje){el.innerHTML=ssHtml;return;}
   const partes=[];
   if(!temHoje) partes.push('o PDF de <b>hoje</b> ainda não foi carregado');
   if(faltam.length) partes.push(`falta${faltam.length>1?'m':''} o${faltam.length>1?'s':''} PDF${faltam.length>1?'s':''} de <b>${faltam.length>12?faltam.slice(0,12).join(', ')+' e mais '+(faltam.length-12):faltam.join(', ')}</b>`);
   el.innerHTML=`<div class="pdf-lembrete ${faltam.length?'':'leve'}" onclick="document.getElementById('file-input').click()">
     <span class="pdf-lembrete-ico">${faltam.length?'⚠️':'📄'}</span>
     <span>${partes.join(' e ').replace(/^./,c=>c.toUpperCase())}. Sem o PDF, as trocas e limpezas do dia não entram no fechamento. <u>Toque para carregar.</u></span>
-  </div>`;
+  </div>`+ssHtml;
 }
 
 // ── Desfazer: remover troca/limpeza de um dia ─────────────────────────────────
@@ -3061,7 +3086,7 @@ function openDia(hotel,apt,dia){
   _diaSel={hotel,apt,dia};
   const t=cache.trocas.find(r=>r.hotel===hotel&&r.apt===apt&&String(r.dia)===dia);
   const l=cache.limpezas.find(r=>r.hotel===hotel&&r.apt===apt&&String(r.dia)===dia);
-  const orig=r=>r?(r.origem==='manual'?'registro manual'+(r.registrado_por?' por '+esc(r.registrado_por):''):'veio do PDF'):'';
+  const orig=r=>r?(r.origem==='manual'?'registro manual'+(r.registrado_por?' por '+esc(r.registrado_por):''):r.origem==='inhouse'?'troca in-house'+(r.registrado_por?' por '+esc(r.registrado_por):''):'veio do PDF'):'';
   document.getElementById('dia-title').textContent=rotuloApto(hotel,apt)+' · '+dia.split('-').reverse().join('/');
   document.getElementById('dia-lista').innerHTML=
     (t?`<div class="dia-item"><div><b>Troca de enxoval</b><small>${orig(t)}</small></div><button class="btn-danger-ghost" onclick="removerRegistro('trocas')">Remover</button></div>`:'')+
@@ -3131,7 +3156,7 @@ function renderAptoHist(){
   const dias=[...new Set(tro.concat(lim).filter(r=>String(r.dia).startsWith(mes)).map(r=>String(r.dia)))].sort();
   const diasHtml=dias.length?dias.map(d=>{
     const t=tro.find(r=>String(r.dia)===d), l=lim.find(r=>String(r.dia)===d);
-    const quem=[t,l].filter(Boolean).map(r=>r.origem==='manual'?('manual'+(r.registrado_por?' · '+esc(r.registrado_por):'')):'PDF')[0];
+    const quem=[t,l].filter(Boolean).map(r=>r.origem==='manual'?('manual'+(r.registrado_por?' · '+esc(r.registrado_por):'')):r.origem==='inhouse'?('in-house'+(r.registrado_por?' · '+esc(r.registrado_por):'')):'PDF')[0];
     return `<button class="ah-dia" data-h="${esc(hotel)}" data-a="${esc(apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)">
       <b>${d.substring(8)}/${d.substring(5,7)}</b><span>${t?'troca':''}${t&&l?' + ':''}${l?'limpeza':''}</span><small>${quem}</small></button>`;
   }).join(''):'<div class="no-movement">Nenhum registro neste mês.</div>';
@@ -3151,6 +3176,7 @@ function renderAptoHist(){
     <div><div class="lav-month">${esc(rotuloApto(hotel,apt))}</div><div class="lav-sub">${esc(hotel)} · apto ${esc(apt)}${cfg?' · '+CFG_LABEL[cfg]:''}${KING_APTS.has(k)?' · king':''}</div></div>
     <button class="mt-btn-ghost" onclick="voltarDoApto()">‹ Voltar</button>
   </div>
+  ${estadoAptoTexto(hotel,apt)}
   ${papelSecaoApto(hotel,apt)}
   ${ctrlSecaoApto(hotel,apt)}
   <div class="mt-section">
@@ -3593,6 +3619,124 @@ function apagarFotoEnx(){
       await carregarFotosEnx(); rerenderCompartilhado(); showToast('Foto apagada');
     });
 }
+// ── IN-HOUSE ──────────────────────────────────────────────────────────────────
+// Regra: olha o último movimento do apto. Última coisa foi chegada → ocupado
+// (in-house) desde aquele dia; foi saída → vago. Saída e chegada no mesmo dia
+// (troca) → ocupado. A troca de enxoval in-house é a cada 3 dias e é cobrada
+// como troca (fica em 'trocas' com origem 'inhouse').
+cache.entradas=[];
+let _movIdx=null;
+async function carregarEntradas(){
+  try{
+    let todas=[], de=0;
+    while(true){
+      const {data,error}=await sb.from('entradas').select('*').order('id',{ascending:true}).range(de,de+999);
+      if(error)throw error; const l=data||[]; todas=todas.concat(l); if(l.length<1000)break; de+=1000;
+    }
+    cache.entradas=todas;
+  }catch(e){ cache.entradas=[]; }
+  _movIdx=null;
+}
+function movIdx(){
+  if(_movIdx)return _movIdx;
+  const ent={},sai={},ih={}; let inicio=null;
+  cache.entradas.forEach(r=>{const k=r.hotel+'||'+r.apt;(ent[k]=ent[k]||[]).push(r);const d=String(r.dia);if(!inicio||d<inicio)inicio=d;});
+  cache.trocas.forEach(r=>{const k=r.hotel+'||'+r.apt,d=String(r.dia);(r.origem==='inhouse'?(ih[k]=ih[k]||[]):(sai[k]=sai[k]||[])).push(d);});
+  Object.values(ent).forEach(l=>l.sort((a,b)=>String(a.dia).localeCompare(String(b.dia))));
+  Object.values(sai).forEach(l=>l.sort()); Object.values(ih).forEach(l=>l.sort());
+  return _movIdx={ent,sai,ih,inicio};
+}
+function addDias(d,n){ const[y,m,dd]=String(d).substring(0,10).split('-').map(Number); const x=new Date(Date.UTC(y,m-1,dd+n)); return x.toISOString().substring(0,10); }
+function dowDe(dia){ const[y,m,d]=dia.split('-').map(Number); return new Date(y,m-1,d).getDay(); }
+function estadoApto(hotel,apt,ref){
+  ref=ref||_pdfDate||todayKey();
+  const m=movIdx(), k=hotel+'||'+apt;
+  if(!m.inicio) return {estado:'desconhecido'};
+  const ents=(m.ent[k]||[]).filter(r=>String(r.dia)<=ref);
+  const sais=(m.sai[k]||[]).filter(d=>d<=ref);
+  const lastIn=ents.length?ents[ents.length-1]:null, lastOut=sais.length?sais[sais.length-1]:null;
+  if(lastIn && (!lastOut || String(lastIn.dia)>=lastOut)){
+    const desde=String(lastIn.dia);
+    const ihs=(m.ih[k]||[]).filter(d=>d>desde&&d<=ref);
+    const ultTroca=ihs.length?ihs[ihs.length-1]:desde;
+    const trocouHoje=ihs.includes(ref);
+    const diasEst=diasEntre(desde,ref), desdeTroca=diasEntre(ultTroca,ref);
+    return {estado:'ocupado',desde,entrada:lastIn,diasEst,ultTroca,trocouHoje,
+      devida:!trocouHoje && diasEst>0 && desdeTroca>=3, proxima:trocouHoje?addDias(ref,3):addDias(ultTroca,3)};
+  }
+  if(lastOut && lastOut>=m.inicio) return {estado:'vago',desde:lastOut};
+  return {estado:'desconhecido'};
+}
+// Grava as chegadas do PDF (só as que ainda não estão no banco)
+async function registrarEntradas(dia,silencioso){
+  if(!_ready||!dia)return 0;
+  const ja=new Set(cache.entradas.filter(r=>String(r.dia)===dia).map(r=>r.hotel+'||'+r.apt));
+  const rows=[];
+  Object.keys(_arr).forEach(k=>{
+    const l=_arr[k]; if(!l||!l.length||ja.has(k))return;
+    const i=k.indexOf('||');
+    rows.push({hotel:k.substring(0,i),apt:k.substring(i+2),dia,hospede:l[0].name||null,pessoas:l[0].guests||null});
+  });
+  if(!rows.length)return 0;
+  const {error}=await sb.from('entradas').upsert(rows,{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
+  if(error){ if(!silencioso)showToast('Erro ao salvar as chegadas'); return 0; }
+  await carregarEntradas();
+  return rows.length;
+}
+async function registrarTrocaInhouse(hotel,apt){
+  const dia=_pdfDate||todayKey();
+  const quem=await pedirNome('Registrar a troca in-house de '+rotuloApto(hotel,apt)+'.'); if(!quem)return;
+  const reg={hotel,apt,dia,origem:'inhouse',registrado_por:quem};
+  const {data,error}=await sb.from('trocas').upsert([reg],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
+  if(error){showToast('Erro ao registrar a troca');return;}
+  const comLimp=LIMPEZA_HOTEIS.has(hotel)&&[0,2,4,6].includes(dowDe(dia));
+  if(comLimp) await sb.from('limpezas').upsert([reg],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
+  if(data&&data.length) logAcao('Troca in-house',rotuloApto(hotel,apt)+' · '+dia.split('-').reverse().join('/')+(comLimp?' · com limpeza':''),quem);
+  await Promise.all([carregarTrocas(),carregarLimpezas()]); _movIdx=null;
+  rerenderCompartilhado();
+  showToast('Troca in-house registrada · '+rotuloApto(hotel,apt)+(comLimp?' · com limpeza':''));
+}
+// Chegada nova num apto que já estava ocupado = provável saída não registrada (PDF faltando)
+function chegadasSemSaida(){
+  const m=movIdx(), out=[], limite=addDias(todayKey(),-35);
+  Object.keys(m.ent).forEach(k=>{
+    const ents=m.ent[k], sais=m.sai[k]||[];
+    for(let i=1;i<ents.length;i++){
+      const ant=String(ents[i-1].dia), cur=String(ents[i].dia);
+      if(cur<limite)continue;
+      if(!sais.some(d=>d>ant&&d<=cur)){ const j=k.indexOf('||'); out.push({hotel:k.substring(0,j),apt:k.substring(j+2),ant,cur}); }
+    }
+  });
+  return out;
+}
+function inhouseResumoHTML(){
+  if(!_pdfDate)return '';
+  const m=movIdx();
+  if(!m.inicio) return `<div class="inhouse-box"><div class="enxoval-title" style="margin-bottom:0.4rem;">🏠 In-house</div><div class="papel-sub" style="text-align:left;margin:0;">Começa a funcionar a partir das chegadas gravadas. Carregue os PDFs dos últimos dias para já saber quem está hospedado.</div></div>`;
+  const ocup=[], dev=[], feitos=[];
+  hoteisAtivosOrdenados().forEach(h=>aptosOrdenados(h).forEach(a=>{
+    const k=h+'||'+a; if(_dep[k]&&_dep[k].length)return;   // quem tem saída hoje entra no enxoval normal
+    const st=estadoApto(h,a,_pdfDate); if(st.estado!=='ocupado')return;
+    ocup.push({h,a,st}); if(st.devida)dev.push({h,a,st}); if(st.trocouHoje)feitos.push({h,a,st});
+  }));
+  const chip=x=>`<button class="aviso-apto" data-h="${esc(x.h)}" data-a="${esc(x.a)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">${esc(rotuloApto(x.h,x.a))} <small>${x.st.diasEst}d</small></button>`;
+  return `<div class="inhouse-box">
+    <div class="fotos-dia-head"><span>🏠 In-house</span><b>${ocup.length} apto${ocup.length!==1?'s':''} ocupado${ocup.length!==1?'s':''}</b></div>
+    ${dev.length?`<div class="avisos-linha" style="border-top:none;"><span class="avisos-lbl">🔄 Troca de enxoval hoje <b>${dev.length}</b></span><div class="avisos-aptos">${dev.map(chip).join('')}</div></div>`
+      :`<div class="papel-sub" style="text-align:left;margin-top:8px;">Nenhuma troca in-house pendente hoje.</div>`}
+    ${feitos.length?`<div class="papel-sub" style="text-align:left;margin-top:6px;">✓ ${feitos.length} troca${feitos.length>1?'s':''} in-house já feita${feitos.length>1?'s':''} hoje.</div>`:''}
+    <div class="papel-sub" style="text-align:left;margin-top:6px;">Contando desde ${m.inicio.split('-').reverse().join('/')}. Troca a cada 3 dias de estadia; o enxoval já está somado no Enxoval do dia.</div>
+  </div>`;
+}
+function estadoAptoTexto(hotel,apt){
+  const st=estadoApto(hotel,apt,todayKey());
+  if(st.estado==='ocupado'){
+    const e=st.entrada; const nome=e.hospede?esc(e.hospede):'hóspede';
+    return `<div class="estado-apto ocupado">🏠 <b>In-house</b> · ${nome}${e.pessoas?' · '+e.pessoas+' px':''} · entrou ${fmtData(st.desde)} (${st.diasEst} dia${st.diasEst!==1?'s':''})<br>${st.trocouHoje?'✓ troca in-house feita hoje':st.devida?'🔄 <b>troca de enxoval devida hoje</b>':'próxima troca: '+fmtData(st.proxima)}</div>`;
+  }
+  if(st.estado==='vago') return `<div class="estado-apto vago">Vago desde ${fmtData(st.desde)}</div>`;
+  return `<div class="estado-apto">Ocupação ainda desconhecida (falta histórico de chegadas)</div>`;
+}
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
   const month=_lavMonth||currentMonthKey();
@@ -3823,6 +3967,7 @@ async function parseAndRender(lines,filename){
   _pdfDate=pdfDateKey;
   if(_ready){
     const novas=await registrarTrocas(pdfDateKey);
+    await registrarEntradas(pdfDateKey);
     await registrarLimpezas(_dep,pdfDateKey);
     logAcao('PDF carregado',filename+' · '+pdfDateKey.split('-').reverse().join('/')+' · '+novas+' trocas novas',nomeSalvo()||null);
     if(novas>0)showToast(novas+' troca'+(novas>1?'s':'')+' registrada'+(novas>1?'s':'')+' na lavanderia');
@@ -3849,7 +3994,17 @@ function calcTotals(){
     Object.keys(ROOMS[hotel].apts).forEach(apt=>{
       const k=hotel+'||'+apt,config=ROOMS[hotel].apts[apt];
       const hasIn=(_arr[k]?.length>0),hasOut=(_dep[k]?.length>0);
-      if(!hasOut)return;
+      if(!hasOut){
+        // in-house com troca de enxoval hoje (devida ou já feita) também vai na sacola
+        if(hasIn||!_pdfDate)return;
+        const st=estadoApto(hotel,apt,_pdfDate);
+        if(st.estado!=='ocupado'||!(st.devida||st.trocouHoje))return;
+        const g=st.entrada.pessoas||null;
+        const lin=calcLinen(config,g,isKing(hotel,apt),SEM_ROSTO.has(hotel));
+        detalhes.push({hotel,apt,config,tipo:'in-house',msg:`in-house${g?` (${g}px)`:''} · ${st.diasEst} dias`,lin});
+        tot.lc+=lin.lc;tot.lk+=lin.lk;tot.ls+=lin.ls;tot.f+=lin.f;tot.t+=lin.t;tot.tr+=lin.tr;tot.tp+=lin.tp;
+        return;
+      }
       if(aptoForaDoEnxoval(k))return;        // extensão ou retirado manualmente → não conta enxoval
       const guests=hasIn?(_arr[k][0]?.guests??null):null;
       const lin=calcLinen(config,guests,isKing(hotel,apt),SEM_ROSTO.has(hotel));
@@ -3954,6 +4109,7 @@ function atualizarListaDoDia(){
   const hr=document.getElementById('enxoval-hotel-root');
   if(hr) hr.innerHTML=enxovalPorHotelHTML(detalhes);
   const ar=document.getElementById('avisos-dia-root'); if(ar) ar.innerHTML=avisosDiaHTML();
+  const ihr=document.getElementById('inhouse-root'); if(ihr) ihr.innerHTML=inhouseResumoHTML();
   renderCards();
 }
 // Botão: tira/recoloca o ENXOVAL FÍSICO de um apto (não mexe no R$8,50).
@@ -3987,6 +4143,7 @@ function renderUI(){
     <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
   </div>
   <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
+  <div id="inhouse-root">${inhouseResumoHTML()}</div>
   <div id="avisos-dia-root">${avisosDiaHTML()}</div>
   <div id="enxoval-hotel-root">${enxovalPorHotelHTML(detalhes)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
@@ -4031,7 +4188,25 @@ function renderCards(){
       oL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-out"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 12:00</span></div>`;});
       iL.forEach(g=>{rows+=`<div class="guest-row"><div class="dir-dot dot-in"></div><span class="guest-name">${esc(g.name)||'–'}</span><span class="guest-meta">${g.guests} px · 15:00</span></div>`;});
       if(emp)rows=`<div class="no-movement">sem movimentação hoje</div>`;
-      let chipsHtml='',foraEnx=false;
+      let chipsHtml='',foraEnx=false, badgeFinal=badge, ih=false;
+      if(emp && _pdfDate){
+        const st=estadoApto(hotel,apt,_pdfDate);
+        if(st.estado==='ocupado'){
+          ih=true;
+          const e=st.entrada;
+          badgeFinal=st.devida?`<span class="type-badge badge-devida">🔄 Troca in-house</span>`:`<span class="type-badge badge-inhouse">🏠 In-house</span>`;
+          rows=`<div class="guest-row"><div class="dir-dot dot-house"></div><span class="guest-name">${esc(e.hospede||'Hóspede')}</span><span class="guest-meta">${e.pessoas?e.pessoas+' px · ':''}${st.diasEst} dia${st.diasEst!==1?'s':''}</span></div>`;
+          if(st.devida||st.trocouHoje){
+            const lin=calcLinen(config,e.pessoas||null,isKing(hotel,apt),SEM_ROSTO.has(hotel));
+            chipsHtml=`<div class="enxoval-chips">${linenChips(lin).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>`;
+            chipsHtml+=st.trocouHoje?`<div class="ih-ok">✓ Troca in-house feita hoje</div>`
+              :`<button class="btn-troca-ih" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="registrarTrocaInhouse(this.dataset.h,this.dataset.a)">✓ Troca feita</button>`;
+          }else chipsHtml=`<div class="ih-prox">Próxima troca de enxoval: ${fmtData(st.proxima)}</div>`;
+        }else if(st.estado==='vago'){
+          badgeFinal=`<span class="type-badge badge-vago">Vago</span>`;
+          rows=`<div class="no-movement">vago desde ${fmtData(st.desde)}</div>`;
+        }
+      }
       if(ho){
         foraEnx=aptoForaDoEnxoval(k);
         if(foraEnx){
@@ -4046,7 +4221,7 @@ function renderCards(){
           if(_ready)chipsHtml+=`<button class="enx-toggle in" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">− Tirar do enxoval</button>`;
         }
       }
-      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left apt-link" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}${ho&&!foraEnx?fotoEnxCardHTML(hotel,apt):''}${avisosAptoHTML(hotel,apt)}</div></div>`;
+      sec+=`<div class="apt-card ${emp&&!ih?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left apt-link" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badgeFinal}</div>${rows}${chipsHtml}${ho&&!foraEnx?fotoEnxCardHTML(hotel,apt):''}${avisosAptoHTML(hotel,apt)}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;
   });

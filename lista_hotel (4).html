@@ -3055,6 +3055,7 @@ async function preencherAcoes(){
 }
 
 // ── Lembrete de PDF não carregado ─────────────────────────────────────────────
+let _recargaOculta=false;
 function renderLembretePdf(){
   const el=document.getElementById('pdf-lembrete'); if(!el)return;
   if(!_ready){el.innerHTML='';return;}
@@ -3066,10 +3067,23 @@ function renderLembretePdf(){
   const temHoje=cache.trocas.some(r=>String(r.dia)===todayKey());
   // chegada nova num apto que já estava ocupado = provável saída não registrada
   const ss=(typeof chegadasSemSaida==='function')?chegadasSemSaida():[];
-  const ssHtml=ss.length?`<div class="pdf-lembrete" style="cursor:default;">
+  let ssHtml=ss.length?`<div class="pdf-lembrete" style="cursor:default;">
     <span class="pdf-lembrete-ico">🔎</span>
     <span><b>Possível saída não registrada</b> em ${ss.length} apto${ss.length>1?'s':''}: ${ss.slice(0,8).map(x=>`<a class="lk" data-h="${esc(x.hotel)}" data-a="${esc(x.apt)}" onclick="event.stopPropagation();openAptoHist(this.dataset.h,this.dataset.a)">${esc(rotuloApto(x.hotel,x.apt))}</a> (chegou ${fmtData(x.cur).substring(0,5)}, já estava ocupado desde ${fmtData(x.ant).substring(0,5)})`).join('; ')}${ss.length>8?' e mais '+(ss.length-8):''}. Provavelmente falta o PDF de algum dia no meio, e a troca não foi cobrada.</span>
   </div>`:'';
+  // Provisório: dias do mês que já tinham PDF antes do in-house existir e ainda
+  // não tiveram as chegadas gravadas (precisam ser recarregados). Some sozinho quando completar.
+  let recHtml='';
+  if(cache.entradas.length && !_recargaOculta){
+    const comEnt=new Set(cache.entradas.filter(r=>String(r.dia).startsWith(mes)).map(r=>String(r.dia).substring(8,10)));
+    const comPdf=[...new Set(cache.trocas.filter(r=>String(r.dia).startsWith(mes)&&r.origem!=='inhouse').map(r=>String(r.dia).substring(8,10)))].sort();
+    const falta=comPdf.filter(d=>!comEnt.has(d));
+    if(falta.length) recHtml=`<div class="pdf-lembrete leve" style="cursor:default;border-color:var(--indigo-bdr);">
+      <span class="pdf-lembrete-ico">📥</span>
+      <span><b>Recarga para o in-house:</b> chegadas gravadas em ${comPdf.length-falta.length} de ${comPdf.length} dias de ${MESES[parseInt(mes.substring(5))-1].toLowerCase()}. Falta recarregar o PDF de <b>${falta.map(d=>d+'/'+mes.substring(5,7)).join(', ')}</b>. <a class="lk" style="color:var(--t3);" onclick="_recargaOculta=true;renderLembretePdf()">ocultar</a></span>
+    </div>`;
+  }
+  ssHtml=recHtml+ssHtml;
   if(!faltam.length && temHoje){el.innerHTML=ssHtml;return;}
   const partes=[];
   if(!temHoje) partes.push('o PDF de <b>hoje</b> ainda não foi carregado');

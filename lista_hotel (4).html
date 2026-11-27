@@ -1219,6 +1219,8 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .enx-dia:first-of-type{border-top:none;}
 .enx-dia-lbl{font-size:13px;font-weight:700;color:var(--t2);min-width:42px;}
 .btn-danger-ghost:disabled{opacity:.4;cursor:default;}
+.foto-bar button.foto-apagar{margin-left:auto;width:auto;height:auto;border-radius:var(--r-pill);padding:6px 12px;color:var(--red);border-color:var(--red-bdr);background:var(--red-dim);font-family:var(--font);font-weight:600;}
+.foto-bar button.foto-apagar + button{margin-left:0;}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1632,7 +1634,7 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 <div class="overlay" id="ov-foto" onclick="if(event.target===this)closeOv('ov-foto')">
   <div class="foto-box">
     <img id="foto-img" alt="">
-    <div class="foto-bar"><span id="foto-lbl"></span><a id="foto-link" target="_blank" rel="noopener">abrir original</a><button onclick="closeOv('ov-foto')">✕</button></div>
+    <div class="foto-bar"><span id="foto-lbl"></span><a id="foto-link" target="_blank" rel="noopener">abrir original</a><button class="foto-apagar" id="foto-apagar" style="display:none;" onclick="apagarFotoEnx()">🗑 Apagar</button><button onclick="closeOv('ov-foto')">✕</button></div>
   </div>
 </div>
 <!-- Papel higiênico: digitar quantidade -->
@@ -3183,6 +3185,7 @@ function fotosHtml(r){
   return `<div class="mt-fotos">${f.map(([lbl,p])=>`<button class="mt-foto" onclick="verFoto('${esc(urlFoto(p))}','${lbl}')"><img src="${esc(urlFoto(p))}" loading="lazy" alt="${lbl}"><span>${lbl}</span></button>`).join('')}</div>`;
 }
 function verFoto(url,lbl){
+  _fotoEnxAberta=null; document.getElementById('foto-apagar').style.display='none';
   document.getElementById('foto-img').src=url;
   document.getElementById('foto-lbl').textContent=lbl||'';
   document.getElementById('foto-link').href=url;
@@ -3474,7 +3477,7 @@ async function enviarFotosEnxoval(input){
   showToast(ok===files.length?(ok>1?ok+' fotos enviadas':'Foto enviada')+' · '+rotuloApto(alvo.hotel,alvo.apt):'Algumas fotos não foram enviadas ('+ok+' de '+files.length+')');
 }
 function thumbsEnx(lista){
-  return lista.map(f=>`<button class="mt-foto" onclick="verFoto('${esc(urlFotoEnx(f.path))}','${esc(rotuloApto(f.hotel,f.apt))} · ${String(f.dia).split('-').reverse().join('/')}${f.enviado_por?' · '+esc(f.enviado_por):''}')"><img src="${esc(urlFotoEnx(f.path))}" loading="lazy" alt=""></button>`).join('');
+  return lista.map(f=>`<button class="mt-foto" onclick="verFotoEnx(${f.id})"><img src="${esc(urlFotoEnx(f.path))}" loading="lazy" alt=""></button>`).join('');
 }
 // No card da Lista do Dia (aptos com saída nos hotéis que tiram foto)
 function fotoEnxCardHTML(hotel,apt){
@@ -3568,6 +3571,26 @@ function apagarFotosMes(mes){
       if(error){showToast('Erro ao apagar os registros');return;}
       logAcao('Fotos do mês apagadas',nomeMes(mes)+' · '+fotos.length+' fotos',quem);
       await carregarFotosEnx(); renderFechamento(); showToast('Fotos de '+nomeMes(mes)+' apagadas');
+    });
+}
+let _fotoEnxAberta=null;
+function verFotoEnx(id){
+  const f=cache.fotosEnx.find(x=>x.id===id); if(!f)return;
+  verFoto(urlFotoEnx(f.path),rotuloApto(f.hotel,f.apt)+' · '+String(f.dia).split('-').reverse().join('/')+(f.enviado_por?' · '+f.enviado_por:''));
+  _fotoEnxAberta=f; document.getElementById('foto-apagar').style.display='';
+}
+function apagarFotoEnx(){
+  const f=_fotoEnxAberta; if(!f)return;
+  closeOv('ov-foto');
+  confirmar('Apagar esta foto?','Foto do enxoval de '+rotuloApto(f.hotel,f.apt)+' em '+String(f.dia).split('-').reverse().join('/')+(f.enviado_por?', enviada por '+f.enviado_por:'')+'. Não dá para desfazer.','Apagar',
+    async()=>{
+      const quem=await pedirPin('Apagar uma foto do enxoval.'); if(!quem)return;
+      const r1=await sb.storage.from('enxoval').remove([f.path]);
+      if(r1.error){showToast('Erro ao apagar o arquivo');return;}
+      const r2=await sb.from('enxoval_fotos').delete().eq('id',f.id);
+      if(r2.error){showToast('Erro ao apagar o registro');return;}
+      logAcao('Foto do enxoval apagada',rotuloApto(f.hotel,f.apt)+' · '+String(f.dia).split('-').reverse().join('/'),quem);
+      await carregarFotosEnx(); rerenderCompartilhado(); showToast('Foto apagada');
     });
 }
 // ── DIALOG ────────────────────────────────────────────────────────────────────
@@ -3931,7 +3954,6 @@ function atualizarListaDoDia(){
   const hr=document.getElementById('enxoval-hotel-root');
   if(hr) hr.innerHTML=enxovalPorHotelHTML(detalhes);
   const ar=document.getElementById('avisos-dia-root'); if(ar) ar.innerHTML=avisosDiaHTML();
-  const fr=document.getElementById('fotos-dia-root'); if(fr) fr.innerHTML=fotosDiaHTML();
   renderCards();
 }
 // Botão: tira/recoloca o ENXOVAL FÍSICO de um apto (não mexe no R$8,50).
@@ -3965,7 +3987,6 @@ function renderUI(){
     <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
   </div>
   <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
-  <div id="fotos-dia-root">${fotosDiaHTML()}</div>
   <div id="avisos-dia-root">${avisosDiaHTML()}</div>
   <div id="enxoval-hotel-root">${enxovalPorHotelHTML(detalhes)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>

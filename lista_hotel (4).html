@@ -1074,6 +1074,82 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .cfg-check input{width:20px;height:20px;accent-color:var(--amber);}
 .dialog-field:disabled{opacity:.55;}
 @media(max-width:420px){ .cfg-precos{grid-template-columns:1fr;} }
+/* ══ v4: lembrete, desfazer, PIN, histórico do apto, fotos ══ */
+.pdf-lembrete{
+  display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin-bottom:1rem;
+  background:var(--amber-dim);border:1px solid var(--amber-bdr);color:var(--amber);border-radius:var(--r-md);
+  padding:0.8rem 1rem;font-size:13px;line-height:1.5;-webkit-tap-highlight-color:transparent;
+}
+.pdf-lembrete b{color:var(--amber);}
+.pdf-lembrete.leve{background:var(--bg-1);border-color:var(--b2);color:var(--t2);}
+.pdf-lembrete.leve b{color:var(--t1);}
+.pdf-lembrete-ico{font-size:16px;line-height:1.3;}
+.lav-day-chip.click{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.lav-day-chip.click:hover{border-color:var(--red-bdr);color:var(--red);}
+.lav-day-chip.manual{border-style:dashed;}
+.apt-link{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.apt-link:hover .lav-apt-num,.apt-link:hover .apt-number,.apt-link:hover .mt-apt-num{color:var(--indigo);}
+.dia-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--b0);}
+.dia-item:first-child{border-top:none;}
+.dia-item b{display:block;font-size:14px;color:var(--t1);}
+.dia-item small{font-size:12px;color:var(--t3);}
+.btn-apagar-dia{
+  font-size:11px;font-family:var(--font);font-weight:600;padding:5px 11px;border-radius:var(--r-pill);margin-left:auto;
+  border:1px solid var(--b1);background:transparent;color:var(--t3);cursor:pointer;white-space:nowrap;
+}
+.btn-apagar-dia:hover{color:var(--red);border-color:var(--red-bdr);}
+.acao-row{display:grid;grid-template-columns:78px 1fr auto;gap:8px;padding:8px 0;border-top:1px solid var(--b0);font-size:12px;align-items:baseline;}
+.acao-row:first-child{border-top:none;}
+.acao-quando{color:var(--t3);font-variant-numeric:tabular-nums;}
+.acao-txt{color:var(--t2);}
+.acao-txt b{color:var(--t1);font-weight:600;}
+.acao-quem{color:var(--violet);font-weight:600;white-space:nowrap;}
+.ah-meses{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+.ah-mes{
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:var(--r-sm);cursor:pointer;
+  border:1px solid var(--b0);background:var(--bg-2);color:var(--t1);font-family:var(--font);-webkit-tap-highlight-color:transparent;
+}
+.ah-mes.active{border-color:var(--indigo-bdr);background:var(--indigo-dim);}
+.ah-mes b{font-size:15px;}
+.ah-mes small{font-size:10px;color:var(--t3);text-transform:uppercase;}
+.ah-mes em{font-size:9px;color:var(--sage);font-style:normal;}
+.ah-bar{width:8px;height:44px;background:var(--bg-3);border-radius:4px;display:flex;align-items:flex-end;overflow:hidden;}
+.ah-bar span{display:block;width:100%;background:var(--violet);border-radius:4px;}
+.ah-valor{font-size:15px;font-weight:700;color:var(--sage);}
+.ah-sub{font-size:12px;color:var(--t3);margin:-0.4rem 0 0.8rem;}
+.ah-dias{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;}
+.ah-dia{
+  display:flex;flex-direction:column;gap:1px;padding:8px;border-radius:var(--r-sm);border:1px solid var(--b0);background:var(--bg-2);
+  color:var(--t1);font-family:var(--font);text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.ah-dia:hover{border-color:var(--b2);}
+.ah-dia b{font-size:13px;}
+.ah-dia span{font-size:11px;color:var(--violet);}
+.ah-dia small{font-size:10px;color:var(--t3);}
+.ah-rep{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--b0);}
+.ah-rep:first-of-type{border-top:none;}
+.ah-rep-desc{font-size:13.5px;font-weight:500;color:var(--t1);}
+.ah-rep.done .ah-rep-desc{color:var(--t2);}
+.mt-fotos{display:flex;gap:8px;margin:9px 0 0 18px;}
+.ah-rep .mt-fotos{margin-left:0;}
+.mt-foto{position:relative;width:64px;height:64px;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--b1);padding:0;cursor:pointer;background:var(--bg-2);}
+.mt-foto img{width:100%;height:100%;object-fit:cover;display:block;}
+.mt-foto span{position:absolute;left:0;right:0;bottom:0;font-size:9px;font-weight:700;color:#fff;background:rgba(0,0,0,0.55);padding:2px 0;text-align:center;}
+.foto-input{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.foto-input label.foto-btn{
+  display:inline-flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;
+  padding:9px 14px;border-radius:var(--r-pill);border:1px dashed var(--b3);color:var(--t2);cursor:pointer;
+}
+.foto-input input[type=file]{display:none;}
+.foto-prev{display:flex;align-items:center;gap:10px;}
+.foto-prev img{width:56px;height:56px;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--b1);}
+.foto-prev button{background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;font-family:var(--font);}
+.foto-box{max-width:92vw;max-height:90vh;display:flex;flex-direction:column;gap:8px;}
+.foto-box img{max-width:92vw;max-height:80vh;border-radius:var(--r-md);object-fit:contain;background:#000;}
+.foto-bar{display:flex;align-items:center;gap:14px;color:var(--t2);font-size:13px;}
+.foto-bar span{font-weight:700;color:var(--t1);}
+.foto-bar a{color:var(--indigo);}
+.foto-bar button{margin-left:auto;background:var(--bg-3);border:1px solid var(--b2);color:var(--t1);border-radius:50%;width:32px;height:32px;cursor:pointer;}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1237,11 +1313,12 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     <div class="tab" onclick="switchTab('manut',this)">Manutenção</div>
   </div>
   <div class="sync-bar">
-    <button class="cfg-gear" onclick="switchTab('config',null)" title="Cadastro de hotéis, aptos e preços">⚙️ Cadastro</button>
+    <button class="cfg-gear" onclick="abrirCadastro()" title="Cadastro de hotéis, aptos e preços">⚙️ Cadastro</button>
     <span class="sync-pill" id="sync-pill"><span class="sync-dot"></span><span id="sync-text">Conectando…</span></span>
   </div>
   <!-- TAB: LISTA -->
   <div id="tab-lista" class="tab-content active">
+    <div id="pdf-lembrete"></div>
     <div id="drop-zone" onclick="document.getElementById('file-input').click()">
       <div class="upload-icon">📄</div>
       <div class="upload-label" id="drop-label">Carregar PDF</div>
@@ -1253,6 +1330,10 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
   <!-- TELA: FECHAMENTO DO MÊS (aberta pela Lavanderia) -->
   <div id="tab-fechamento" class="tab-content">
     <div id="fech-content"></div>
+  </div>
+  <!-- TELA: HISTÓRICO DO APARTAMENTO -->
+  <div id="tab-apto" class="tab-content">
+    <div id="apto-content"></div>
   </div>
   <!-- TELA: CADASTRO (hotéis, aptos e preços) -->
   <div id="tab-config" class="tab-content">
@@ -1296,6 +1377,8 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     </div>
     <label id="sd-data-lbl">Data da saída</label>
     <input class="dialog-field" type="date" id="saida-data" onchange="atualizarCheckLimpeza()">
+    <label>Seu nome</label>
+    <input class="dialog-field" id="sd-nome" autocomplete="name" placeholder="Quem está registrando">
     <label class="cfg-check" id="sd-limp-wrap"><input type="checkbox" id="sd-limp"> Teve limpeza também (R$ 25)</label>
     <div class="dialog-btns" style="margin-top:1.5rem;">
       <button class="btn-cancel" onclick="closeSaida()">Cancelar</button>
@@ -1316,6 +1399,8 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     </div>
     <label>O que precisa arrumar</label>
     <textarea class="dialog-field" id="rp-desc" placeholder="Ex.: chuveiro não esquenta, trocar lâmpada do banheiro..."></textarea>
+    <label>Foto do problema (opcional)</label>
+    <div class="foto-input"><label class="foto-btn">📷 Tirar ou escolher foto<input type="file" id="rp-foto" accept="image/*" onchange="previewFoto('rp-foto','rp-foto-prev')"></label><div class="foto-prev" id="rp-foto-prev"></div></div>
     <label>Seu nome</label>
     <input class="dialog-field" id="rp-nome" placeholder="Quem está registrando" autocomplete="name">
     <label>Colocado para arrumar em</label>
@@ -1343,6 +1428,8 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     <div class="dialog-hint">Se escolher uma peça, ela é descontada do estoque automaticamente.</div>
     <label>Observação (opcional)</label>
     <input class="dialog-field" id="rs-obs" placeholder="Ex.: troquei a resistência">
+    <label>Foto do conserto (opcional)</label>
+    <div class="foto-input"><label class="foto-btn">📷 Tirar ou escolher foto<input type="file" id="rs-foto" accept="image/*" onchange="previewFoto('rs-foto','rs-foto-prev')"></label><div class="foto-prev" id="rs-foto-prev"></div></div>
     <div class="dialog-btns" style="margin-top:1.5rem;">
       <button class="btn-cancel" onclick="closeOv('ov-resolver')">Cancelar</button>
       <button class="btn-primary green" id="rs-salvar" onclick="confirmarResolver()">✓ Resolvido</button>
@@ -1440,6 +1527,39 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     </div>
   </div>
 </div>
+<!-- PIN / nome para ações protegidas -->
+<div class="overlay" id="ov-pin" style="z-index:60;">
+  <div class="dialog dialog-form">
+    <div class="dialog-title">🔒 Confirmação</div>
+    <div class="dialog-sub" id="pin-motivo"></div>
+    <label>Seu nome</label>
+    <input class="dialog-field" id="pin-nome" autocomplete="name" placeholder="Quem está fazendo">
+    <div id="pin-wrap"><label>PIN</label>
+      <input class="dialog-field" id="pin-valor" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" onkeydown="if(event.key==='Enter')confirmarPin()"></div>
+    <div class="dialog-hint" id="pin-sem">Ainda não tem PIN. Dá para criar um em ⚙️ Cadastro.</div>
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-cancel" onclick="cancelarPin()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmarPin()">Confirmar</button>
+    </div>
+  </div>
+</div>
+<!-- Registros de um dia (troca/limpeza) -->
+<div class="overlay" id="ov-dia">
+  <div class="dialog dialog-form">
+    <div class="dialog-title" id="dia-title"></div>
+    <div id="dia-lista" style="margin-top:0.75rem;"></div>
+    <div class="dialog-btns" style="margin-top:1.25rem;">
+      <button class="btn-cancel" onclick="closeOv('ov-dia')">Fechar</button>
+    </div>
+  </div>
+</div>
+<!-- Foto ampliada -->
+<div class="overlay" id="ov-foto" onclick="if(event.target===this)closeOv('ov-foto')">
+  <div class="foto-box">
+    <img id="foto-img" alt="">
+    <div class="foto-bar"><span id="foto-lbl"></span><a id="foto-link" target="_blank" rel="noopener">abrir original</a><button onclick="closeOv('ov-foto')">✕</button></div>
+  </div>
+</div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1495,7 +1615,7 @@ function avisoConfig(msg){
   });
 }
 async function recarregarTudo(){
-  await carregarCadastro();
+  await Promise.all([carregarCadastro(),carregarPin()]);
   await Promise.all([carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
 }
 // O Supabase devolve no máximo 1000 linhas por consulta. Quando a tabela passa
@@ -1505,7 +1625,7 @@ async function carregarTudoPaginado(tabela){
   const PAGINA=1000;
   let todas=[], de=0;
   while(true){
-    const {data,error}=await sb.from(tabela).select('hotel,apt,dia')
+    const {data,error}=await sb.from(tabela).select('*')
       .order('dia',{ascending:true}).order('hotel',{ascending:true}).order('apt',{ascending:true})
       .range(de, de+PAGINA-1);
     if(error)throw error;
@@ -1586,13 +1706,16 @@ function abaAtiva(){
   if(document.getElementById('tab-manut').classList.contains('active'))return 'manut';
   if(document.getElementById('tab-fechamento').classList.contains('active'))return 'fechamento';
   if(document.getElementById('tab-config').classList.contains('active'))return 'config';
+  if(document.getElementById('tab-apto').classList.contains('active'))return 'apto';
   return 'lista';
 }
 function rerenderCompartilhado(){
+  renderLembretePdf();
   const aba=abaAtiva();
   if(aba==='manut') renderManut();
   else if(aba==='fechamento') renderFechamento();
   else if(aba==='config') renderConfig();
+  else if(aba==='apto') renderAptoHist();
   else if(aba==='lavanderia') renderLavanderia();
   else if(aba==='lista' && _pdfDate) atualizarListaDoDia();
 }
@@ -1660,6 +1783,7 @@ function switchTab(name,el){
   if(name==='manut') renderManut();
   if(name==='fechamento') abrirFechamentoMes();
   if(name==='config') renderConfig();
+  if(name==='apto') renderAptoHist();
   if(name==='lista' && _pdfDate) atualizarListaDoDia();
 }
 // ── DATAS ────────────────────────────────────────────────────────────────────
@@ -1722,7 +1846,7 @@ async function registrarTrocas(dia){
   Object.keys(_dep).forEach(k=>{
     if(!_dep[k]||_dep[k].length===0)return;
     const i=k.indexOf('||');
-    rows.push({hotel:k.substring(0,i),apt:k.substring(i+2),dia});
+    rows.push({hotel:k.substring(0,i),apt:k.substring(i+2),dia,origem:'pdf'});
   });
   if(rows.length===0)return 0;
   const {data,error}=await sb.from('trocas')
@@ -1743,7 +1867,7 @@ async function registrarLimpezas(depMap, dia){
     const i=k.indexOf('||');
     const hotel=k.substring(0,i);
     if(!LIMPEZA_HOTEIS.has(hotel))return;
-    rows.push({hotel,apt:k.substring(i+2),dia});
+    rows.push({hotel,apt:k.substring(i+2),dia,origem:'pdf'});
   });
   if(rows.length===0)return 0;
   const {data,error}=await sb.from('limpezas')
@@ -1845,9 +1969,9 @@ function renderLavanderia(){
       const hotelEntries=entries.filter(e=>e.hotel===hotel);
       html+=`<div class="hotel-section"><div class="hotel-header">${esc(hotel)}</div>`;
       hotelEntries.forEach(e=>{
-        const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
+        const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');const man=cache.trocas.concat(cache.limpezas).some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='manual');return`<span class="lav-day-chip click${man?' manual':''}" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)" title="${man?'registro manual · ':''}toque para ver ou remover">${dd}/${mm}</span>`;}).join('');
         html+=`<div class="lav-apt-card">
-          <div class="lav-apt-left">
+          <div class="lav-apt-left apt-link" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">
             <div class="lav-apt-num">${esc(e.apt)}</div>
             <div class="lav-apt-hotel">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</div>
           </div>
@@ -1877,9 +2001,9 @@ function renderLavanderia(){
         <div class="lav-total-card"><div class="lav-total-val lav-green">R$ ${fmtBRL(totalLimpezas*PRECO.limpezaComf)}</div><div class="lav-total-lbl">Valor total</div><div class="lav-total-sub">R$ ${fmtBRL(PRECO.limpezaComf)} por limpeza</div></div>
       </div>`;
     limpEntries.forEach(e=>{
-      const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');return`<span class="lav-day-chip">${dd}/${mm}</span>`;}).join('');
+      const dayChips=e.days.map(d=>{const[,mm,dd]=d.split('-');const man=cache.trocas.concat(cache.limpezas).some(r=>r.hotel===e.hotel&&r.apt===e.apt&&String(r.dia)===d&&r.origem==='manual');return`<span class="lav-day-chip click${man?' manual':''}" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)" title="${man?'registro manual · ':''}toque para ver ou remover">${dd}/${mm}</span>`;}).join('');
       html+=`<div class="lav-apt-card">
-        <div class="lav-apt-left">
+        <div class="lav-apt-left apt-link" data-h="${esc(e.hotel)}" data-a="${esc(e.apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">
           <div class="lav-apt-num">${esc(e.apt)}</div>
           <div class="lav-apt-hotel">${CFG_LABEL[ROOMS[e.hotel]?.apts[e.apt]]||''}</div>
         </div>
@@ -2058,12 +2182,13 @@ function mtCardsHTML(){
           <button class="mt-del" onclick="excluirReparo(${r.id})" title="Excluir">🗑</button>
         </div>
         <div class="mt-meta">${meta}</div>
+        ${fotosHtml(r)}
         <div class="mt-actions">${acts}</div>
       </div>`;
     }).join('');
     cards+=`<div class="mt-apt">
       <div class="mt-apt-left">
-        <span class="mt-apt-num">${esc(apt)}</span>
+        <span class="mt-apt-num apt-link" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">${esc(apt)}</span>
         <button class="mt-apt-add" onclick="openReparo('${esc(hotel)}','${esc(apt)}')" title="Novo reparo neste apto">+</button>
       </div>
       <div class="mt-apt-right">${repsHtml}</div>
@@ -2095,6 +2220,7 @@ function openReparo(hotel,apt){
   onRpHotel();
   if(apt) document.getElementById('rp-apto').value=apt;
   document.getElementById('rp-desc').value='';
+  limparFoto('rp-foto','rp-foto-prev');
   document.getElementById('rp-nome').value=nomeSalvo();
   document.getElementById('rp-data').value=todayKey();
   openOv('ov-reparo');
@@ -2113,9 +2239,13 @@ async function salvarReparo(){
   const dia=document.getElementById('rp-data').value||todayKey();
   if(!descricao){showToast('Descreva o que precisa arrumar');document.getElementById('rp-desc').focus();return;}
   if(!nome){showToast('Coloque seu nome');document.getElementById('rp-nome').focus();return;}
-  const btn=document.getElementById('rp-salvar'); btn.disabled=true;
-  const {error}=await sb.from('manutencoes').insert({hotel,apt,descricao,solicitado_por:nome,solicitado_em:dia});
-  btn.disabled=false;
+  const btn=document.getElementById('rp-salvar'); btn.disabled=true; btn.textContent='Salvando…';
+  let foto=null;
+  try{ foto=await enviarFoto('rp-foto','antes'); }
+  catch(e){ btn.disabled=false; btn.textContent='Registrar'; showToast('Não consegui enviar a foto'); return; }
+  const novo={hotel,apt,descricao,solicitado_por:nome,solicitado_em:dia}; if(foto) novo.foto_antes=foto;
+  const {error}=await sb.from('manutencoes').insert(novo);
+  btn.disabled=false; btn.textContent='Registrar';
   if(error){showToast('Erro ao registrar o reparo');return;}
   salvarNome(nome);
   closeOv('ov-reparo');
@@ -2134,6 +2264,7 @@ function openResolver(id){
   document.getElementById('rs-nome').value=nomeSalvo();
   document.getElementById('rs-data').value=todayKey();
   document.getElementById('rs-obs').value='';
+  limparFoto('rs-foto','rs-foto-prev');
   document.getElementById('rs-qtd').value=1;
   document.getElementById('rs-item').innerHTML=`<option value="">Não usou peça</option>`+
     cache.manutItens.map(i=>`<option value="${i.id}">${esc(i.nome)} (${i.quantidade} em estoque)</option>`).join('');
@@ -2151,7 +2282,11 @@ async function confirmarResolver(){
   const r=cache.manut.find(x=>x.id===id);
   if(r && dia<String(r.solicitado_em)){showToast('A data não pode ser antes da abertura');return;}
   const btn=document.getElementById('rs-salvar'); btn.disabled=true;
+  let foto=null;
+  try{ foto=await enviarFoto('rs-foto','depois'); }
+  catch(e){ btn.disabled=false; showToast('Não consegui enviar a foto'); return; }
   const {data,error}=await sb.rpc('resolver_manutencao',{p_id:id,p_por:nome,p_em:dia,p_obs:obs,p_item:item,p_qtd:qtd});
+  if(!error && foto && data!==false) await sb.from('manutencoes').update({foto_depois:foto}).eq('id',id);
   btn.disabled=false;
   if(error){showToast('Erro ao salvar');return;}
   salvarNome(nome);
@@ -2174,14 +2309,17 @@ function reabrirReparo(id){
 }
 function excluirReparo(id){
   const r=cache.manut.find(x=>x.id===id); if(!r)return;
+  const fazer=async()=>{
+      const quem=await pedirPin('Excluir o reparo de '+r.hotel+' '+r.apt+'.'); if(!quem)return;
+      const {error}=await sb.from('manutencoes').delete().eq('id',id);
+      if(error){showToast('Erro ao excluir');return;}
+      logAcao('Reparo excluído',r.hotel+' '+r.apt+' · '+r.descricao,quem);
+      await carregarManut(); renderManut(); showToast('Reparo excluído');
+  };
   confirmar('Excluir reparo?',
     r.hotel+' '+r.apt+': "'+r.descricao+'". O registro some do histórico e não dá para desfazer.',
     'Excluir',
-    async()=>{
-      const {error}=await sb.from('manutencoes').delete().eq('id',id);
-      if(error){showToast('Erro ao excluir');return;}
-      await carregarManut(); renderManut(); showToast('Reparo excluído');
-    });
+    fazer);
 }
 
 // ── Estoque de peças
@@ -2435,6 +2573,7 @@ function openAjuste(k){
 }
 async function salvarAjuste(){
   const k=_ajK; if(!k)return;
+  const quem=await pedirPin('Salvar ajuste do fechamento.'); if(!quem)return;
   const i=k.indexOf('||'), hotel=k.substring(0,i), apt=k.substring(i+2);
   const txt=document.getElementById('aj-valor').value.trim().replace(/\s/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.');
   const valor=txt===''?0:Number(txt);
@@ -2444,6 +2583,7 @@ async function salvarAjuste(){
   if(!valor && !obs) ({error}=await sb.from('ajustes_mes').delete().eq('mes',_fechMes).eq('hotel',hotel).eq('apt',apt));
   else ({error}=await sb.from('ajustes_mes').upsert({mes:_fechMes,hotel,apt,valor,obs:obs||null,atualizado_em:new Date().toISOString()},{onConflict:'mes,hotel,apt'}));
   if(error){showToast('Erro ao salvar o ajuste');return;}
+  logAcao(valor||obs?'Ajuste salvo':'Ajuste removido',rotuloApto(hotel,apt)+' · '+nomeMes(_fechMes)+(valor?' · '+fmtR(valor):'')+(obs?' · '+obs:''),quem);
   closeOv('ov-ajuste');
   await carregarAjustes(_fechMes); renderFechamento();
   showToast(valor||obs?'Ajuste salvo':'Ajuste removido');
@@ -2542,6 +2682,11 @@ async function baixarExcelFechamento(){
 }
 
 // ── TELA DE CADASTRO ──────────────────────────────────────────────────────────
+async function abrirCadastro(){
+  if(!_ready){showToast('Sem conexão com o banco');return;}
+  const quem=await pedirPin('Abrir o cadastro de hotéis, aptos e preços.');
+  if(quem) switchTab('config',null);
+}
 function renderConfig(){
   const root=document.getElementById('config-content'); if(!root)return;
   if(!_ready){root.innerHTML=`<div class="empty-state">⚙️ Sem conexão com o banco.</div>`;return;}
@@ -2582,7 +2727,21 @@ function renderConfig(){
     <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="salvarPrecos()">Salvar preços</button>
   </div>
   ${cards}
-  <button class="fech-download" style="background:var(--bg-1);color:var(--t1);border:1px dashed var(--b3);" onclick="openHotel()">＋ Novo hotel</button>`;
+  <button class="fech-download" style="background:var(--bg-1);color:var(--t1);border:1px dashed var(--b3);" onclick="openHotel()">＋ Novo hotel</button>
+  <div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">🔒 PIN das ações protegidas</span><span class="cfg-tag">${_pinHash?'ativo':'sem PIN'}</span></div>
+    <div class="ah-sub" style="margin:0 0 0.8rem;">Pedido para zerar mês, remover registros, salvar ajustes e abrir este cadastro. ${_pinHash?'Para trocar, digite o novo PIN duas vezes.':'Crie um PIN de 4 a 8 números.'}</div>
+    <div class="cfg-precos">
+      <label>${_pinHash?'Novo PIN':'PIN'}<input class="dialog-field" id="cfg-pin1" type="password" inputmode="numeric" autocomplete="off"></label>
+      <label>Repita o PIN<input class="dialog-field" id="cfg-pin2" type="password" inputmode="numeric" autocomplete="off"></label>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="salvarPin()">${_pinHash?'Trocar PIN':'Criar PIN'}</button>
+  </div>
+  <div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">📜 Histórico de ações</span><button class="mt-mini-btn" onclick="preencherAcoes()">Atualizar</button></div>
+    <div id="cfg-acoes"><div class="no-movement">Carregando…</div></div>
+  </div>`;
+  preencherAcoes();
 }
 function voltarDoCadastro(){
   switchTab('lista',document.querySelectorAll('.tab')[0]);
@@ -2598,6 +2757,7 @@ async function salvarPrecos(){
   const {error}=await sb.from('config').upsert(Object.entries(vals).map(([chave,valor])=>({chave,valor})),{onConflict:'chave'});
   if(error){showToast('Erro ao salvar os preços');return;}
   await carregarCadastro(); _cadastroMudou=true; renderConfig(); showToast('Preços salvos');
+  logAcao('Preços alterados',`adm ${vals.admin_por_apto} · troca ${vals.troca_enxoval} · limpeza ${vals.limpeza} · pacote ${vals.pacote_30_trocas}`);
 }
 let _cfgApto=null, _cfgHotel=null;
 function openApto(hotel,apt){
@@ -2625,6 +2785,7 @@ async function salvarApto(){
     : await sb.from('aptos').upsert(Object.assign({hotel:c.hotel,apt},dados),{onConflict:'hotel,apt'});
   if(error){showToast('Erro ao salvar o apto');return;}
   closeOv('ov-apto'); await carregarCadastro(); _cadastroMudou=true; renderConfig();
+  logAcao(c.id?'Apto alterado':'Apto adicionado',c.hotel+' '+apt+' · '+({c:'casal','2s':'2 solteiro',cs:'casal + solteiro'})[dados.config]+(dados.king?' · king':''));
   showToast(c.id?'Apto atualizado':'Apto '+apt+' adicionado ao '+c.hotel);
 }
 function removerApto(){
@@ -2635,6 +2796,7 @@ function removerApto(){
       const {error}=await sb.from('aptos').update({ativo:false}).eq('id',c.id);
       if(error){showToast('Erro ao remover');return;}
       await carregarCadastro(); _cadastroMudou=true; renderConfig(); showToast('Apto removido');
+      logAcao('Apto removido',c.hotel+' '+c.apt);
     });
 }
 function openHotel(nome){
@@ -2670,6 +2832,7 @@ async function salvarHotel(){
     : await sb.from('hoteis').insert(Object.assign({nome},dados));
   if(error){showToast('Erro ao salvar o hotel');return;}
   closeOv('ov-hotel'); await carregarCadastro(); _cadastroMudou=true; renderConfig();
+  logAcao(atual?'Hotel alterado':'Hotel criado',nome);
   showToast(atual?'Hotel atualizado':'Hotel '+nome+' criado. Agora adicione os aptos.');
 }
 function desativarHotel(){
@@ -2680,8 +2843,267 @@ function desativarHotel(){
       const {error}=await sb.from('hoteis').update({ativo:false}).eq('nome',nome);
       if(error){showToast('Erro ao desativar');return;}
       await carregarCadastro(); _cadastroMudou=true; renderConfig(); showToast('Hotel desativado');
+      logAcao('Hotel desativado',nome);
     });
 }
+// ══════════════════════════════════════════════════════════════════════════════
+// v4: PIN + histórico de ações, desfazer registros, lembrete de PDF,
+//     histórico do apartamento e fotos dos reparos
+// ══════════════════════════════════════════════════════════════════════════════
+// ── PIN e registro de quem fez ────────────────────────────────────────────────
+// Observação: o PIN é uma trava contra acidentes e uso indevido casual. O hash
+// fica no banco e a conferência é feita no navegador; não substitui um login.
+let _pinHash=null, _pinOkAte=0, _pinNome='';
+async function carregarPin(){
+  try{
+    const {data,error}=await sb.from('config_texto').select('*').eq('chave','pin_hash').maybeSingle();
+    if(error)throw error;
+    _pinHash=data?data.valor:null;
+  }catch(e){ _pinHash=null; }
+}
+async function sha256(txt){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+const hashPin=pin=>sha256('fenix-flats::'+String(pin).trim());
+let _pinResolver=null;
+// Pede nome (+ PIN, se houver PIN definido). Devolve o nome, ou null se cancelou.
+function pedirPin(motivo){
+  return new Promise(resolve=>{
+    if(Date.now()<_pinOkAte && _pinNome){ resolve(_pinNome); return; }
+    _pinResolver=resolve;
+    document.getElementById('pin-motivo').textContent=motivo||'Confirme para continuar.';
+    document.getElementById('pin-nome').value=_pinNome||nomeSalvo();
+    const p=document.getElementById('pin-valor'); p.value='';
+    document.getElementById('pin-wrap').style.display=_pinHash?'':'none';
+    document.getElementById('pin-sem').style.display=_pinHash?'none':'';
+    openOv('ov-pin');
+    setTimeout(()=>(_pinHash?p:document.getElementById('pin-nome')).focus(),60);
+  });
+}
+async function confirmarPin(){
+  const nome=document.getElementById('pin-nome').value.trim();
+  if(!nome){showToast('Coloque seu nome');return;}
+  if(_pinHash){
+    const pin=document.getElementById('pin-valor').value;
+    if(!pin || await hashPin(pin)!==_pinHash){ showToast('PIN incorreto'); document.getElementById('pin-valor').select(); return; }
+  }
+  _pinNome=nome; salvarNome(nome); _pinOkAte=Date.now()+10*60*1000;   // vale por 10 minutos
+  closeOv('ov-pin');
+  const r=_pinResolver; _pinResolver=null; if(r) r(nome);
+}
+function cancelarPin(){ closeOv('ov-pin'); const r=_pinResolver; _pinResolver=null; if(r) r(null); }
+async function logAcao(acao,detalhe,quem){
+  try{ await sb.from('registro_acoes').insert({acao,detalhe:detalhe||null,quem:quem||_pinNome||nomeSalvo()||null}); }catch(e){}
+}
+async function salvarPin(){
+  const a=document.getElementById('cfg-pin1').value.trim(), b=document.getElementById('cfg-pin2').value.trim();
+  if(!/^\d{4,8}$/.test(a)){showToast('O PIN deve ter de 4 a 8 números');return;}
+  if(a!==b){showToast('Os dois PINs não são iguais');return;}
+  const tinha=!!_pinHash;
+  const {error}=await sb.from('config_texto').upsert({chave:'pin_hash',valor:await hashPin(a)},{onConflict:'chave'});
+  if(error){showToast('Erro ao salvar o PIN');return;}
+  await carregarPin(); _pinOkAte=0;
+  logAcao(tinha?'PIN alterado':'PIN criado','',_pinNome);
+  renderConfig(); showToast('PIN salvo. Ele vai ser pedido nas ações protegidas.');
+}
+async function carregarAcoes(){
+  try{
+    const {data,error}=await sb.from('registro_acoes').select('*').order('id',{ascending:false}).range(0,39);
+    if(error)throw error; return data||[];
+  }catch(e){ return null; }
+}
+function fmtQuando(ts){
+  const d=new Date(ts); if(isNaN(d))return '';
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+async function preencherAcoes(){
+  const el=document.getElementById('cfg-acoes'); if(!el)return;
+  const lista=await carregarAcoes();
+  if(lista===null){el.innerHTML='<div class="no-movement">Rode o arquivo supabase-v4-seguranca-fotos.sql para ativar o histórico.</div>';return;}
+  if(!lista.length){el.innerHTML='<div class="no-movement">Nenhuma ação registrada ainda.</div>';return;}
+  el.innerHTML=lista.map(a=>`<div class="acao-row"><span class="acao-quando">${fmtQuando(a.quando)}</span>
+    <span class="acao-txt"><b>${esc(a.acao)}</b>${a.detalhe?' · '+esc(a.detalhe):''}</span>
+    <span class="acao-quem">${esc(a.quem||'–')}</span></div>`).join('');
+}
+
+// ── Lembrete de PDF não carregado ─────────────────────────────────────────────
+function renderLembretePdf(){
+  const el=document.getElementById('pdf-lembrete'); if(!el)return;
+  if(!_ready){el.innerHTML='';return;}
+  const mes=currentMonthKey(), hoje=String(new Date().getDate()).padStart(2,'0');
+  const fmt=(m,dd)=>dd+'/'+m.substring(5,7);
+  let faltam=diasSemPdf(mes).filter(d=>d!==hoje).map(d=>fmt(mes,d));
+  // nos primeiros dias do mês, lembra também do mês anterior
+  if(new Date().getDate()<=7){ const ant=shiftMonth(mes,-1); faltam=diasSemPdf(ant).map(d=>fmt(ant,d)).concat(faltam); }
+  const temHoje=cache.trocas.some(r=>String(r.dia)===todayKey());
+  if(!faltam.length && temHoje){el.innerHTML='';return;}
+  const partes=[];
+  if(!temHoje) partes.push('o PDF de <b>hoje</b> ainda não foi carregado');
+  if(faltam.length) partes.push(`falta${faltam.length>1?'m':''} o${faltam.length>1?'s':''} PDF${faltam.length>1?'s':''} de <b>${faltam.length>12?faltam.slice(0,12).join(', ')+' e mais '+(faltam.length-12):faltam.join(', ')}</b>`);
+  el.innerHTML=`<div class="pdf-lembrete ${faltam.length?'':'leve'}" onclick="document.getElementById('file-input').click()">
+    <span class="pdf-lembrete-ico">${faltam.length?'⚠️':'📄'}</span>
+    <span>${partes.join(' e ').replace(/^./,c=>c.toUpperCase())}. Sem o PDF, as trocas e limpezas do dia não entram no fechamento. <u>Toque para carregar.</u></span>
+  </div>`;
+}
+
+// ── Desfazer: remover troca/limpeza de um dia ─────────────────────────────────
+let _diaSel=null;
+function openDia(hotel,apt,dia){
+  _diaSel={hotel,apt,dia};
+  const t=cache.trocas.find(r=>r.hotel===hotel&&r.apt===apt&&String(r.dia)===dia);
+  const l=cache.limpezas.find(r=>r.hotel===hotel&&r.apt===apt&&String(r.dia)===dia);
+  const orig=r=>r?(r.origem==='manual'?'registro manual'+(r.registrado_por?' por '+esc(r.registrado_por):''):'veio do PDF'):'';
+  document.getElementById('dia-title').textContent=rotuloApto(hotel,apt)+' · '+dia.split('-').reverse().join('/');
+  document.getElementById('dia-lista').innerHTML=
+    (t?`<div class="dia-item"><div><b>Troca de enxoval</b><small>${orig(t)}</small></div><button class="btn-danger-ghost" onclick="removerRegistro('trocas')">Remover</button></div>`:'')+
+    (l?`<div class="dia-item"><div><b>Limpeza</b><small>${orig(l)}</small></div><button class="btn-danger-ghost" onclick="removerRegistro('limpezas')">Remover</button></div>`:'')+
+    (!t&&!l?'<div class="no-movement">Nada registrado neste dia.</div>':'');
+  openOv('ov-dia');
+}
+async function removerRegistro(tabela){
+  const s=_diaSel; if(!s)return;
+  closeOv('ov-dia');
+  const nome=await pedirPin('Remover '+(tabela==='trocas'?'a troca':'a limpeza')+' de '+rotuloApto(s.hotel,s.apt)+' em '+s.dia.split('-').reverse().join('/')+'.');
+  if(!nome)return;
+  const {error}=await sb.from(tabela).delete().eq('hotel',s.hotel).eq('apt',s.apt).eq('dia',s.dia);
+  if(error){showToast('Erro ao remover');return;}
+  logAcao(tabela==='trocas'?'Troca removida':'Limpeza removida',rotuloApto(s.hotel,s.apt)+' · '+s.dia.split('-').reverse().join('/'),nome);
+  await Promise.all([carregarTrocas(),carregarLimpezas()]);
+  rerenderCompartilhado(); renderLembretePdf();
+  showToast(tabela==='trocas'?'Troca removida':'Limpeza removida');
+}
+// Apaga tudo que foi registrado num dia (para quando carregaram o PDF errado)
+async function apagarRegistrosDoDia(){
+  const dia=_pdfDate; if(!dia)return;
+  const nT=cache.trocas.filter(r=>String(r.dia)===dia).length, nL=cache.limpezas.filter(r=>String(r.dia)===dia).length;
+  if(!nT&&!nL){showToast('Não há registros neste dia');return;}
+  const data=dia.split('-').reverse().join('/');
+  confirmar('Apagar os registros de '+data+'?',
+    `Vai apagar ${nT} troca${nT!==1?'s':''} e ${nL} limpeza${nL!==1?'s':''} de ${data} (do PDF e manuais). Use quando o PDF carregado estava errado. Depois é só carregar o PDF certo.`,
+    'Apagar',
+    async()=>{
+      const nome=await pedirPin('Apagar os registros de '+data+'.'); if(!nome)return;
+      const e1=await sb.from('trocas').delete().eq('dia',dia), e2=await sb.from('limpezas').delete().eq('dia',dia);
+      if(e1.error||e2.error){showToast('Erro ao apagar');return;}
+      logAcao('Registros do dia apagados',`${data} · ${nT} trocas, ${nL} limpezas`,nome);
+      await Promise.all([carregarTrocas(),carregarLimpezas()]);
+      rerenderCompartilhado(); renderLembretePdf(); showToast('Registros de '+data+' apagados');
+    });
+}
+
+// ── Histórico do apartamento ──────────────────────────────────────────────────
+let _aptoHist=null, _abaAntesApto='lista';
+function openAptoHist(hotel,apt){
+  _abaAntesApto=abaAtiva(); if(_abaAntesApto==='apto')_abaAntesApto='lista';
+  _aptoHist={hotel,apt,mes:_lavMonth||currentMonthKey()};
+  switchTab('apto',null);
+}
+function voltarDoApto(){
+  const idx={lista:0,lavanderia:1,manut:2}[_abaAntesApto];
+  if(idx!==undefined) switchTab(_abaAntesApto,document.querySelectorAll('.tab')[idx]);
+  else switchTab(_abaAntesApto,null);
+}
+function aptoMudarMes(d){ const nx=shiftMonth(_aptoHist.mes,d); if(nx>currentMonthKey())return; _aptoHist.mes=nx; renderAptoHist(); }
+function renderAptoHist(){
+  const root=document.getElementById('apto-content'); if(!root||!_aptoHist)return;
+  const {hotel,apt,mes}=_aptoHist, k=hotel+'||'+apt;
+  const tro=cache.trocas.filter(r=>r.hotel===hotel&&r.apt===apt);
+  const lim=cache.limpezas.filter(r=>r.hotel===hotel&&r.apt===apt);
+  // resumo dos últimos 6 meses
+  let meses=[]; for(let i=5;i>=0;i--) meses.push(shiftMonth(currentMonthKey(),-i));
+  const resumo=meses.map(m=>{
+    const nt=tro.filter(r=>String(r.dia).startsWith(m)).length, nl=lim.filter(r=>String(r.dia).startsWith(m)).length;
+    const max=Math.max(1,...meses.map(mm=>tro.filter(r=>String(r.dia).startsWith(mm)).length));
+    return `<button class="ah-mes ${m===mes?'active':''}" onclick="_aptoHist.mes='${m}';renderAptoHist()">
+      <span class="ah-bar"><span style="height:${Math.round(nt/max*100)}%"></span></span>
+      <b>${nt}</b><small>${MESES[parseInt(m.substring(5))-1].substring(0,3)}</small>${nl?`<em>${nl} limp.</em>`:''}</button>`;
+  }).join('');
+  // dias do mês escolhido
+  const dias=[...new Set(tro.concat(lim).filter(r=>String(r.dia).startsWith(mes)).map(r=>String(r.dia)))].sort();
+  const diasHtml=dias.length?dias.map(d=>{
+    const t=tro.find(r=>String(r.dia)===d), l=lim.find(r=>String(r.dia)===d);
+    const quem=[t,l].filter(Boolean).map(r=>r.origem==='manual'?('manual'+(r.registrado_por?' · '+esc(r.registrado_por):'')):'PDF')[0];
+    return `<button class="ah-dia" data-h="${esc(hotel)}" data-a="${esc(apt)}" data-d="${d}" onclick="openDia(this.dataset.h,this.dataset.a,this.dataset.d)">
+      <b>${d.substring(8)}/${d.substring(5,7)}</b><span>${t?'troca':''}${t&&l?' + ':''}${l?'limpeza':''}</span><small>${quem}</small></button>`;
+  }).join(''):'<div class="no-movement">Nenhum registro neste mês.</div>';
+  const nT=tro.filter(r=>String(r.dia).startsWith(mes)).length, nL=lim.filter(r=>String(r.dia).startsWith(mes)).length;
+  const valor=(ROOMS[hotel]?.apts[apt]!==undefined?PRECO.adminPorApto:0)+nT*PRECO.trocaEnxoval+nL*PRECO.limpezaComf;
+  // reparos
+  const reps=cache.manut.filter(r=>r.hotel===hotel&&r.apt===apt)
+    .sort((a,b)=>(!a.resolvido_em===!b.resolvido_em)?String(b.solicitado_em).localeCompare(String(a.solicitado_em)):(a.resolvido_em?1:-1));
+  const repsHtml=reps.length?reps.map(r=>`<div class="ah-rep ${r.resolvido_em?'done':''}">
+      <span class="mt-dot ${r.resolvido_em?'ok':'pend'}"></span>
+      <div><div class="ah-rep-desc">${esc(r.descricao)}</div>
+      <div class="mt-meta" style="margin-left:0;">Aberto por <b>${esc(r.solicitado_por)}</b> em ${fmtData(r.solicitado_em)}${r.resolvido_em?` · <span class="mt-done-line">resolvido por <b>${esc(r.resolvido_por||'')}</b> em ${fmtData(r.resolvido_em)}</span>`:''}</div>
+      ${fotosHtml(r)}</div></div>`).join(''):'<div class="no-movement">Nenhum reparo registrado.</div>';
+  const cfg=ROOMS[hotel]?.apts[apt];
+  root.innerHTML=`
+  <div class="lav-header">
+    <div><div class="lav-month">${esc(rotuloApto(hotel,apt))}</div><div class="lav-sub">${esc(hotel)} · apto ${esc(apt)}${cfg?' · '+CFG_LABEL[cfg]:''}${KING_APTS.has(k)?' · king':''}</div></div>
+    <button class="mt-btn-ghost" onclick="voltarDoApto()">‹ Voltar</button>
+  </div>
+  <div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">📈 Trocas nos últimos 6 meses</span></div>
+    <div class="ah-meses">${resumo}</div>
+  </div>
+  <div class="mt-section">
+    <div class="mt-section-head">
+      <div class="lav-nav" style="gap:8px;">
+        <button class="lav-nav-btn" onclick="aptoMudarMes(-1)">‹</button>
+        <span class="mt-section-title" style="font-size:12px;">${nomeMes(mes)}</span>
+        <button class="lav-nav-btn" onclick="aptoMudarMes(1)" ${mes>=currentMonthKey()?'disabled':''}>›</button>
+      </div>
+      <span class="ah-valor">${fmtR(valor)}</span>
+    </div>
+    <div class="ah-sub">${nT} troca${nT!==1?'s':''} · ${nL} limpeza${nL!==1?'s':''} · toque num dia para ver ou remover</div>
+    <div class="ah-dias">${diasHtml}</div>
+  </div>
+  <div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">🔧 Reparos</span>
+      <button class="mt-mini-btn" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openReparo(this.dataset.h,this.dataset.a)">+ Reparo</button></div>
+    ${repsHtml}
+  </div>`;
+}
+
+// ── Fotos dos reparos ─────────────────────────────────────────────────────────
+function urlFoto(path){ if(!path)return ''; try{return sb.storage.from('reparos').getPublicUrl(path).data.publicUrl;}catch(e){return '';} }
+function fotosHtml(r){
+  const f=[]; if(r.foto_antes)f.push(['Antes',r.foto_antes]); if(r.foto_depois)f.push(['Depois',r.foto_depois]);
+  if(!f.length)return '';
+  return `<div class="mt-fotos">${f.map(([lbl,p])=>`<button class="mt-foto" onclick="verFoto('${esc(urlFoto(p))}','${lbl}')"><img src="${esc(urlFoto(p))}" loading="lazy" alt="${lbl}"><span>${lbl}</span></button>`).join('')}</div>`;
+}
+function verFoto(url,lbl){
+  document.getElementById('foto-img').src=url;
+  document.getElementById('foto-lbl').textContent=lbl||'';
+  document.getElementById('foto-link').href=url;
+  openOv('ov-foto');
+}
+// Reduz a foto para no máximo 1600px (JPEG ~80%) antes de enviar, para não pesar
+async function comprimirFoto(file){
+  const img=await new Promise((ok,erro)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=erro;i.src=URL.createObjectURL(file);});
+  const max=1600, esc_=Math.min(1,max/Math.max(img.width,img.height));
+  const c=document.createElement('canvas'); c.width=Math.round(img.width*esc_); c.height=Math.round(img.height*esc_);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  URL.revokeObjectURL(img.src);
+  return await new Promise(ok=>c.toBlob(ok,'image/jpeg',0.8));
+}
+async function enviarFoto(inputId,prefixo){
+  const inp=document.getElementById(inputId); const file=inp&&inp.files&&inp.files[0];
+  if(!file)return null;
+  const blob=await comprimirFoto(file);
+  const path=prefixo+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
+  const {error}=await sb.storage.from('reparos').upload(path,blob,{contentType:'image/jpeg',upsert:false});
+  if(error)throw error;
+  return path;
+}
+function previewFoto(inputId,prevId){
+  const inp=document.getElementById(inputId), prev=document.getElementById(prevId);
+  const f=inp.files&&inp.files[0];
+  if(!f){prev.innerHTML='';return;}
+  prev.innerHTML=`<img src="${URL.createObjectURL(f)}"><button type="button" onclick="limparFoto('${inputId}','${prevId}')">✕ tirar foto</button>`;
+}
+function limparFoto(inputId,prevId){ document.getElementById(inputId).value=''; document.getElementById(prevId).innerHTML=''; }
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
   const month=_lavMonth||currentMonthKey();
@@ -2696,13 +3118,17 @@ function closeDialog(){document.getElementById('overlay').classList.remove('show
 async function confirmReset(){
   if(!_ready){closeDialog();showToast('Sem conexão com o banco');return;}
   const month=_lavMonth||currentMonthKey();
+  closeDialog();
+  const quem=await pedirPin('Zerar '+nomeMes(month)+': apaga todas as trocas e limpezas do mês.');
+  if(!quem)return;
+  const nT=cache.trocas.filter(r=>String(r.dia).startsWith(month)).length, nL=cache.limpezas.filter(r=>String(r.dia).startsWith(month)).length;
   const ini=month+'-01';
   const[y,m]=month.split('-').map(Number);
   const prox=(m===12)?((y+1)+'-01-01'):(y+'-'+String(m+1).padStart(2,'0')+'-01');
   const e1=await sb.from('trocas').delete().gte('dia',ini).lt('dia',prox);
   const e2=await sb.from('limpezas').delete().gte('dia',ini).lt('dia',prox);
-  closeDialog();
   if(e1.error||e2.error){showToast('Erro ao zerar o mês');return;}
+  logAcao('Mês zerado',nomeMes(month)+' · '+nT+' trocas, '+nL+' limpezas apagadas',quem);
   try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
   renderLavanderia();
   showToast('Mês zerado com sucesso');
@@ -2712,6 +3138,7 @@ let _modoSaida='saida';
 function openSaida(modo){
   if(!_ready){showToast('Sem conexão com o banco');return;}
   document.getElementById('saida-data').value=_pdfDate||todayKey();
+  document.getElementById('sd-nome').value=nomeSalvo();
   setModoSaida(modo||'saida');
   document.getElementById('overlay-saida').classList.add('show');
 }
@@ -2757,22 +3184,30 @@ async function addSaidaManual(){
   const apt=document.getElementById('saida-apto').value;
   const dia=document.getElementById('saida-data').value;
   if(!hotel||!apt||!dia){showToast('Preencha hotel, apto e data');return;}
+  const quem=document.getElementById('sd-nome').value.trim();
+  if(!quem){showToast('Coloque seu nome');document.getElementById('sd-nome').focus();return;}
+  salvarNome(quem);
+  const reg={hotel,apt,dia,origem:'manual',registrado_por:quem};
+  const dataBR=dia.split('-').reverse().join('/');
   const btn=document.getElementById('sd-salvar'); btn.disabled=true;
   try{
     if(_modoSaida==='limpeza'){
-      const {data,error}=await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
+      const {data,error}=await sb.from('limpezas').upsert([reg],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
       if(error){showToast('Erro ao registrar a limpeza');return;}
+      if(data&&data.length) logAcao('Limpeza manual',rotuloApto(hotel,apt)+' · '+dataBR,quem);
       await carregarLimpezas();
       closeSaida(); _lavMonth=String(dia).substring(0,7); renderLavanderia();
       showToast((data&&data.length)?'Limpeza registrada · '+hotel+' '+apt:'Essa limpeza já estava registrada');
       return;
     }
-    const {data,error}=await sb.from('trocas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
+    const {data,error}=await sb.from('trocas').upsert([reg],{onConflict:'hotel,apt,dia',ignoreDuplicates:true}).select();
     if(error){showToast('Erro ao adicionar saída');return;}
     const novaTroca=!!(data&&data.length);
-    if(document.getElementById('sd-limp').checked && LIMPEZA_HOTEIS.has(hotel)){
-      await sb.from('limpezas').upsert([{hotel,apt,dia}],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
+    const comLimp=document.getElementById('sd-limp').checked && LIMPEZA_HOTEIS.has(hotel);
+    if(comLimp){
+      await sb.from('limpezas').upsert([reg],{onConflict:'hotel,apt,dia',ignoreDuplicates:true});
     }
+    if(novaTroca) logAcao('Saída manual',rotuloApto(hotel,apt)+' · '+dataBR+(comLimp?' · com limpeza':''),quem);
     // se for o dia carregado na lista, reflete lá também (para o enxoval do dia)
     if(_pdfDate===dia){
       const k=hotel+'||'+apt;
@@ -2900,6 +3335,7 @@ async function parseAndRender(lines,filename){
   if(_ready){
     const novas=await registrarTrocas(pdfDateKey);
     await registrarLimpezas(_dep,pdfDateKey);
+    logAcao('PDF carregado',filename+' · '+pdfDateKey.split('-').reverse().join('/')+' · '+novas+' trocas novas',nomeSalvo()||null);
     if(novas>0)showToast(novas+' troca'+(novas>1?'s':'')+' registrada'+(novas>1?'s':'')+' na lavanderia');
     else showToast('Dia já registrado na lavanderia');
   }else{
@@ -2914,6 +3350,7 @@ async function parseAndRender(lines,filename){
     else setTimeout(()=>showToast('PDF de '+pdfDateKey.split('-').reverse().join('/')+' registrado · a lista de hoje não mudou'),2600);
   }
   renderUI();
+  renderLembretePdf();
 }
 // ── LINEN TOTALS ──────────────────────────────────────────────────────────────
 function calcTotals(){
@@ -3052,7 +3489,7 @@ function renderUI(){
   const{tot:lin,detalhes}=calcTotals();
   _detalhes=detalhes;
   document.getElementById('results').innerHTML=`
-  ${_pdfDate?`<div class="date-banner"><span class="date-banner-icon">📅</span><span>${formatPdfDate(_pdfDate)}</span></div>`:''}
+  ${_pdfDate?`<div class="date-banner"><span class="date-banner-icon">📅</span><span>${formatPdfDate(_pdfDate)}</span><button class="btn-apagar-dia" onclick="apagarRegistrosDoDia()" title="Para quando o PDF carregado estava errado">🗑 Apagar registros do dia</button></div>`:''}
   <div class="summary-grid">
     <div class="metric"><div class="metric-label">Chegadas</div><div class="metric-value">${tIn}</div></div>
     <div class="metric"><div class="metric-label">Saídas</div><div class="metric-value">${tOut}</div></div>
@@ -3118,7 +3555,7 @@ function renderCards(){
           if(_ready)chipsHtml+=`<button class="enx-toggle in" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">− Tirar do enxoval</button>`;
         }
       }
-      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
+      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left apt-link" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;
   });

@@ -1175,6 +1175,20 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .papel-chip span{font-size:11px;color:var(--amber);font-weight:600;}
 .papel-chip.zero{border-color:var(--red-bdr);background:var(--red-dim);}
 .papel-chip.zero span{color:var(--red);}
+/* ══ controles ══ */
+.ctrl-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--b0);}
+.ctrl-row:first-of-type{border-top:none;}
+.ctrl-row.sem{grid-template-columns:1fr auto;}
+.ctrl-nome{font-size:14px;font-weight:500;color:var(--t1);}
+.ctrl-ctl{display:flex;align-items:center;gap:8px;}
+.ctrl-step{width:34px;height:34px;border-radius:50%;border:1px solid var(--b2);background:var(--bg-3);color:var(--t1);font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font);-webkit-tap-highlight-color:transparent;}
+.ctrl-step:disabled{opacity:.3;cursor:default;}
+.ctrl-qtd{font-size:12px;color:var(--t3);min-width:46px;text-align:center;}
+.ctrl-qtd b{font-size:17px;color:var(--t1);}
+.ctrl-row.falta .ctrl-qtd b{color:var(--red);}
+.ctrl-status{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);background:var(--bg-3);color:var(--t3);white-space:nowrap;}
+.ctrl-status.ok{background:var(--green-dim);color:var(--green);}
+.ctrl-status.falta{background:var(--red-dim);color:var(--red);}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1519,6 +1533,11 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
       <option value="cs">Casal + solteiro</option>
     </select>
     <label class="cfg-check"><input type="checkbox" id="ap-king"> Cama king (usa lençol king)</label>
+    <div class="dialog-row" style="grid-template-columns:1fr 1fr;">
+      <div><label>Controles de TV</label><input class="dialog-field" type="number" min="0" id="ap-ctv" inputmode="numeric"></div>
+      <div><label>Controles do ar</label><input class="dialog-field" type="number" min="0" id="ap-car" inputmode="numeric"></div>
+    </div>
+    <div class="dialog-hint">Quantos o apto deve ter. Coloque 0 no ar se o apto não tem ar-condicionado.</div>
     <label>Nome na planilha (opcional)</label>
     <input class="dialog-field" id="ap-rotulo">
     <div class="dialog-hint">Deixe vazio para usar o padrão do hotel.</div>
@@ -2151,6 +2170,7 @@ function renderManut(){
     <div class="mt-stock-grid">${stock}</div>
   </div>
   ${papelResumoManut()}
+  ${ctrlResumoManut()}
   <div class="mt-metrics">
     <div class="mt-metric"><div class="mt-metric-val amber">${pend.length}</div><div class="mt-metric-lbl">Pendentes</div></div>
     <div class="mt-metric"><div class="mt-metric-val green">${resMes.length}</div><div class="mt-metric-lbl">Resolvidos no mês</div></div>
@@ -2810,6 +2830,8 @@ function openApto(hotel,apt){
   const num=document.getElementById('ap-num'); num.value=info?apt:''; num.disabled=!!info;
   document.getElementById('ap-cfg').value=info?info.config:'c';
   document.getElementById('ap-king').checked=info?!!info.king:false;
+  document.getElementById('ap-ctv').value=info&&info.controles_tv!=null?info.controles_tv:1;
+  document.getElementById('ap-car').value=info&&info.controles_ar!=null?info.controles_ar:1;
   document.getElementById('ap-rotulo').value=info&&info.rotulo?info.rotulo:'';
   document.getElementById('ap-rotulo').placeholder=((HOTEIS_INFO[hotel]&&HOTEIS_INFO[hotel].sigla)||hotel)+' '+(apt||'101');
   document.getElementById('ap-remover').style.display=info?'':'none';
@@ -2820,7 +2842,9 @@ async function salvarApto(){
   const c=_cfgApto; if(!c)return;
   const apt=c.apt||document.getElementById('ap-num').value.trim();
   const dados={config:document.getElementById('ap-cfg').value,king:document.getElementById('ap-king').checked,
-    rotulo:document.getElementById('ap-rotulo').value.trim()||null,ativo:true};
+    rotulo:document.getElementById('ap-rotulo').value.trim()||null,ativo:true,
+    controles_tv:Math.max(0,parseInt(document.getElementById('ap-ctv').value,10)||0),
+    controles_ar:Math.max(0,parseInt(document.getElementById('ap-car').value,10)||0)};
   if(!apt){showToast('Digite o número do apto');return;}
   if(!c.id && ROOMS[c.hotel]?.apts[apt]!==undefined){showToast('Esse apto já está cadastrado');return;}
   const {error}=c.id
@@ -2828,7 +2852,7 @@ async function salvarApto(){
     : await sb.from('aptos').upsert(Object.assign({hotel:c.hotel,apt},dados),{onConflict:'hotel,apt'});
   if(error){showToast('Erro ao salvar o apto');return;}
   closeOv('ov-apto'); await carregarCadastro(); _cadastroMudou=true; renderConfig();
-  logAcao(c.id?'Apto alterado':'Apto adicionado',c.hotel+' '+apt+' · '+({c:'casal','2s':'2 solteiro',cs:'casal + solteiro'})[dados.config]+(dados.king?' · king':''));
+  logAcao(c.id?'Apto alterado':'Apto adicionado',c.hotel+' '+apt+' · '+({c:'casal','2s':'2 solteiro',cs:'casal + solteiro'})[dados.config]+(dados.king?' · king':'')+' · '+dados.controles_tv+' TV / '+dados.controles_ar+' ar');
   showToast(c.id?'Apto atualizado':'Apto '+apt+' adicionado ao '+c.hotel);
 }
 function removerApto(){
@@ -3090,6 +3114,7 @@ function renderAptoHist(){
     <button class="mt-btn-ghost" onclick="voltarDoApto()">‹ Voltar</button>
   </div>
   ${papelSecaoApto(hotel,apt)}
+  ${ctrlSecaoApto(hotel,apt)}
   <div class="mt-section">
     <div class="mt-section-head"><span class="mt-section-title">📈 Trocas nos últimos 6 meses</span></div>
     <div class="ah-meses">${resumo}</div>
@@ -3155,10 +3180,14 @@ function limparFoto(inputId,prevId){ document.getElementById(inputId).value=''; 
 cache.papel={};   // 'hotel||apt' -> {quantidade, atualizado_por, atualizado_em}
 async function carregarPapel(){
   try{
-    const {data,error}=await sb.from('apto_itens').select('*').eq('item','papel_higienico');
+    const {data,error}=await sb.from('apto_itens').select('*');
     if(error)throw error;
-    cache.papel={}; (data||[]).forEach(r=>cache.papel[r.hotel+'||'+r.apt]=r);
-  }catch(e){ cache.papel={}; }
+    cache.papel={}; cache.ctrl={tv:{},ar:{}};
+    (data||[]).forEach(r=>{const k=r.hotel+'||'+r.apt;
+      if(r.item==='papel_higienico')cache.papel[k]=r;
+      else if(r.item==='controle_tv')cache.ctrl.tv[k]=r;
+      else if(r.item==='controle_ar')cache.ctrl.ar[k]=r;});
+  }catch(e){ cache.papel={}; cache.ctrl={tv:{},ar:{}}; }
 }
 function papelMin(){ return PRECO.papelMinimo; }
 function papelBaixo(r){ return r && r.quantidade<papelMin(); }
@@ -3220,6 +3249,83 @@ function papelResumoManut(){
     <div class="mt-section-head"><span class="mt-section-title">🧻 Papel higiênico nos aptos</span><span class="cfg-tag">mínimo ${papelMin()}</span></div>
     ${baixos.length?`<div class="papel-chips">${chips}</div>`:`<div class="no-movement">${contados.length?'Todos os aptos contados estão com papel suficiente.':'Nenhum apto contado ainda.'}</div>`}
     <div class="papel-sub" style="margin-top:10px;">${contados.length} de ${todos.length} aptos contados${semContar?` · ${semContar} sem contagem`:''}. Para contar, toque no número do apto.</div>
+  </div>`;
+}
+// ── CONTROLES (TV e ar) POR APTO ──────────────────────────────────────────────
+// Esperado: aptos.controles_tv / aptos.controles_ar (0 no ar = apto sem ar).
+// Presentes: apto_itens com item 'controle_tv' / 'controle_ar'.
+cache.ctrl={tv:{},ar:{}};
+const CTRL={tv:{item:'controle_tv',nome:'Controle da TV',ico:'📺',col:'controles_tv'},ar:{item:'controle_ar',nome:'Controle do ar',ico:'❄️',col:'controles_ar'}};
+function ctrlEsperado(hotel,apt,tipo){
+  const a=APTOS_INFO[hotel+'||'+apt]; const v=a?a[CTRL[tipo].col]:undefined;
+  return (v===undefined||v===null)?1:Number(v);
+}
+function ctrlFalta(hotel,apt,tipo){
+  const r=cache.ctrl[tipo][hotel+'||'+apt]; if(!r)return null;   // não contado
+  return Math.max(0,ctrlEsperado(hotel,apt,tipo)-r.quantidade);
+}
+async function gravarItemApto(hotel,apt,item,quantidade,motivo){
+  const quem=await pedirNome(motivo); if(!quem)return false;
+  quantidade=Math.max(0,quantidade|0);
+  const {error}=await sb.from('apto_itens').upsert({hotel,apt,item,quantidade,atualizado_por:quem,atualizado_em:new Date().toISOString()},{onConflict:'hotel,apt,item'});
+  if(error){showToast('Erro ao salvar');return false;}
+  await carregarPapel(); rerenderCompartilhado(); return true;
+}
+function ajustarCtrl(hotel,apt,tipo,delta){
+  const r=cache.ctrl[tipo][hotel+'||'+apt];
+  const base=r?r.quantidade:ctrlEsperado(hotel,apt,tipo);   // primeira contagem parte do esperado
+  gravarItemApto(hotel,apt,CTRL[tipo].item,base+(r?delta:Math.min(0,delta)),'Atualizar os controles de '+rotuloApto(hotel,apt)+'.');
+}
+function confirmarCtrlOk(hotel,apt){
+  // "está tudo aqui": grava presentes = esperado para TV e ar
+  (async()=>{
+    const quem=await pedirNome('Confirmar os controles de '+rotuloApto(hotel,apt)+'.'); if(!quem)return;
+    const agora=new Date().toISOString(), rows=[];
+    ['tv','ar'].forEach(t=>{const e=ctrlEsperado(hotel,apt,t); if(e>0) rows.push({hotel,apt,item:CTRL[t].item,quantidade:e,atualizado_por:quem,atualizado_em:agora});});
+    if(!rows.length)return;
+    const {error}=await sb.from('apto_itens').upsert(rows,{onConflict:'hotel,apt,item'});
+    if(error){showToast('Erro ao salvar');return;}
+    await carregarPapel(); rerenderCompartilhado(); showToast('Controles conferidos · '+rotuloApto(hotel,apt));
+  })();
+}
+function ctrlLinha(hotel,apt,tipo){
+  const c=CTRL[tipo], esp=ctrlEsperado(hotel,apt,tipo), r=cache.ctrl[tipo][hotel+'||'+apt];
+  if(esp===0) return `<div class="ctrl-row sem"><span class="ctrl-nome">${c.ico} ${c.nome}</span><span class="ctrl-status">apto sem ${tipo==='ar'?'ar-condicionado':'TV'}</span></div>`;
+  const falta=r?Math.max(0,esp-r.quantidade):null;
+  const status=r===undefined||r===null?'<span class="ctrl-status">não conferido</span>'
+    :falta?`<span class="ctrl-status falta">falta ${falta}</span>`:'<span class="ctrl-status ok">ok</span>';
+  return `<div class="ctrl-row ${falta?'falta':''}">
+    <span class="ctrl-nome">${c.ico} ${c.nome}</span>
+    <span class="ctrl-ctl">
+      <button class="ctrl-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarCtrl(this.dataset.h,this.dataset.a,'${tipo}',-1)" ${r&&r.quantidade<=0?'disabled':''}>−</button>
+      <span class="ctrl-qtd"><b>${r?r.quantidade:'–'}</b> de ${esp}</span>
+      <button class="ctrl-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarCtrl(this.dataset.h,this.dataset.a,'${tipo}',1)">+</button>
+    </span>
+    ${status}
+  </div>`;
+}
+function ctrlSecaoApto(hotel,apt){
+  const tv=cache.ctrl.tv[hotel+'||'+apt], ar=cache.ctrl.ar[hotel+'||'+apt];
+  const ult=[tv,ar].filter(Boolean).sort((a,b)=>String(b.atualizado_em).localeCompare(String(a.atualizado_em)))[0];
+  const falta=(ctrlFalta(hotel,apt,'tv')||0)+(ctrlFalta(hotel,apt,'ar')||0);
+  return `<div class="mt-section ${falta?'papel-box low':''}">
+    <div class="mt-section-head"><span class="mt-section-title">🎮 Controles</span>
+      <button class="mt-mini-btn" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="confirmarCtrlOk(this.dataset.h,this.dataset.a)">✓ Está tudo aqui</button></div>
+    ${ctrlLinha(hotel,apt,'tv')}${ctrlLinha(hotel,apt,'ar')}
+    <div class="papel-sub">${ult?`Conferido por <b>${esc(ult.atualizado_por||'–')}</b> em ${fmtQuando(ult.atualizado_em)}`:'Ainda não conferido. Use − e + ou "Está tudo aqui".'}</div>
+  </div>`;
+}
+function ctrlResumoManut(){
+  const lista=[];
+  hoteisAtivosOrdenados().forEach(h=>aptosOrdenados(h).forEach(a=>{
+    const ft=ctrlFalta(h,a,'tv')||0, fa=ctrlFalta(h,a,'ar')||0;
+    if(ft||fa) lista.push({h,a,ft,fa});
+  }));
+  const chips=lista.map(x=>`<button class="papel-chip zero" data-h="${esc(x.h)}" data-a="${esc(x.a)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">
+    <b>${esc(rotuloApto(x.h,x.a))}</b><span>${[x.ft?`falta ${x.ft} TV`:'',x.fa?`falta ${x.fa} ar`:''].filter(Boolean).join(' · ')}</span></button>`).join('');
+  return `<div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">🎮 Controles faltando</span></div>
+    ${lista.length?`<div class="papel-chips">${chips}</div>`:'<div class="no-movement">Nenhum controle faltando nos aptos conferidos.</div>'}
   </div>`;
 }
 // ── DIALOG ────────────────────────────────────────────────────────────────────

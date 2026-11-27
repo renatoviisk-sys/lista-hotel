@@ -1191,6 +1191,17 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .ctrl-status.falta{background:var(--red-dim);color:var(--red);}
 .ctrl-row.novo .ctrl-status{background:var(--indigo-dim);color:var(--indigo);}
 .mt-mini-btn.destaque{background:var(--green-dim);color:var(--green);border-color:var(--green-bdr);}
+.apt-avisos{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.aviso-chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:var(--r-pill);background:var(--red-dim);color:var(--red);border:1px solid var(--red-bdr);}
+.aviso-chip.ctrl{background:var(--indigo-dim);color:var(--indigo);border-color:var(--indigo-bdr);}
+.avisos-dia{background:var(--bg-1);border:1px solid var(--red-bdr);border-radius:var(--r-lg);padding:1.1rem 1.25rem;margin-bottom:1.75rem;box-shadow:var(--sh-sm);}
+.avisos-linha{display:flex;flex-direction:column;gap:7px;padding:8px 0;border-top:1px solid var(--b0);}
+.avisos-linha:first-of-type{border-top:none;}
+.avisos-lbl{font-size:13px;font-weight:600;color:var(--t1);}
+.avisos-lbl b{color:var(--red);}
+.avisos-aptos{display:flex;flex-wrap:wrap;gap:5px;}
+.aviso-apto{font-size:12px;font-weight:600;font-family:var(--font);padding:5px 10px;border-radius:var(--r-pill);border:1px solid var(--b1);background:var(--bg-2);color:var(--t1);cursor:pointer;}
+.aviso-apto small{color:var(--red);font-weight:700;margin-left:2px;}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -3362,6 +3373,39 @@ function ctrlResumoManut(){
     ${lista.length?`<div class="papel-chips">${chips}</div>`:'<div class="no-movement">Nenhum controle faltando nos aptos conferidos.</div>'}
   </div>`;
 }
+// ── AVISOS NA LISTA DO DIA (papel e controles para levar na sacola) ───────────
+function avisosApto(hotel,apt){
+  const k=hotel+'||'+apt, out=[];
+  const p=cache.papel&&cache.papel[k];
+  if(papelBaixo(p)) out.push({tipo:'papel',txt:`🧻 Levar papel higiênico · tem ${p.quantidade}`});
+  const ft=ctrlFalta(hotel,apt,'tv')||0, fa=ctrlFalta(hotel,apt,'ar')||0;
+  if(ft) out.push({tipo:'ctrl',txt:`📺 Falta ${ft} controle da TV`});
+  if(fa) out.push({tipo:'ctrl',txt:`❄️ Falta ${fa} controle do ar`});
+  return out;
+}
+function avisosAptoHTML(hotel,apt){
+  const av=avisosApto(hotel,apt); if(!av.length)return '';
+  return `<div class="apt-avisos">${av.map(a=>`<span class="aviso-chip ${a.tipo}">${a.txt}</span>`).join('')}</div>`;
+}
+// Resumo no topo: aptos com movimento hoje que precisam de papel ou controle
+function avisosDiaHTML(){
+  const papel=[], ctrl=[];
+  Object.keys(ROOMS).sort((a,b)=>ROOMS[a].order-ROOMS[b].order).forEach(h=>{
+    aptosOrdenados(h).forEach(a=>{
+      const k=h+'||'+a; if(!((_dep[k]&&_dep[k].length)||(_arr[k]&&_arr[k].length)))return;   // só quem tem movimento hoje
+      avisosApto(h,a).forEach(x=>{ (x.tipo==='papel'?papel:ctrl).push({h,a,txt:x.txt}); });
+    });
+  });
+  if(!papel.length && !ctrl.length) return '';
+  const chip=x=>`<button class="aviso-apto" data-h="${esc(x.h)}" data-a="${esc(x.a)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">${esc(rotuloApto(x.h,x.a))}</button>`;
+  const papelTxt=x=>{const q=cache.papel[x.h+'||'+x.a].quantidade;return chip(x).replace('</button>',` <small>${q}</small></button>`);};
+  return `<div class="avisos-dia">
+    <div class="enxoval-title" style="margin-bottom:0.6rem;">🛍️ Levar também na sacola</div>
+    ${papel.length?`<div class="avisos-linha"><span class="avisos-lbl">🧻 Papel higiênico <b>${papel.length}</b> apto${papel.length>1?'s':''}</span><div class="avisos-aptos">${papel.map(papelTxt).join('')}</div></div>`:''}
+    ${ctrl.length?`<div class="avisos-linha"><span class="avisos-lbl">🎮 Controle faltando <b>${ctrl.length}</b></span><div class="avisos-aptos">${ctrl.map(x=>chip(x).replace('</button>',` <small>${x.txt.includes('TV')?'TV':'ar'}</small></button>`)).join('')}</div></div>`:''}
+    <div class="papel-sub" style="text-align:left;margin-top:8px;">Só aptos com saída ou chegada hoje. Toque no apto para atualizar a contagem depois de levar.</div>
+  </div>`;
+}
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
   const month=_lavMonth||currentMonthKey();
@@ -3722,6 +3766,7 @@ function atualizarListaDoDia(){
   if(er) er.innerHTML=enxovalDiaHTML(lin);
   const hr=document.getElementById('enxoval-hotel-root');
   if(hr) hr.innerHTML=enxovalPorHotelHTML(detalhes);
+  const ar=document.getElementById('avisos-dia-root'); if(ar) ar.innerHTML=avisosDiaHTML();
   renderCards();
 }
 // Botão: tira/recoloca o ENXOVAL FÍSICO de um apto (não mexe no R$8,50).
@@ -3755,6 +3800,7 @@ function renderUI(){
     <div class="metric"><div class="metric-label">Aptos</div><div class="metric-value">${total}</div></div>
   </div>
   <div id="enxoval-dia-root">${enxovalDiaHTML(lin)}</div>
+  <div id="avisos-dia-root">${avisosDiaHTML()}</div>
   <div id="enxoval-hotel-root">${enxovalPorHotelHTML(detalhes)}</div>
   <button class="detalhamento-btn" onclick="toggleDetalhamento(this)">📋 Ver detalhamento</button>
   <div id="detalhamento-section" class="detalhamento-section" style="display:none;"></div>
@@ -3813,7 +3859,7 @@ function renderCards(){
           if(_ready)chipsHtml+=`<button class="enx-toggle in" onclick="toggleEnxoval('${esc(hotel)}','${esc(apt)}')">− Tirar do enxoval</button>`;
         }
       }
-      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left apt-link" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}</div></div>`;
+      sec+=`<div class="apt-card ${emp?'':'has-movement'}${foraEnx?' apt-foraenx':''}"><div class="apt-left apt-link" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)"><span class="apt-number">${apt}</span><span class="bed-config">${cfgLabel}</span></div><div class="apt-right"><div class="badges-row">${badge}</div>${rows}${chipsHtml}${avisosAptoHTML(hotel,apt)}</div></div>`;
     });
     if(sec)html+=`<div class="hotel-section"><div class="hotel-header">${hotel}</div>${sec}</div>`;
   });

@@ -1084,6 +1084,11 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .pdf-lembrete.leve{background:var(--bg-1);border-color:var(--b2);color:var(--t2);}
 .pdf-lembrete.leve b{color:var(--t1);}
 .pdf-lembrete-ico{font-size:16px;line-height:1.3;}
+.ss-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--amber-bdr);flex-wrap:wrap;}
+.ss-row small{display:block;color:var(--t2);font-size:11.5px;margin-top:2px;}
+.ss-acoes{display:flex;gap:6px;}
+.ss-btn{font-size:11px;font-weight:700;font-family:var(--font);padding:6px 11px;border-radius:var(--r-pill);cursor:pointer;border:1px solid var(--amber-bdr);background:var(--amber);color:#1f1300;}
+.ss-btn.ghost{background:transparent;color:var(--amber);}
 .pdf-lembrete a.lk{color:var(--amber);font-weight:700;text-decoration:underline;cursor:pointer;}
 .lav-day-chip.click{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .lav-day-chip.click:hover{border-color:var(--red-bdr);color:var(--red);}
@@ -3067,9 +3072,16 @@ function renderLembretePdf(){
   const temHoje=cache.trocas.some(r=>String(r.dia)===todayKey());
   // chegada nova num apto que já estava ocupado = provável saída não registrada
   const ss=(typeof chegadasSemSaida==='function')?chegadasSemSaida():[];
-  let ssHtml=ss.length?`<div class="pdf-lembrete" style="cursor:default;">
-    <span class="pdf-lembrete-ico">🔎</span>
-    <span><b>Possível saída não registrada</b> em ${ss.length} apto${ss.length>1?'s':''}: ${ss.slice(0,8).map(x=>`<a class="lk" data-h="${esc(x.hotel)}" data-a="${esc(x.apt)}" onclick="event.stopPropagation();openAptoHist(this.dataset.h,this.dataset.a)">${esc(rotuloApto(x.hotel,x.apt))}</a> (chegou ${fmtData(x.cur).substring(0,5)}, já estava ocupado desde ${fmtData(x.ant).substring(0,5)})`).join('; ')}${ss.length>8?' e mais '+(ss.length-8):''}. Provavelmente falta o PDF de algum dia no meio, e a troca não foi cobrada.</span>
+  let ssHtml=ss.length?`<div class="pdf-lembrete" style="cursor:default;display:block;">
+    <div style="margin-bottom:6px;">🔎 <b>Possível saída não registrada</b> em ${ss.length} apto${ss.length>1?'s':''}. A troca pode não ter sido cobrada.</div>
+    ${ss.map(x=>`<div class="ss-row">
+      <span><a class="lk" data-h="${esc(x.hotel)}" data-a="${esc(x.apt)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)">${esc(rotuloApto(x.hotel,x.apt))}</a>
+        <small>ocupado desde ${fmtData(x.ant).substring(0,5)}, nova chegada ${fmtData(x.cur).substring(0,5)}: a saída foi entre ${fmtData(addDias(x.ant,1)).substring(0,5)} e ${fmtData(x.cur).substring(0,5)}</small></span>
+      <span class="ss-acoes">
+        <button class="ss-btn" data-h="${esc(x.hotel)}" data-a="${esc(x.apt)}" data-d="${x.cur}" onclick="openSaida('saida',this.dataset.h,this.dataset.a,this.dataset.d)">Registrar saída</button>
+        <button class="ss-btn ghost" onclick="dispensarSemSaida(${x.id})">Não foi saída</button>
+      </span></div>`).join('')}
+    <div class="papel-sub" style="text-align:left;margin-top:6px;">Dica: recarregar o PDF dos dias do intervalo resolve sozinho, se a saída estiver nele.</div>
   </div>`:'';
   // Provisório: dias do mês que já tinham PDF antes do in-house existir e ainda
   // não tiveram as chegadas gravadas (precisam ser recarregados). Some sozinho quando completar.
@@ -3717,8 +3729,8 @@ function chegadasSemSaida(){
     const ents=m.ent[k], sais=m.sai[k]||[];
     for(let i=1;i<ents.length;i++){
       const ant=String(ents[i-1].dia), cur=String(ents[i].dia);
-      if(cur<limite)continue;
-      if(!sais.some(d=>d>ant&&d<=cur)){ const j=k.indexOf('||'); out.push({hotel:k.substring(0,j),apt:k.substring(j+2),ant,cur}); }
+      if(cur<limite||ents[i].sem_saida_ok)continue;
+      if(!sais.some(d=>d>ant&&d<=cur)){ const j=k.indexOf('||'); out.push({hotel:k.substring(0,j),apt:k.substring(j+2),ant,cur,id:ents[i].id}); }
     }
   });
   return out;
@@ -3751,6 +3763,17 @@ function estadoAptoTexto(hotel,apt){
   if(st.estado==='vago') return `<div class="estado-apto vago">Vago desde ${fmtData(st.desde)}</div>`;
   return `<div class="estado-apto">Ocupação ainda desconhecida (falta histórico de chegadas)</div>`;
 }
+async function dispensarSemSaida(id){
+  const e=cache.entradas.find(x=>x.id===id); if(!e)return;
+  confirmar('Dispensar o aviso de '+rotuloApto(e.hotel,e.apt)+'?','Use quando não houve saída de verdade (reserva cancelada, hóspede trocou de apto, no-show). Nenhuma troca é registrada.','Dispensar',
+    async()=>{
+      const quem=await pedirNome('Dispensar aviso de saída.'); if(!quem)return;
+      const {error}=await sb.from('entradas').update({sem_saida_ok:true}).eq('id',id);
+      if(error){showToast('Erro ao salvar');return;}
+      logAcao('Aviso de saída dispensado',rotuloApto(e.hotel,e.apt)+' · chegada '+String(e.dia).split('-').reverse().join('/'),quem);
+      await carregarEntradas(); rerenderCompartilhado(); showToast('Aviso dispensado');
+    });
+}
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
   const month=_lavMonth||currentMonthKey();
@@ -3782,11 +3805,12 @@ async function confirmReset(){
 }
 // ── SAÍDA MANUAL ──────────────────────────────────────────────────────────────
 let _modoSaida='saida';
-function openSaida(modo){
+function openSaida(modo,hotel,apt,dia){
   if(!_ready){showToast('Sem conexão com o banco');return;}
-  document.getElementById('saida-data').value=_pdfDate||todayKey();
+  document.getElementById('saida-data').value=dia||_pdfDate||todayKey();
   document.getElementById('sd-nome').value=nomeSalvo();
   setModoSaida(modo||'saida');
+  if(hotel){ const hs=document.getElementById('saida-hotel'); hs.value=hotel; onSaidaHotel(); if(apt) document.getElementById('saida-apto').value=apt; }
   document.getElementById('overlay-saida').classList.add('show');
 }
 function setModoSaida(modo){
@@ -3866,6 +3890,7 @@ async function addSaidaManual(){
       }
     }
     try{await Promise.all([carregarTrocas(),carregarLimpezas()]);}catch(e){}
+    _movIdx=null; renderLembretePdf();
     closeSaida();
     _lavMonth=String(dia).substring(0,7);
     renderLavanderia();

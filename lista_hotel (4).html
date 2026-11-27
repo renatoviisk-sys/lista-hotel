@@ -1150,6 +1150,31 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
 .foto-bar span{font-weight:700;color:var(--t1);}
 .foto-bar a{color:var(--indigo);}
 .foto-bar button{margin-left:auto;background:var(--bg-3);border:1px solid var(--b2);color:var(--t1);border-radius:50%;width:32px;height:32px;cursor:pointer;}
+/* ══ papel higiênico ══ */
+.papel-box.low{border-color:var(--red-bdr);background:linear-gradient(180deg,var(--red-dim) 0%,var(--bg-1) 100%);}
+.papel-row{display:flex;align-items:center;justify-content:center;gap:18px;}
+.papel-step{
+  width:54px;height:54px;border-radius:50%;border:1px solid var(--b2);background:var(--bg-3);color:var(--t1);
+  font-size:24px;font-weight:600;font-family:var(--font);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:transform .08s;
+}
+.papel-step:active{transform:scale(0.92);}
+.papel-step:disabled{opacity:.3;cursor:default;}
+.papel-qtd{min-width:96px;text-align:center;font-size:40px;font-weight:700;color:var(--amber);line-height:1;cursor:pointer;letter-spacing:-0.03em;}
+.papel-box.low .papel-qtd{color:var(--red);}
+.papel-qtd small{display:block;font-size:11px;font-weight:600;color:var(--t3);letter-spacing:0.06em;text-transform:uppercase;margin-top:6px;}
+.papel-sub{font-size:12px;color:var(--t3);text-align:center;margin-top:12px;}
+.papel-sub b{color:var(--t2);}
+.papel-box.low .papel-sub{color:var(--red);}
+.papel-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;}
+.papel-chip{
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 11px;border-radius:var(--r-sm);cursor:pointer;
+  border:1px solid var(--amber-bdr);background:var(--amber-dim);color:var(--t1);font-family:var(--font);text-align:left;
+}
+.papel-chip b{font-size:13px;}
+.papel-chip span{font-size:11px;color:var(--amber);font-weight:600;}
+.papel-chip.zero{border-color:var(--red-bdr);background:var(--red-dim);}
+.papel-chip.zero span{color:var(--red);}
 .toast{
   position:fixed;
   bottom:2rem;
@@ -1560,6 +1585,18 @@ textarea.dialog-field{resize:vertical;min-height:84px;line-height:1.45;}
     <div class="foto-bar"><span id="foto-lbl"></span><a id="foto-link" target="_blank" rel="noopener">abrir original</a><button onclick="closeOv('ov-foto')">✕</button></div>
   </div>
 </div>
+<!-- Papel higiênico: digitar quantidade -->
+<div class="overlay" id="ov-papel">
+  <div class="dialog dialog-form">
+    <div class="dialog-title" id="pp-title">Papel higiênico</div>
+    <label>Quantos rolos tem no apto?</label>
+    <input class="dialog-field" id="pp-qtd" type="number" min="0" inputmode="numeric" onkeydown="if(event.key==='Enter')salvarPapelExato()">
+    <div class="dialog-btns" style="margin-top:1.5rem;">
+      <button class="btn-cancel" onclick="closeOv('ov-papel')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarPapelExato()">Salvar</button>
+    </div>
+  </div>
+</div>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -1616,7 +1653,7 @@ function avisoConfig(msg){
 }
 async function recarregarTudo(){
   await Promise.all([carregarCadastro(),carregarPin()]);
-  await Promise.all([carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
+  await Promise.all([carregarPapel(), carregarManutItens(), carregarManut(), carregarTrocas(), carregarLimpezas(), carregarListaAtual(), carregarOverrides()]);
 }
 // O Supabase devolve no máximo 1000 linhas por consulta. Quando a tabela passa
 // disso, as trocas mais novas somem da Lavanderia. Aqui buscamos em páginas
@@ -1693,6 +1730,7 @@ function assinarTempoReal(){
     .on('postgres_changes',{event:'*',schema:'public',table:'aptos'},         ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
     .on('postgres_changes',{event:'*',schema:'public',table:'config'},        ()=>recarregarDepois('cadastro',recarregarCadastroERenderizar))
     .on('postgres_changes',{event:'*',schema:'public',table:'ajustes_mes'},   ()=>recarregarDepois('ajustes',carregarAjustesMesAtual))
+    .on('postgres_changes',{event:'*',schema:'public',table:'apto_itens'},    ()=>recarregarDepois('papel',carregarPapel))
     .on('postgres_changes',{event:'*',schema:'public',table:'manut_itens'},   ()=>recarregarDepois('manut_itens',carregarManutItens))
     .on('postgres_changes',{event:'*',schema:'public',table:'manutencoes'},   ()=>recarregarDepois('manutencoes',carregarManut))
     .on('postgres_changes',{event:'*',schema:'public',table:'trocas'},        ()=>recarregarDepois('trocas',carregarTrocas))
@@ -1739,7 +1777,8 @@ let PRECO={
   adminPorApto: 230,
   trocaEnxoval: 8.5,
   limpezaComf:  25,
-  pacote30:     250,   // preço combinado de 30 trocas (o desconto é 30×troca − pacote)
+  pacote30:     250,
+  papelMinimo:  2,     // menos que isso de papel higiênico no apto = alerta   // preço combinado de 30 trocas (o desconto é 30×troca − pacote)
 };
 function esc(str){
   return String(str)
@@ -2111,6 +2150,7 @@ function renderManut(){
     </div>
     <div class="mt-stock-grid">${stock}</div>
   </div>
+  ${papelResumoManut()}
   <div class="mt-metrics">
     <div class="mt-metric"><div class="mt-metric-val amber">${pend.length}</div><div class="mt-metric-lbl">Pendentes</div></div>
     <div class="mt-metric"><div class="mt-metric-val green">${resMes.length}</div><div class="mt-metric-lbl">Resolvidos no mês</div></div>
@@ -2414,6 +2454,7 @@ function aplicarCadastro(hoteis,aptos,config){
   if(!isNaN(cfg.troca_enxoval))PRECO.trocaEnxoval=cfg.troca_enxoval;
   if(!isNaN(cfg.limpeza))PRECO.limpezaComf=cfg.limpeza;
   if(!isNaN(cfg.pacote_30_trocas))PRECO.pacote30=cfg.pacote_30_trocas;
+  if(!isNaN(cfg.papel_minimo))PRECO.papelMinimo=cfg.papel_minimo;
 }
 async function recarregarCadastroERenderizar(){
   await carregarCadastro();
@@ -2723,6 +2764,7 @@ function renderConfig(){
       <label>Troca de enxoval<input class="dialog-field" id="cfg-troca" inputmode="decimal" value="${String(PRECO.trocaEnxoval).replace('.',',')}"></label>
       <label>Limpeza<input class="dialog-field" id="cfg-limp" inputmode="decimal" value="${String(PRECO.limpezaComf).replace('.',',')}"></label>
       <label>Pacote de 30 trocas<input class="dialog-field" id="cfg-pacote" inputmode="decimal" value="${String(PRECO.pacote30).replace('.',',')}"></label>
+      <label>Mínimo de papel higiênico por apto<input class="dialog-field" id="cfg-papel" inputmode="numeric" value="${PRECO.papelMinimo}"></label>
     </div>
     <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="salvarPrecos()">Salvar preços</button>
   </div>
@@ -2752,7 +2794,8 @@ async function salvarPrecos(){
   const vals={admin_por_apto:numBR(document.getElementById('cfg-admin').value),
     troca_enxoval:numBR(document.getElementById('cfg-troca').value),
     limpeza:numBR(document.getElementById('cfg-limp').value),
-    pacote_30_trocas:numBR(document.getElementById('cfg-pacote').value)};
+    pacote_30_trocas:numBR(document.getElementById('cfg-pacote').value),
+    papel_minimo:numBR(document.getElementById('cfg-papel').value)};
   if(Object.values(vals).some(v=>isNaN(v)||v<0)){showToast('Confira os valores');return;}
   const {error}=await sb.from('config').upsert(Object.entries(vals).map(([chave,valor])=>({chave,valor})),{onConflict:'chave'});
   if(error){showToast('Erro ao salvar os preços');return;}
@@ -2866,24 +2909,27 @@ async function sha256(txt){
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 const hashPin=pin=>sha256('fenix-flats::'+String(pin).trim());
-let _pinResolver=null;
+let _pinResolver=null, _pinSoNome=false;
 // Pede nome (+ PIN, se houver PIN definido). Devolve o nome, ou null se cancelou.
-function pedirPin(motivo){
+// soNome=true: pede só o nome (para coisas do dia a dia, como contar papel).
+function pedirPin(motivo,soNome){
   return new Promise(resolve=>{
-    if(Date.now()<_pinOkAte && _pinNome){ resolve(_pinNome); return; }
-    _pinResolver=resolve;
+    if(!soNome && Date.now()<_pinOkAte && _pinNome){ resolve(_pinNome); return; }
+    _pinResolver=resolve; _pinSoNome=!!soNome;
+    const exigePin=_pinHash && !soNome;
     document.getElementById('pin-motivo').textContent=motivo||'Confirme para continuar.';
     document.getElementById('pin-nome').value=_pinNome||nomeSalvo();
     const p=document.getElementById('pin-valor'); p.value='';
-    document.getElementById('pin-wrap').style.display=_pinHash?'':'none';
-    document.getElementById('pin-sem').style.display=_pinHash?'none':'';
+    document.getElementById('pin-wrap').style.display=exigePin?'':'none';
+    document.getElementById('pin-sem').style.display=(_pinHash||soNome)?'none':'';
     openOv('ov-pin');
-    setTimeout(()=>(_pinHash?p:document.getElementById('pin-nome')).focus(),60);
+    setTimeout(()=>(exigePin?p:document.getElementById('pin-nome')).focus(),60);
   });
 }
 async function confirmarPin(){
   const nome=document.getElementById('pin-nome').value.trim();
   if(!nome){showToast('Coloque seu nome');return;}
+  if(_pinSoNome){ salvarNome(nome); closeOv('ov-pin'); const r=_pinResolver; _pinResolver=null; if(r) r(nome); return; }
   if(_pinHash){
     const pin=document.getElementById('pin-valor').value;
     if(!pin || await hashPin(pin)!==_pinHash){ showToast('PIN incorreto'); document.getElementById('pin-valor').select(); return; }
@@ -3043,6 +3089,7 @@ function renderAptoHist(){
     <div><div class="lav-month">${esc(rotuloApto(hotel,apt))}</div><div class="lav-sub">${esc(hotel)} · apto ${esc(apt)}${cfg?' · '+CFG_LABEL[cfg]:''}${KING_APTS.has(k)?' · king':''}</div></div>
     <button class="mt-btn-ghost" onclick="voltarDoApto()">‹ Voltar</button>
   </div>
+  ${papelSecaoApto(hotel,apt)}
   <div class="mt-section">
     <div class="mt-section-head"><span class="mt-section-title">📈 Trocas nos últimos 6 meses</span></div>
     <div class="ah-meses">${resumo}</div>
@@ -3104,6 +3151,77 @@ function previewFoto(inputId,prevId){
   prev.innerHTML=`<img src="${URL.createObjectURL(f)}"><button type="button" onclick="limparFoto('${inputId}','${prevId}')">✕ tirar foto</button>`;
 }
 function limparFoto(inputId,prevId){ document.getElementById(inputId).value=''; document.getElementById(prevId).innerHTML=''; }
+// ── PAPEL HIGIÊNICO POR APTO ──────────────────────────────────────────────────
+cache.papel={};   // 'hotel||apt' -> {quantidade, atualizado_por, atualizado_em}
+async function carregarPapel(){
+  try{
+    const {data,error}=await sb.from('apto_itens').select('*').eq('item','papel_higienico');
+    if(error)throw error;
+    cache.papel={}; (data||[]).forEach(r=>cache.papel[r.hotel+'||'+r.apt]=r);
+  }catch(e){ cache.papel={}; }
+}
+function papelMin(){ return PRECO.papelMinimo; }
+function papelBaixo(r){ return r && r.quantidade<papelMin(); }
+// Só pede o nome (sem PIN) na primeira vez; depois usa o nome salvo no celular
+async function pedirNome(motivo){
+  const n=nomeSalvo(); if(n)return n;
+  return await pedirPin(motivo,true);
+}
+let _papelSalvando={};
+async function gravarPapel(hotel,apt,quantidade){
+  const quem=await pedirNome('Atualizar o papel higiênico de '+rotuloApto(hotel,apt)+'.'); if(!quem)return;
+  const k=hotel+'||'+apt, antes=cache.papel[k]?{...cache.papel[k]}:null;
+  quantidade=Math.max(0,quantidade|0);
+  cache.papel[k]=Object.assign({},antes||{hotel,apt,item:'papel_higienico'},{quantidade,atualizado_por:quem,atualizado_em:new Date().toISOString()});
+  rerenderCompartilhado();
+  const {error}=await sb.from('apto_itens').upsert({hotel,apt,item:'papel_higienico',quantidade,atualizado_por:quem,atualizado_em:new Date().toISOString()},{onConflict:'hotel,apt,item'});
+  if(error){ if(antes)cache.papel[k]=antes; else delete cache.papel[k]; rerenderCompartilhado(); showToast('Erro ao salvar o papel higiênico'); }
+}
+function ajustarPapel(hotel,apt,delta){
+  const r=cache.papel[hotel+'||'+apt];
+  gravarPapel(hotel,apt,(r?r.quantidade:0)+delta);
+}
+let _papelSel=null;
+function openPapel(hotel,apt){
+  _papelSel={hotel,apt};
+  const r=cache.papel[hotel+'||'+apt];
+  document.getElementById('pp-title').textContent='🧻 '+rotuloApto(hotel,apt);
+  const i=document.getElementById('pp-qtd'); i.value=r?r.quantidade:'';
+  openOv('ov-papel'); setTimeout(()=>{i.focus();i.select();},60);
+}
+function salvarPapelExato(){
+  const v=parseInt(document.getElementById('pp-qtd').value,10);
+  if(isNaN(v)||v<0){showToast('Digite quantos rolos tem');return;}
+  closeOv('ov-papel'); gravarPapel(_papelSel.hotel,_papelSel.apt,v);
+}
+function papelSecaoApto(hotel,apt){
+  const r=cache.papel[hotel+'||'+apt], baixo=papelBaixo(r);
+  const sub=r?`Contado por <b>${esc(r.atualizado_por||'–')}</b> em ${fmtQuando(r.atualizado_em)}`:'Ainda não contado neste apto';
+  return `<div class="mt-section papel-box ${baixo?'low':''}">
+    <div class="mt-section-head"><span class="mt-section-title">🧻 Papel higiênico</span><span class="cfg-tag">mínimo ${papelMin()}</span></div>
+    <div class="papel-row">
+      <button class="papel-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarPapel(this.dataset.h,this.dataset.a,-1)" ${!r||r.quantidade<=0?'disabled':''}>−</button>
+      <div class="papel-qtd" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="openPapel(this.dataset.h,this.dataset.a)">${r?r.quantidade:'–'}<small>rolos</small></div>
+      <button class="papel-step" data-h="${esc(hotel)}" data-a="${esc(apt)}" onclick="ajustarPapel(this.dataset.h,this.dataset.a,1)">+</button>
+    </div>
+    <div class="papel-sub">${baixo?'⚠️ Abaixo do mínimo · ':''}${sub}</div>
+  </div>`;
+}
+// Resumo na Manutenção: aptos abaixo do mínimo
+function papelResumoManut(){
+  const todos=[]; hoteisAtivosOrdenados().forEach(h=>aptosOrdenados(h).forEach(a=>todos.push([h,a])));
+  const contados=todos.filter(([h,a])=>cache.papel[h+'||'+a]);
+  const baixos=contados.filter(([h,a])=>papelBaixo(cache.papel[h+'||'+a]))
+    .sort((x,y)=>cache.papel[x[0]+'||'+x[1]].quantidade-cache.papel[y[0]+'||'+y[1]].quantidade);
+  const chips=baixos.map(([h,a])=>{const q=cache.papel[h+'||'+a].quantidade;
+    return `<button class="papel-chip ${q===0?'zero':''}" data-h="${esc(h)}" data-a="${esc(a)}" onclick="openAptoHist(this.dataset.h,this.dataset.a)"><b>${esc(rotuloApto(h,a))}</b><span>${q} rolo${q!==1?'s':''}</span></button>`;}).join('');
+  const semContar=todos.length-contados.length;
+  return `<div class="mt-section">
+    <div class="mt-section-head"><span class="mt-section-title">🧻 Papel higiênico nos aptos</span><span class="cfg-tag">mínimo ${papelMin()}</span></div>
+    ${baixos.length?`<div class="papel-chips">${chips}</div>`:`<div class="no-movement">${contados.length?'Todos os aptos contados estão com papel suficiente.':'Nenhum apto contado ainda.'}</div>`}
+    <div class="papel-sub" style="margin-top:10px;">${contados.length} de ${todos.length} aptos contados${semContar?` · ${semContar} sem contagem`:''}. Para contar, toque no número do apto.</div>
+  </div>`;
+}
 // ── DIALOG ────────────────────────────────────────────────────────────────────
 function openDialog(){
   const month=_lavMonth||currentMonthKey();
